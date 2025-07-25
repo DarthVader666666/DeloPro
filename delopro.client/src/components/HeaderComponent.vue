@@ -262,7 +262,7 @@ function handleBurgerClick() {
             </div>
             <Button type="submit" severity="secondary" icon="pi pi-sign-in" label="Войти" raised form="login-form"></Button>
         </div>
-        <RouterLink to="recover-password" @click="() => { showMenu = false; showLogin = !showLogin; }">Забыли пароль?</RouterLink>
+        <RouterLink to="/recover-password" @click="() => { showMenu = false; showLogin = !showLogin; }">Забыли пароль?</RouterLink>
     </form>
 </template>
 
