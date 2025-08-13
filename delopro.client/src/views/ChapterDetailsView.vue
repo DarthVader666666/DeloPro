@@ -45,7 +45,7 @@ function nextTheme() {
             </h3>
             <span>{{ helper.getDateString(chapter.dateCreated) }}</span>
         </div>
-        <hr/>    
+        <hr style="margin:5px"/>    
     </div>
     <ThemeComponent v-if="theme" :theme="theme"></ThemeComponent>
     <div class="theme-buttons">
@@ -66,10 +66,13 @@ function nextTheme() {
 .chapter-title {
     display: flex;
     flex-direction: row;
-    padding-right: 15px;
+    padding: 0 10px 0 10px;
     align-items: center;
     justify-content: space-between;
-    height: 35px;
+}
+
+.chapter-title h3 {
+    margin: 0;
 }
 
 .chapter-title input {
