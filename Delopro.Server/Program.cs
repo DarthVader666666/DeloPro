@@ -157,19 +157,6 @@ app.UseCookiePolicy(
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.Use(async (context, next) => 
-{ 
-    context.Response.OnStarting(() => 
-    { 
-        context.Response.Headers.Append("Access-Control-Allow-Origin", origins ?? []); 
-        context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); 
-        context.Response.Headers.Append("Access-Control-Allow-Headers", "*");
-        return Task.CompletedTask; 
-    }); 
-    
-    await next();
-});
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}"
