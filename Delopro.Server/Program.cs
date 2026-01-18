@@ -140,7 +140,7 @@ UploadDocuments(scope);
 
 var app = builder.Build();
 
-app.UseStatusCodePagesWithReExecute("home/api/error/{0}");
+app.UseStatusCodePagesWithReExecute("/home/api/error/{0}");
 
 app.UseDefaultFiles();
 app.UseStaticFiles();

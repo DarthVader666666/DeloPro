@@ -22,6 +22,21 @@ function handleThemeClick(node) {
     router.push(node.data);
 }
 
+const expandedKeys = ref({});
+
+function toggleNode (node) {
+  if (node.children && node.children.length > 0) {
+    // Toggle the expanded state
+    if (expandedKeys.value[node.key]) {
+      delete expandedKeys.value[node.key];
+    } else {
+      expandedKeys.value[node.key] = true;
+    }
+    // Important: Create a new object to trigger reactivity
+    expandedKeys.value = { ...expandedKeys.value };
+  }
+};
+
 </script>
 <template>
     <div class="left-container">
@@ -33,9 +48,11 @@ function handleThemeClick(node) {
                 </Button>
             </div>
             <hr/>
-            <Tree :value="chapterNodes" class="tree" v-model:selectionKeys="selectedKey" selectionMode="single" @nodeSelect="handleThemeClick">
-                <template #url="{ node }">
-                    <span>{{ node.label }}</span>
+            <Tree :value="chapterNodes" class="tree" v-model:selectionKeys="selectedKey" selectionMode="single" @nodeSelect="handleThemeClick" :expandedKeys="expandedKeys">
+                <template #default="slotProps">
+                  <div @click="toggleNode(slotProps.node)">
+                    {{ slotProps.node.label }}
+                  </div>
                 </template>
             </Tree>
         </div>
@@ -43,7 +60,7 @@ function handleThemeClick(node) {
 </template>
 
 <style scoped>
-    .items {        
+    .items {
         text-align: start;
         padding: 1rem;
     }
@@ -68,6 +85,7 @@ function handleThemeClick(node) {
     .tree {
         padding: 0;
         font-size: small;
+        font-weight: bold;
         background: var(--COLUMNS-BCKGND-CLR);
     }
 
@@ -80,16 +98,8 @@ function handleThemeClick(node) {
         padding: 1px;
     }
 
-    .tree:deep(li) {
-        font-weight: bold;
-    }
-
-    .tree:deep(li) {
-        font-weight: bold;
-    }
-
-    .tree:deep(span span) {
-        font-weight: normal;
+    .tree:deep(ul li ul li div span div) {
+        font-weight: lighter;
     }
 
     .tree:deep(*) {
