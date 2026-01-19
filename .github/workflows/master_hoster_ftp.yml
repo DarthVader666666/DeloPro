@@ -32,7 +32,7 @@ jobs:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
 
-  ftp-deploy:
+  deploy-to-hoster-ftp:
     runs-on: windows-latest
     needs: build
     steps:
