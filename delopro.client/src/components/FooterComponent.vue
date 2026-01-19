@@ -6,7 +6,7 @@ const store = useStore();
 </script>
 <template>
     <div class="footer-container">
-        <h1>{{ store.getters.environment }}</h1>
+        <h1>{{ store.getters.environment === 'Production' ? '' : store.getters.environment }}</h1>
     </div>
 </template>
 
