@@ -63,5 +63,25 @@ jobs:
           slot-name: 'Production'
           package: .
 
-          
+  ftp-deploy:
+    runs-on: windows-latest
+    needs: build
+    steps:
+      - name: Download publish artifact 
+        uses: actions/download-artifact@v4 
+        with: 
+          name: .net-app
+          path: ./publish
+
+      - name: Upload files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_PATH }}
+          local-dir: ./publish/
+          protocol: ftp
+
+
 
