@@ -19,6 +19,7 @@ function handleThemeClick(node) {
         return
     }
 
+    store.commit('setPending', true);
     router.push(node.data);
 }
 
@@ -26,13 +27,13 @@ const expandedKeys = ref({});
 
 function toggleNode (node) {
   if (node.children && node.children.length > 0) {
-    // Toggle the expanded state
+    
     if (expandedKeys.value[node.key]) {
       delete expandedKeys.value[node.key];
     } else {
       expandedKeys.value[node.key] = true;
     }
-    // Important: Create a new object to trigger reactivity
+    
     expandedKeys.value = { ...expandedKeys.value };
   }
 };
