@@ -65,7 +65,28 @@ namespace Delopro.Bll.Services
 
         public Task<IEnumerable<Chapter?>> GetListAsync(int? id = null)
         {
-            return Task.FromResult<IEnumerable<Chapter?>>(_dbContext.Chapters.Include(x => x.Themes).AsEnumerable());
+            return Task.FromResult<IEnumerable<Chapter?>>(_dbContext.Chapters
+                .Select(c => 
+                new Chapter 
+                {
+                    ChapterId = c.ChapterId,
+                    UserId = c.UserId,
+                    ChapterTitle = c.ChapterTitle,
+                    DateCreated = c.DateCreated,
+                    DateDeleted = c.DateDeleted,
+                    ImagePath = c.ImagePath,
+                    Themes = c.Themes!.Select(t => 
+                        new Theme 
+                        {
+                            ThemeId = t.ThemeId,
+                            UserId = t.UserId,
+                            ChapterId = t.ChapterId,
+                            ThemeTitle = t.ThemeTitle,
+                            Content = null,
+                            DateCreated = t.DateCreated,
+                            DateDeleted = t.DateDeleted
+                        }).ToList()
+                }).AsEnumerable());
         }
 
         public async Task<Chapter?> UpdateAsync(Chapter? item)
