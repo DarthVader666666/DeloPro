@@ -65,7 +65,30 @@ namespace Delopro.Bll.Services
 
         public Task<IEnumerable<Theme?>> GetListAsync(int? id = null)
         {
-            var themes = id == null ? _dbContext.Themes : _dbContext.Chapters.Include(x => x.Themes).FirstOrDefault(x => x.ChapterId == id)?.Themes?.AsEnumerable<Theme?>();
+            var themes = id == null
+                ? _dbContext.Themes.Select(t =>
+                    new Theme
+                    {
+                        ThemeId = t.ThemeId,
+                        UserId = t.UserId,
+                        ChapterId = t.ChapterId,
+                        ThemeTitle = t.ThemeTitle,
+                        Content = null,
+                        DateCreated = t.DateCreated,
+                        DateDeleted = t.DateDeleted
+                    })
+                : _dbContext.Chapters
+                .SelectMany<Chapter, Theme, Theme?>(c => c.Themes!, (c, t) =>
+                    new Theme
+                    {
+                        ThemeId = t.ThemeId,
+                        UserId = t.UserId,
+                        ChapterId = t.ChapterId,
+                        ThemeTitle = t.ThemeTitle,
+                        Content = null,
+                        DateCreated = t.DateCreated,
+                        DateDeleted = t.DateDeleted
+                    }).AsEnumerable();
 
             return Task.FromResult(themes ?? []);
         }

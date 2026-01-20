@@ -19,7 +19,6 @@ function handleThemeClick(node) {
         return
     }
 
-    store.commit('setPending', true);
     router.push(node.data);
 }
 
@@ -37,8 +36,8 @@ function toggleNode (node) {
     expandedKeys.value = { ...expandedKeys.value };
   }
 };
-
 </script>
+
 <template>
     <div class="left-container">
         <div class="items">
