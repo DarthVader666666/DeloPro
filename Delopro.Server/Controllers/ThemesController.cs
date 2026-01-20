@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Delopro.Server.Controllers
 {
@@ -18,19 +19,31 @@ namespace Delopro.Server.Controllers
         private readonly IRepository<Theme> _themeRepository;
         private readonly UserManager _userManager;
         private readonly IMapper _mapper;
+        private readonly IMemoryCache _cache;
 
-        public ThemesController(IRepository<Theme> themesRepository, UserManager userManager, IMapper mapper)
+        public ThemesController(IRepository<Theme> themesRepository, UserManager userManager, IMapper mapper, IMemoryCache cache)
         {
             _themeRepository = themesRepository;
             _userManager = userManager;
             _mapper = mapper;
+            _cache = cache;
         }
 
         [HttpGet]
         [Route("[action]/{themeId:int?}")]
         public async Task<IActionResult> Get(int? themeId)
         {
-            var theme = await _themeRepository.GetAsync(themeId);
+            if( themeId == null)
+            {
+                return BadRequest(new { errorText = "ThemeId is null" });
+            }
+
+            if (!_cache.TryGetValue($"theme_id={themeId}", out Theme? theme))
+            {
+                theme = await _themeRepository.GetAsync(themeId);
+
+                _cache.Set($"theme_id={themeId}", theme, TimeSpan.FromMinutes(5));
+            }
 
             return Ok(theme);
         }

@@ -214,16 +214,17 @@ const store = createStore({
         },
         async downloadTheme({commit, state}, themeId ) {
             commit('setPending', true);
+            let url = `${state.serverUrl}/themes/get/`;
 
             if (themeId) {
-                const url = `${state.serverUrl}/themes/get/${themeId}`;
-                const theme = (await axios.get(url)).data;
-                commit('setTheme', theme);
+                url += `${themeId}`;
             }
-            else {                
-                commit('setTheme', state.chapter.themes[0]);
+            else if (state.chapter.themes.length > 0){
+                url += `${state.chapter.themes[0].themeId}`;
             }
 
+            const theme = (await axios.get(url)).data;
+            commit('setTheme', theme);
             commit('setPending', false);
         },
         async downloadDocuments({commit, state}) {

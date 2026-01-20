@@ -107,6 +107,7 @@ if (builder.Environment.IsProduction() && !usePostgres)
 
 builder.Services.AddSingleton<CryptoService>();
 builder.Services.AddScoped<UserManager>();
+builder.Services.AddMemoryCache();
 
 builder.Services.AddSingleton<DriveService>(provider =>
 {

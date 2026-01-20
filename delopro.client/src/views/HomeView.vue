@@ -16,13 +16,13 @@ const chapters = computed(() => store.state.chapters);
         </div>
         <div class="chapter-links">
             <div v-for="(chapter, index) in chapters" :key="index" class="chapter">
-                <RouterLink :to="`/chapters/${chapter.chapterId}`" >
+                <RouterLink :to="`/chapters/${chapter.chapterId}${chapter.themes.length > 0 ? '/' + chapter.themes[0].themeId : '' }`" >
                     <img :src="helper.getImagePath() + chapter.imagePath" width="150px" height="auto">
                     <p>{{ chapter.chapterTitle }}</p>
                 </RouterLink>
             </div>
         </div>
-    </div>    
+    </div>
 </template>
 
 <style scoped>
