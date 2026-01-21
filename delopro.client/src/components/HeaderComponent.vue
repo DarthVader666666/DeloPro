@@ -121,7 +121,7 @@ const handleLogout = () => {
         }})
         .then(response => {
             if(response.status === 200) {
-                localStorage.removeItem('Deloprosit_Cookies');
+                localStorage.removeItem('Delopro_Cookies');
                 store.commit('setNickname', null);
                 store.commit('setRoles', []);
                 store.commit('setNickname', null);
