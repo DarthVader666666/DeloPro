@@ -41,7 +41,7 @@ builder.Services.AddAuthentication(options =>
 })
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
     {
-        options.Cookie.Name = "Deloprosit_Cookies";
+        options.Cookie.Name = "Delopro_Cookies";
         //options.Cookie.MaxAge = TimeSpan.FromDays(1);
         //options.Cookie.SameSite = SameSiteMode.None;
         options.Events.OnRedirectToLogin = (context) =>
@@ -60,12 +60,12 @@ builder.Services.AddCors(options => options.AddPolicy("AllowClient",
     new CorsPolicyBuilder().WithOrigins(origins ?? [])
     .AllowAnyHeader().AllowAnyMethod().AllowCredentials().Build()));
 
-var connectionString = builder.Configuration.GetConnectionString("MssqlDeloprositDb");
+var connectionString = builder.Configuration.GetConnectionString("MssqlDeloproDb");
 
 if (connectionString == null)
 {
     usePostgres = true;
-    connectionString = builder.Configuration.GetConnectionString("PostgresDeloprositDb");
+    connectionString = builder.Configuration.GetConnectionString("PostgresDeloproDb");
     builder.Services.AddDbContext<PostgresDeloproDbContext>(optionsBuilder => optionsBuilder.UseNpgsql(connectionString));
     AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 }

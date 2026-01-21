@@ -213,7 +213,6 @@ const store = createStore({
             commit('setChapterNodes', chapterNodes);
         },
         async downloadTheme({commit, state}, themeId ) {
-            commit('setPending', true);
             let url = `${state.serverUrl}/themes/get/`;
 
             if (themeId) {
@@ -222,10 +221,26 @@ const store = createStore({
             else if (state.chapter.themes.length > 0){
                 url += `${state.chapter.themes[0].themeId}`;
             }
+            else {
+                return;
+            }
 
-            const theme = (await axios.get(url)).data;
-            commit('setTheme', theme);
-            commit('setPending', false);
+            commit('setPending', true);
+            
+            try {
+                const theme = (await axios.get(url)
+                .then(response => response.data)
+                .catch(error => {
+                    if(error.response) {
+                        toast.error(error.response.data.errorText)
+                    }
+                }));
+
+                commit('setTheme', theme);
+            }
+            finally {
+                commit('setPending', false);
+            }
         },
         async downloadDocuments({commit, state}) {
             const documents = (await axios.get(`${state.serverUrl}/documents/getlist`)

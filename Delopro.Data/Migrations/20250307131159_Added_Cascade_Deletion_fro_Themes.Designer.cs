@@ -25,7 +25,7 @@ namespace Delopro.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Deloprosit.Data.Entities.Chapter", b =>
+            modelBuilder.Entity("Delopro.Data.Entities.Chapter", b =>
                 {
                     b.Property<int>("ChapterId")
                         .ValueGeneratedOnAdd()
@@ -57,7 +57,7 @@ namespace Delopro.Data.Migrations
                     b.ToTable("Chapters");
                 });
 
-            modelBuilder.Entity("Deloprosit.Data.Entities.Comment", b =>
+            modelBuilder.Entity("Delopro.Data.Entities.Comment", b =>
                 {
                     b.Property<int>("CommentId")
                         .ValueGeneratedOnAdd()
@@ -94,7 +94,7 @@ namespace Delopro.Data.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("Deloprosit.Data.Entities.Role", b =>
+            modelBuilder.Entity("Delopro.Data.Entities.Role", b =>
                 {
                     b.Property<int>("RoleId")
                         .ValueGeneratedOnAdd()
@@ -132,7 +132,7 @@ namespace Delopro.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Deloprosit.Data.Entities.Theme", b =>
+            modelBuilder.Entity("Delopro.Data.Entities.Theme", b =>
                 {
                     b.Property<int?>("ThemeId")
                         .ValueGeneratedOnAdd()
@@ -169,7 +169,7 @@ namespace Delopro.Data.Migrations
                     b.ToTable("Themes");
                 });
 
-            modelBuilder.Entity("Deloprosit.Data.Entities.User", b =>
+            modelBuilder.Entity("Delopro.Data.Entities.User", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
@@ -242,7 +242,7 @@ namespace Delopro.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Deloprosit.Data.Entities.UserRole", b =>
+            modelBuilder.Entity("Delopro.Data.Entities.UserRole", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -257,9 +257,9 @@ namespace Delopro.Data.Migrations
                     b.ToTable("UserRoles");
                 });
 
-            modelBuilder.Entity("Deloprosit.Data.Entities.Chapter", b =>
+            modelBuilder.Entity("Delopro.Data.Entities.Chapter", b =>
                 {
-                    b.HasOne("Deloprosit.Data.Entities.User", "User")
+                    b.HasOne("Delopro.Data.Entities.User", "User")
                         .WithMany("Chapters")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -268,15 +268,15 @@ namespace Delopro.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Deloprosit.Data.Entities.Comment", b =>
+            modelBuilder.Entity("Delopro.Data.Entities.Comment", b =>
                 {
-                    b.HasOne("Deloprosit.Data.Entities.Theme", "Theme")
+                    b.HasOne("Delopro.Data.Entities.Theme", "Theme")
                         .WithMany("Comments")
                         .HasForeignKey("ThemeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Deloprosit.Data.Entities.User", "User")
+                    b.HasOne("Delopro.Data.Entities.User", "User")
                         .WithMany("Comments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -287,14 +287,14 @@ namespace Delopro.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Deloprosit.Data.Entities.Theme", b =>
+            modelBuilder.Entity("Delopro.Data.Entities.Theme", b =>
                 {
-                    b.HasOne("Deloprosit.Data.Entities.Chapter", "Chapter")
+                    b.HasOne("Delopro.Data.Entities.Chapter", "Chapter")
                         .WithMany("Themes")
                         .HasForeignKey("ChapterId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Deloprosit.Data.Entities.User", "User")
+                    b.HasOne("Delopro.Data.Entities.User", "User")
                         .WithMany("Themes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -304,15 +304,15 @@ namespace Delopro.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Deloprosit.Data.Entities.UserRole", b =>
+            modelBuilder.Entity("Delopro.Data.Entities.UserRole", b =>
                 {
-                    b.HasOne("Deloprosit.Data.Entities.Role", "Role")
+                    b.HasOne("Delopro.Data.Entities.Role", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Deloprosit.Data.Entities.User", "User")
+                    b.HasOne("Delopro.Data.Entities.User", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -323,22 +323,22 @@ namespace Delopro.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Deloprosit.Data.Entities.Chapter", b =>
+            modelBuilder.Entity("Delopro.Data.Entities.Chapter", b =>
                 {
                     b.Navigation("Themes");
                 });
 
-            modelBuilder.Entity("Deloprosit.Data.Entities.Role", b =>
+            modelBuilder.Entity("Delopro.Data.Entities.Role", b =>
                 {
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("Deloprosit.Data.Entities.Theme", b =>
+            modelBuilder.Entity("Delopro.Data.Entities.Theme", b =>
                 {
                     b.Navigation("Comments");
                 });
 
-            modelBuilder.Entity("Deloprosit.Data.Entities.User", b =>
+            modelBuilder.Entity("Delopro.Data.Entities.User", b =>
                 {
                     b.Navigation("Chapters");
 

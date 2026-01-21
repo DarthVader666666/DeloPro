@@ -12,7 +12,7 @@ const store = useStore();
 const cookieManager = useCookies();
 const showSearchBar = computed(() => store.state.showSearchBar);
 
-const coockieName ='Deloprosit_Cookies';
+const coockieName ='Delopro_Cookies';
 
 onMounted(async () => {
     axios.defaults.withCredentials = true;
