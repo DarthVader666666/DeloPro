@@ -105,5 +105,10 @@ namespace Delopro.Bll.Services
 
             return updatedTheme;
         }
+
+        public Task<IEnumerable<Theme?>> GetListIncludeAsync(int? id = null)
+        {
+            return Task.FromResult<IEnumerable<Theme?>>(_dbContext.Themes.AsEnumerable());
+        }
     }
 }

@@ -121,5 +121,10 @@ namespace Delopro.Bll.Services
 
             return updatedChapter;
         }
+
+        public Task<IEnumerable<Chapter?>> GetListIncludeAsync(int? id = null)
+        {
+            return Task.FromResult<IEnumerable<Chapter?>>(_dbContext.Chapters.Include(c => c.Themes).Where(c => c.ChapterId == id).AsEnumerable());
+        }
     }
 }

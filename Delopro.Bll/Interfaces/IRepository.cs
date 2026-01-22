@@ -10,5 +10,9 @@
         Task<TEntity?> DeleteAsync(int? id_1, int? id_2 = null);
         Task DeleteRangeAsync(IEnumerable<TEntity> items);
         Task<bool> ExistsAsync(TEntity? item);
+        virtual Task<IEnumerable<TEntity?>> GetListIncludeAsync(int? id = null)
+        { 
+            return Task.FromResult(Enumerable.Empty<TEntity?>());
+        }
     }
 }

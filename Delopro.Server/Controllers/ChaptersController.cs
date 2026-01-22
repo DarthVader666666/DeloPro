@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using System.Text.RegularExpressions;
+
+using AutoMapper;
 
 using Delopro.Bll.Interfaces;
 using Delopro.Bll.Services;
@@ -22,12 +25,14 @@ namespace Delopro.Server.Controllers
     {
         private readonly UserManager _userManager;
         private readonly IRepository<Chapter> _chapterRepository;
+        private readonly IRepository<Theme> _themeRepository;
         private readonly IMapper _mapper;
 
-        public ChaptersController(UserManager userManager, IRepository<Chapter> chapterRepository, IMapper mapper)
+        public ChaptersController(UserManager userManager, IRepository<Chapter> chapterRepository, IRepository<Theme> themeRepository, IMapper mapper)
         {
             _userManager = userManager;
             _chapterRepository = chapterRepository;
+            _themeRepository = themeRepository;
             _mapper = mapper;
         }
 
@@ -191,8 +196,16 @@ namespace Delopro.Server.Controllers
                 return BadRequest(new { errorText = "Не задана строка поиска" });
             }
 
-            var chapterSearchResultModels = (await _chapterRepository.GetListAsync()).SelectMany(chapter => chapter?.Themes ?? [])
-                .Where(theme => theme.Content != null && theme.Content.Contains(searchLine, StringComparison.OrdinalIgnoreCase))
+            string getPlainText(string html)
+            {
+                var tagsStripped = Regex.Replace(html, "<.*?>", string.Empty);
+                var plainText = WebUtility.HtmlDecode(tagsStripped);
+
+                return plainText;
+            }
+
+            var chapterSearchResultModels = (await _themeRepository.GetListIncludeAsync())
+                .Where(theme => theme!.Content != null && getPlainText(theme.Content).Contains(searchLine, StringComparison.OrdinalIgnoreCase))
                 .SelectMany(theme => theme == null || theme.Content.IsNullOrEmpty() ? [] : GetChapterSearchResultModels(theme, searchLine));
 
             return Ok(chapterSearchResultModels);
@@ -205,11 +218,11 @@ namespace Delopro.Server.Controllers
             var htmlPage = new HtmlDocument();
             htmlPage.LoadHtml(theme!.Content!);
             var rootNode = htmlPage.DocumentNode;
-            var nodes = rootNode.ChildNodes.Where(x => x.InnerText.Contains(searchLine, StringComparison.OrdinalIgnoreCase));
+            var nodes = rootNode.ChildNodes.Where(x => WebUtility.HtmlDecode(x.InnerText).Contains(searchLine, StringComparison.OrdinalIgnoreCase));
 
             foreach (var node in nodes)
             {
-                var childNode = node.ChildNodes.FirstOrDefault(x => x.Name != "#text" && x.InnerText.Contains(searchLine, StringComparison.OrdinalIgnoreCase)) ?? node;
+                var childNode = node.ChildNodes.FirstOrDefault(x => x.Name != "#text" && WebUtility.HtmlDecode(x.InnerText).Contains(searchLine, StringComparison.OrdinalIgnoreCase)) ?? node;
                 var content = childNode.InnerText;
 
                 var lastIndex = content.Length;
@@ -217,7 +230,7 @@ namespace Delopro.Server.Controllers
 
                 while (startIndex < lastIndex)
                 {
-                    var index = content.IndexOf(searchLine, startIndex, StringComparison.OrdinalIgnoreCase);
+                    var index = content.IndexOf(WebUtility.HtmlEncode(searchLine), startIndex, StringComparison.OrdinalIgnoreCase);
 
                     if (index < 0)
                     {
