@@ -3,17 +3,20 @@ import ThemeComponent from '@/components/ThemeComponent.vue';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import Button from 'primevue/button';
 import { helper } from '@/helper/helper';
 
 const store = useStore();
 const router = useRouter();
+const route = useRoute();
 
 const isAdmin = computed(() => store.getters.isAdmin);
 const isOwner = computed(() => store.getters.isOwner);
 const chapter = computed(() => store.getters.getChapter);
 const theme = computed(() => store.getters.getTheme);
 const themeIds = computed(() => store.getters.getThemes.map(x => x.themeId));
+const searchTerm = computed(() => route.params.search)
 
 function previousTheme() {
     const themeIndex = themeIds.value.indexOf(theme.value.themeId);
@@ -47,7 +50,7 @@ function nextTheme() {
         </div>
         <hr style="margin:5px"/>    
     </div>
-    <ThemeComponent v-if="theme" :theme="theme"></ThemeComponent>
+    <ThemeComponent v-if="theme" :theme="theme" :searchTerm="searchTerm"></ThemeComponent>
     <div class="theme-buttons">
         <Button @click="previousTheme" icon="pi pi-arrow-left" rounded raised></Button>
         <Button @click="nextTheme" icon="pi pi-arrow-right" rounded raised></Button>

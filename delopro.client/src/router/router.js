@@ -32,7 +32,7 @@ const router = createRouter({
             component: ChapterCreateView            
         },
         {
-            path: '/chapters/:chapterId/:themeId?',
+            path: '/chapters/:chapterId/:themeId?/:search?',
             name: 'chapter-details',
             component: ChapterDetailsView            
         },

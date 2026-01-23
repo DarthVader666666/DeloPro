@@ -2,10 +2,12 @@
 import { helper } from '@/helper/helper';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 
 const store = useStore();
+const router = useRouter();
 const chapterSearchResult = computed(() => store.getters.getChapterSearchResult);
 
 </script>
@@ -28,7 +30,9 @@ const chapterSearchResult = computed(() => store.getters.getChapterSearchResult)
                     </RouterLink>
                     <span class="date">{{ helper.getDateString(slotProps.data.dateCreated) }}</span>
                 </div>
-                <div v-html="slotProps.data.searchFragment" class="search-result-content"></div>
+                <div v-html="slotProps.data.searchFragment" class="search-result-content" 
+                    @click="router.push(`/chapters/${slotProps.data.chapterId}/${slotProps.data.themeId}/${helper.trimTags(slotProps.data.searchFragment)}`)">
+                </div>
             </template>
         </Column>        
     </DataTable>

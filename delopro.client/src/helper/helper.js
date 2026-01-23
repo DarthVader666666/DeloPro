@@ -142,5 +142,8 @@ export const helper = {
                 item.style.removeProperty('filter');
             }
         })
+    },
+    trimTags(htmlString) {
+        return htmlString.replace(/<\/?[^>]+(>|$)/g, "");
     }
 }

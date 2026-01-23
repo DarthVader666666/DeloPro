@@ -3,7 +3,7 @@ import { useStore } from 'vuex';
 import Button from 'primevue/button';
 import { RouterLink, useRouter } from 'vue-router';
 import { helper } from '@/helper/helper';
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import SpinningCircle from './SpinningCircle.vue';
 
 const store = useStore();
@@ -26,8 +26,34 @@ const props = defineProps({
     useShortMode: {
         typeof: Boolean,
         default: false
+    },
+    searchTerm: {
+        typeof: String,
+        default: null
     }
 });
+
+watch(() => props.searchTerm, (oldValue, newValue) =>
+{
+    if (!newValue) 
+    {
+        return;
+    }
+
+      const content = this.$refs.content;
+      const elements = content.querySelectorAll("p");
+
+      for (let el of elements) {
+        if (el.textContent.toLowerCase().includes(decodeHtmlEntities(newValue).toLowerCase())) {
+          // Smooth scroll to the element
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+
+          // Optional: highlight the match
+          el.style.backgroundColor = "yellow";
+          break; // stop at first match
+        }
+      }
+  }) 
 
 </script>
 
