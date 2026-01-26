@@ -54,7 +54,6 @@ function handleCancel() {
     else {
         router.push('/');
     }
-    
 }
 
 </script>

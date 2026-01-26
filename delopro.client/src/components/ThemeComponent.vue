@@ -43,14 +43,10 @@ onMounted(() => {
 
         for (let el of elements) {
           if (el.textContent.includes(props.searchTerm)) {
-            // Smooth scroll to the element
-            el.scrollIntoView({ behavior: "smooth", block: "center" });
-            // Optional: highlight the match
             el.style.backgroundColor = 'yellow';
-            //classList.add("highlighted");
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
             highlightedElement.value = el;
-
-            break; // stop at first match
+            break;
           }
         }
     }
@@ -60,7 +56,7 @@ onUnmounted(() => {
     if(highlightedElement.value) {
         highlightedElement.value.style.backgroundColor = 'white';
         highlightedElement.value = null;
-    }        
+    }
 })
 
 </script>
@@ -72,7 +68,7 @@ onUnmounted(() => {
                 <RouterLink :class="!useShortMode && `disabled`" :to="`/chapters/${store.state.chapter.chapterId}/${props.theme.themeId}`" :disabled="true">
                     {{ props.theme.themeTitle }}
                 </RouterLink>
-                <Button v-if="!props.useShortMode && (isAdmin || isOwner)" rounded text icon="pi pi-pencil" severity="contrast" 
+                <Button v-if="!props.useShortMode && (isAdmin || isOwner)" rounded text icon="pi pi-pencil" severity="contrast"
                     title="Редактировать" @click="router.push(`/themes/${theme.themeId}/edit`)"/>
             </div>
             <span v-if="!useShortMode" class="date">{{ helper.getDateString(props.theme.dateCreated) }}</span>

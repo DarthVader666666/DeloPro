@@ -12,6 +12,9 @@ import SearchResultView from "@/views/SearchResultView.vue";
 import PersonalDataAgreement from "@/views/PersonalDataAgreement.vue";
 import RecoverPasswordView from "@/views/RecoverPasswordView.vue";
 import UsersView from "@/views/UsersView.vue";
+import { ref } from "vue";
+
+const doScrollUp = ref(true);
 
 const router = createRouter({
     history: createWebHistory(),
@@ -29,17 +32,17 @@ const router = createRouter({
         {
             path: '/chapters/create',
             name: 'create-chapter',
-            component: ChapterCreateView            
+            component: ChapterCreateView
         },
         {
             path: '/chapters/:chapterId/:themeId/:search?',
             name: 'chapter-details',
-            component: ChapterDetailsView            
+            component: ChapterDetailsView
         },
         {
             path: '/chapters/:chapterId/edit',
             name: 'edit-chapter',
-            component: ChapterEditView        
+            component: ChapterEditView
         },
         {
             path: '/:catchAll(.*)', // any resource which doesn't exist
@@ -49,7 +52,7 @@ const router = createRouter({
         {
             path: '/themes/:themeId/edit',
             name: 'edit-theme',
-            component: ThemeEditView        
+            component: ThemeEditView
         },
         {
             path: '/feedback',
@@ -91,7 +94,11 @@ router.afterEach(async (to) => {
         await store.dispatch('downloadChapter', to.params['chapterId']);
         await store.dispatch('downloadTheme', to.params['themeId']);
         store.commit('renderSearchBar');
-        store.commit('setShowChapterList', false);        
+        store.commit('setShowChapterList', false);
+
+        if(to.params.search) {
+          doScrollUp.value = false;
+        }
     }
     else {
         store.commit('setShowChapterList', true);
@@ -113,7 +120,7 @@ router.afterEach(async (to) => {
     }
 
     if(to.name === 'register') {
-        store.commit('setTitle', 'Заполните форму регистрации');        
+        store.commit('setTitle', 'Заполните форму регистрации');
         const captchaInput =  document.getElementById('captcha-input');
 
         if(captchaInput) {
@@ -168,11 +175,15 @@ router.afterEach(async (to) => {
     await store.dispatch('downloadChapterNodes');
     await store.dispatch('downloadDocuments');
     await store.dispatch('downloadDocumentNodes');
-    
+
     if(store.getters.isOwner)
         await store.dispatch('downloadUnreadMessagesCount');
 
-    window.scrollTo(0, 0);
+    if(doScrollUp.value) {
+      window.scrollTo(0, 0);
+    }
+
+    doScrollUp.value = true;
 });
 
 export default router;

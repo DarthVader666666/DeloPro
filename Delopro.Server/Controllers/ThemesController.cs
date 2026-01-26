@@ -19,25 +19,26 @@ namespace Delopro.Server.Controllers
         private readonly IRepository<Theme> _themeRepository;
         private readonly UserManager _userManager;
         private readonly IMapper _mapper;
-        private readonly IMemoryCache _cache;
+        private readonly IMemoryCache _memoryCache;
+        private const string baseThemeKey = "theme_id=";
 
-        public ThemesController(IRepository<Theme> themesRepository, UserManager userManager, IMapper mapper, IMemoryCache cache)
+        public ThemesController(IRepository<Theme> themesRepository, UserManager userManager, IMapper mapper, IMemoryCache memoryCache)
         {
             _themeRepository = themesRepository;
             _userManager = userManager;
             _mapper = mapper;
-            _cache = cache;
+            _memoryCache = memoryCache;
         }
 
         [HttpGet]
         [Route("[action]/{themeId:int}")]
         public async Task<IActionResult> Get(int themeId)
         {
-            if (!_cache.TryGetValue($"theme_id={themeId}", out Theme? theme))
+            if (!_memoryCache.TryGetValue($"theme_id={themeId}", out Theme? theme))
             {
                 theme = await _themeRepository.GetAsync(themeId);
 
-                _cache.Set($"theme_id={themeId}", theme, TimeSpan.FromMinutes(5));
+                _memoryCache.Set($"{baseThemeKey}{themeId}", theme, TimeSpan.FromMinutes(5));
             }
 
             return Ok(theme);
@@ -110,6 +111,8 @@ namespace Delopro.Server.Controllers
             {
                 return StatusCode(500, new { errorText = "Ошибка базы данных" });
             }
+
+            _memoryCache.Remove($"{baseThemeKey}{theme.ThemeId}");
 
             return Ok();
         }
