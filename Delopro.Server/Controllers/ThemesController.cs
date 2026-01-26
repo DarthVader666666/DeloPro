@@ -30,14 +30,9 @@ namespace Delopro.Server.Controllers
         }
 
         [HttpGet]
-        [Route("[action]/{themeId:int?}")]
-        public async Task<IActionResult> Get(int? themeId)
+        [Route("[action]/{themeId:int}")]
+        public async Task<IActionResult> Get(int themeId)
         {
-            if( themeId == null)
-            {
-                return BadRequest(new { errorText = "ThemeId is null" });
-            }
-
             if (!_cache.TryGetValue($"theme_id={themeId}", out Theme? theme))
             {
                 theme = await _themeRepository.GetAsync(themeId);

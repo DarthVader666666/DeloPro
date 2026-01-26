@@ -3,7 +3,7 @@ import { useStore } from 'vuex';
 import Button from 'primevue/button';
 import { RouterLink, useRouter } from 'vue-router';
 import { helper } from '@/helper/helper';
-import { computed, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import SpinningCircle from './SpinningCircle.vue';
 
 const store = useStore();
@@ -13,6 +13,9 @@ const emit = defineEmits(['removeTheme']);
 const isAdmin = computed(() => store.getters.isAdmin);
 const isOwner = computed(() => store.getters.isOwner);
 const pending = computed(() => store.getters.getPending);
+
+const themeContent = ref(null);
+const highlightedElement = ref(null);
 
 const props = defineProps({
     theme: {
@@ -28,37 +31,43 @@ const props = defineProps({
         default: false
     },
     searchTerm: {
-        typeof: String,
+        type: String,
         default: null
     }
 });
 
-watch(() => props.searchTerm, (oldValue, newValue) =>
-{
-    if (!newValue) 
-    {
-        return;
-    }
+onMounted(() => {
+    if(props.searchTerm) {
+        const content = themeContent.value;
+        const elements = content.querySelectorAll("p");
 
-      const content = this.$refs.content;
-      const elements = content.querySelectorAll("p");
+        console.log(props.searchTerm)
 
-      for (let el of elements) {
-        if (el.textContent.toLowerCase().includes(decodeHtmlEntities(newValue).toLowerCase())) {
-          // Smooth scroll to the element
-          el.scrollIntoView({ behavior: "smooth", block: "center" });
+        for (let el of elements) {
+          if (el.textContent.toLowerCase().includes(helper.trimTags(props.searchTerm ?? ''))) {
+            // Smooth scroll to the element
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+            // Optional: highlight the match
+            el.classList().add("highlighted");
+            highlightedElement.value = el;
 
-          // Optional: highlight the match
-          el.style.backgroundColor = "yellow";
-          break; // stop at first match
+            console.log(el)
+
+            break; // stop at first match
+          }
         }
-      }
-  }) 
+    }
+})
+
+onUnmounted(() => {
+    if(highlightedElement.value)
+        highlightedElement.value.classList().remove("highlighted");
+})
 
 </script>
 
 <template>
-    <div :id="`theme_${props.theme.themeId}`" :ref="`theme_${props.theme.themeId}`">
+    <div :id="`theme_${props.theme.themeId}`" :ref="`theme_${props.theme.themeId}`" >
         <div class="theme-header">
             <div>
                 <RouterLink :class="!useShortMode && `disabled`" :to="`/chapters/${store.state.chapter.chapterId}/${props.theme.themeId}`" :disabled="true">
@@ -76,7 +85,7 @@ watch(() => props.searchTerm, (oldValue, newValue) =>
             <h3>Загрузка...</h3>
             <SpinningCircle></SpinningCircle>
         </div>
-        <div v-else-if="!props.useShortMode" v-html="theme.content" class="theme-content"></div>
+        <div v-else-if="!props.useShortMode" v-html="theme.content" class="theme-content" ref="themeContent"></div>
     </div>
 </template>
 <style scoped>
@@ -122,6 +131,10 @@ watch(() => props.searchTerm, (oldValue, newValue) =>
 
 .date {
     font-size: small;
+}
+
+.highlighted {
+    background-color: yellow;
 }
 
 @media (max-width: 1500px) {

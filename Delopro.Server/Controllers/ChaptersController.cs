@@ -132,13 +132,8 @@ namespace Delopro.Server.Controllers
 
         [HttpGet]
         [Route("[action]/{chapterId:int}")]
-        public async Task<IActionResult> Get(int? chapterId)
+        public async Task<IActionResult> Get(int chapterId)
         {
-            if (chapterId == null)
-            {
-                return BadRequest();
-            }
-
             var chapter = await _chapterRepository.GetAsync(chapterId);
 
             if (chapter == null)

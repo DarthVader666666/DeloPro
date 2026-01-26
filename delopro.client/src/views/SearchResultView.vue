@@ -71,9 +71,14 @@ const chapterSearchResult = computed(() => store.getters.getChapterSearchResult)
     text-decoration: underline;
 }
 
+.search-result-content :hover {
+    cursor: pointer;
+    background: lightgray;
+}
+
 .search-result-content {
     padding: 18px 20px 20px 20px;
-    background: white;
+    background: white;    
 }
 
 .date {
