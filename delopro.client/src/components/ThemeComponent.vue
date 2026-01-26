@@ -41,17 +41,14 @@ onMounted(() => {
         const content = themeContent.value;
         const elements = content.querySelectorAll("p");
 
-        console.log(props.searchTerm)
-
         for (let el of elements) {
-          if (el.textContent.toLowerCase().includes(helper.trimTags(props.searchTerm ?? ''))) {
+          if (el.textContent.includes(props.searchTerm)) {
             // Smooth scroll to the element
             el.scrollIntoView({ behavior: "smooth", block: "center" });
             // Optional: highlight the match
-            el.classList().add("highlighted");
+            el.style.backgroundColor = 'yellow';
+            //classList.add("highlighted");
             highlightedElement.value = el;
-
-            console.log(el)
 
             break; // stop at first match
           }
@@ -60,8 +57,10 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-    if(highlightedElement.value)
-        highlightedElement.value.classList().remove("highlighted");
+    if(highlightedElement.value) {
+        highlightedElement.value.style.backgroundColor = 'white';
+        highlightedElement.value = null;
+    }        
 })
 
 </script>
