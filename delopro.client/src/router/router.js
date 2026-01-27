@@ -35,7 +35,7 @@ const router = createRouter({
             component: ChapterCreateView
         },
         {
-            path: '/chapters/:chapterId/:themeId/:search?',
+            path: '/chapters/:chapterId/:themeId',
             name: 'chapter-details',
             component: ChapterDetailsView
         },
@@ -96,7 +96,7 @@ router.afterEach(async (to) => {
         store.commit('renderSearchBar');
         store.commit('setShowChapterList', false);
 
-        if(to.params.search) {
+        if(to.query.search) {
           doScrollUp.value = false;
         }
     }

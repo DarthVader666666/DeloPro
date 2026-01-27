@@ -143,7 +143,12 @@ export const helper = {
             }
         })
     },
-    trimTags(htmlString) {
-        return htmlString.replace(/<\/?[^>]+(>|$)/g, "");
+    trimTags(htmlTag) {
+        return htmlTag.replace(/<\/?[^>]+(>|$)/g, "");
+    },
+    decodeHtml(htmlString) {
+        const txt = document.createElement("textarea");
+        txt.innerHTML = htmlString;
+        return txt.value;
     }
 }

@@ -31,13 +31,13 @@ const chapterSearchResult = computed(() => store.getters.getChapterSearchResult)
                     <span class="date">{{ helper.getDateString(slotProps.data.dateCreated) }}</span>
                 </div>
                 <div v-html="slotProps.data.searchFragment" class="search-result-content" 
-                    @click="router.push(`/chapters/${slotProps.data.chapterId}/${slotProps.data.themeId}/${helper.trimTags(slotProps.data.searchFragment)}`)">
+                    @click="router.push({ path: `/chapters/${slotProps.data.chapterId}/${slotProps.data.themeId}`, query: { search: helper.trimTags(slotProps.data.searchFragment) }})">
                 </div>
             </template>
         </Column>        
     </DataTable>
 </div>
-<h1 v-else>
+<h1 style="padding-left: 10px;" v-else>
     Поиск не дал результатов
 </h1>
 </template>

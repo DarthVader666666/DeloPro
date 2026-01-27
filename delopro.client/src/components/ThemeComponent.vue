@@ -30,19 +30,19 @@ const props = defineProps({
         typeof: Boolean,
         default: false
     },
-    searchTerm: {
+    searchFragment: {
         type: String,
         default: null
     }
 });
 
 onMounted(() => {
-    if(props.searchTerm) {
+    if(props.searchFragment) {
         const content = themeContent.value;
-        const elements = content.querySelectorAll("p");
+        const elements = content.querySelectorAll("p,a,em,span,h");
 
         for (let el of elements) {
-          if (el.textContent.includes(props.searchTerm)) {
+          if (el.textContent.includes(props.searchFragment)) {
             el.style.backgroundColor = 'yellow';
             el.scrollIntoView({ behavior: "smooth", block: "center" });
             highlightedElement.value = el;
