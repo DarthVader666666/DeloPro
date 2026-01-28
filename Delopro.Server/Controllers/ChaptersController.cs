@@ -1,20 +1,15 @@
-﻿using System.Net;
-using System.Text.RegularExpressions;
-
-using AutoMapper;
+﻿using AutoMapper;
 
 using Delopro.Bll.Interfaces;
 using Delopro.Bll.Services;
 using Delopro.Data.Entities;
 using Delopro.Server.Models;
 
-using HtmlAgilityPack;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 
 namespace Delopro.Server.Controllers
 {
@@ -163,113 +158,6 @@ namespace Delopro.Server.Controllers
             }
 
             return Ok();
-        }
-
-        [HttpPost]
-        [Route("[action]")]
-        public async Task<IActionResult> Search()
-        {
-            string? searchLine = null;
-
-            try
-            {
-                var reader = new StreamReader(HttpContext.Request.Body);
-                searchLine = JsonConvert.DeserializeObject<SearchLineModel>(await reader.ReadToEndAsync())?.SearchLine;
-
-                if (searchLine == null || searchLine.Length < 3)
-                {
-                    return Ok(Enumerable.Empty<ChapterSearchResultModel>());
-                }
-            }
-            catch
-            {
-                return StatusCode(500, new { errorText = "Не удалось прочесть запрос" });
-            }
-
-            if (searchLine == null)
-            {
-                return BadRequest(new { errorText = "Не задана строка поиска" });
-            }
-
-            string getPlainText(string html)
-            {
-                var tagsStripped = Regex.Replace(html, "<.*?>", string.Empty);
-                var plainText = WebUtility.HtmlDecode(tagsStripped);
-
-                return plainText;
-            }
-
-            var chapterSearchResultModels = (await _themeRepository.GetListIncludeAsync())
-                .Where(theme => theme!.Content != null && getPlainText(theme.Content).Contains(searchLine, StringComparison.OrdinalIgnoreCase))
-                .SelectMany(theme => theme == null || theme.Content.IsNullOrEmpty() ? [] : GetChapterSearchResultModels(theme, searchLine));
-
-            return Ok(chapterSearchResultModels);
-        }
-
-        private static IEnumerable<ChapterSearchResultModel> GetChapterSearchResultModels(Theme theme, string searchLine)
-        {
-            const int offset = 100;
-
-            var htmlPage = new HtmlDocument();
-            htmlPage.LoadHtml(theme!.Content!);
-            var rootNode = htmlPage.DocumentNode;
-            var nodes = rootNode.ChildNodes.Where(x => WebUtility.HtmlDecode(x.InnerText).Contains(searchLine, StringComparison.OrdinalIgnoreCase));
-
-            foreach (var node in nodes)
-            {
-                var childNode = node.ChildNodes.FirstOrDefault(x => x.Name != "#text" && WebUtility.HtmlDecode(x.InnerText).Contains(searchLine, StringComparison.OrdinalIgnoreCase)) ?? node;
-                var content = childNode.InnerText;
-
-                var lastIndex = content.Length;
-                var startIndex = 0;
-
-                while (startIndex < lastIndex)
-                {
-                    var index = content.IndexOf(WebUtility.HtmlEncode(searchLine), startIndex, StringComparison.OrdinalIgnoreCase);
-
-                    if (index < 0)
-                    {
-                        break;
-                    }
-
-                    var leftOffset = offset;
-                    var leftIndex = index - offset;
-
-                    if (leftIndex < 0)
-                    {
-                        leftOffset = leftIndex + offset;
-                        leftIndex = index - leftOffset;
-                    }
-
-                    var rightIndex = index + searchLine.Length + offset;
-                    var rigthOffset = offset;
-
-                    if (rightIndex > lastIndex)
-                    {
-                        rigthOffset = lastIndex - (index + searchLine.Length);
-                    }
-
-                    var searchFragmentText = content.Substring(leftIndex, leftOffset + searchLine.Length + rigthOffset);
-                    var searchLineContent = content.Substring(index, searchLine.Length);
-                    searchFragmentText = searchFragmentText.Replace(searchLineContent, $"<span style=\"background:yellow\">{searchLineContent.TrimStart('/')}</span>");
-                    var searchFragment = content.Replace(childNode.InnerText, searchFragmentText);
-
-                    var chapterSearchResultModel = new ChapterSearchResultModel
-                    {
-                        ChapterId = theme.ChapterId,
-                        ThemeId = theme.ThemeId,
-                        ThemeTitle = theme.ThemeTitle,
-                        DateCreated = theme.DateCreated,
-                        SearchFragment = 
-                            $"<{childNode.Name} style=\"{string.Join(';', childNode.Attributes.Select(attribute => 
-                            $"{attribute.Name}:{attribute.DeEntitizeValue}"))}\">{searchFragment}</{childNode.Name}>"
-                    };
-
-                    startIndex = index + searchLine.Length;
-
-                    yield return chapterSearchResultModel;
-                }
-            }
         }
     }
 }

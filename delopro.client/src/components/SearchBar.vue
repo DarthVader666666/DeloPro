@@ -15,7 +15,7 @@ async function handleSearch() {
         return;
     }
 
-    await store.dispatch('downloadChapterSearchResult', searchLine.value);
+    await store.dispatch('downloadSearchResult', searchLine.value);
     searchLine.value = null;
     router.push('/search-result');
 }

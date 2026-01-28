@@ -22,7 +22,7 @@ const store = createStore({
         messages: [],
         message: null,
         unreadMessagesCount: 0,
-        chapterSearchResult: [],
+        searchResult: [],
         showSearchBar: true,
         title: null,
         imageNames: [],
@@ -78,8 +78,8 @@ const store = createStore({
         getUnreadMessagesCount(state) {
             return state.unreadMessagesCount;
         },
-        getChapterSearchResult(state) {
-            return state.chapterSearchResult;
+        getSearchResult(state) {
+            return state.searchResult;
         },
         serverUrl(state) {
             return state.serverUrl;
@@ -172,8 +172,8 @@ const store = createStore({
         setMessageById(state, messageId) {
             state.message = state.messages.find(x => x.messageId === messageId);
         },
-        setChapterSearchResult(state, chapterSearchResult) {
-            state.chapterSearchResult = chapterSearchResult;
+        setSearchResult(state, searchResult) {
+            state.searchResult = searchResult;
         },
         setShowChapterList(state, value) {
             state.showChapterList = value;
@@ -300,8 +300,8 @@ const store = createStore({
 
             commit('setUnreadMessagesCount', count);
         },
-        async downloadChapterSearchResult({commit, state}, searchLine) {
-            const chapterSearchResult = (await axios.post(`${state.serverUrl}/chapters/search`,
+        async downloadSearchResult({commit, state}, searchLine) {
+            const searchResult = (await axios.post(`${state.serverUrl}/search/getsearchresult`,
                 {
                     searchLine: searchLine
                 }
@@ -313,7 +313,7 @@ const store = createStore({
                     }
                 }));
 
-            commit('setChapterSearchResult', chapterSearchResult);
+            commit('setSearchResult', searchResult);
         },
         async downloadCaptcha({commit, state}) {
             const captcha = (await axios.get(`${state.serverUrl}/captcha/get`)

@@ -15,7 +15,7 @@ const isOwner = computed(() => store.getters.isOwner);
 const pending = computed(() => store.getters.getPending);
 
 const themeContent = ref(null);
-const highlightedElement = ref(null);
+const highlightingStyles = { color: 'black', backgroundColor: 'yellow' };
 
 const props = defineProps({
     theme: {
@@ -30,35 +30,34 @@ const props = defineProps({
         typeof: Boolean,
         default: false
     },
-    searchFragment: {
-        type: String,
+    searchResult: {
+        type: Object,
         default: null
     }
 });
 
 onMounted(() => {
-    if(props.searchFragment) {
+    if(props.searchResult) {
         const content = themeContent.value;
-        const elements = content.querySelectorAll("p,a,em,span,h");
+        const elements = content.querySelectorAll("*");
+        let index = 0;
 
         for (let el of elements) {
-          if (el.textContent.includes(props.searchFragment)) {
-            el.style.backgroundColor = 'yellow';
-            el.scrollIntoView({ behavior: "smooth", block: "center" });
-            highlightedElement.value = el;
+          if (el.textContent.includes(props.searchResult.searchFragment) && index == props.searchResult.index) {
+            Object.assign(el.style, highlightingStyles);
+
+            el.querySelectorAll('*').forEach(child => {
+                Object.assign(child.style, highlightingStyles);
+                child.scrollIntoView({ behavior: "smooth", block: "center" });
+            });            
             break;
+          }
+          else if (el.textContent.includes(props.searchResult.searchFragment) && index != props.searchResult.index) {
+            index++;
           }
         }
     }
 })
-
-onUnmounted(() => {
-    if(highlightedElement.value) {
-        highlightedElement.value.style.backgroundColor = 'white';
-        highlightedElement.value = null;
-    }
-})
-
 </script>
 
 <template>

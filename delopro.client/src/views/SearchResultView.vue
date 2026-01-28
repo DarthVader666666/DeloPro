@@ -8,12 +8,12 @@ import Column from 'primevue/column';
 
 const store = useStore();
 const router = useRouter();
-const chapterSearchResult = computed(() => store.getters.getChapterSearchResult);
+const searchResult = computed(() => store.getters.getSearchResult);
 
 </script>
 
 <template>
-<div v-if="chapterSearchResult.length > 0" class="search-result-container">
+<div v-if="searchResult.length > 0" class="search-result-container">
     <div>
         <h3>
             Результаты поиска
@@ -21,7 +21,7 @@ const chapterSearchResult = computed(() => store.getters.getChapterSearchResult)
         <hr/> 
     </div>
     
-    <DataTable :value="chapterSearchResult" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" class="table-class">
+    <DataTable :value="searchResult" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" class="table-class">
         <Column>
             <template #body="slotProps">
                 <div class="search-result-header">
@@ -31,10 +31,14 @@ const chapterSearchResult = computed(() => store.getters.getChapterSearchResult)
                     <span class="date">{{ helper.getDateString(slotProps.data.dateCreated) }}</span>
                 </div>
                 <div v-html="slotProps.data.searchFragment" class="search-result-content" 
-                    @click="router.push({ path: `/chapters/${slotProps.data.chapterId}/${slotProps.data.themeId}`, query: { search: helper.trimTags(slotProps.data.searchFragment) }})">
+                    @click="router.push({ path: `/chapters/${slotProps.data.chapterId}/${slotProps.data.themeId}`, 
+                        query: {
+                             searchFragment: helper.trimTags(slotProps.data.searchFragment),
+                             index: slotProps.data.index
+                        }})">
                 </div>
             </template>
-        </Column>        
+        </Column>
     </DataTable>
 </div>
 <h1 style="padding-left: 10px;" v-else>

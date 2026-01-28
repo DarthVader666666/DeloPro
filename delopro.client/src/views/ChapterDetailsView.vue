@@ -16,9 +16,9 @@ const isOwner = computed(() => store.getters.isOwner);
 const chapter = computed(() => store.getters.getChapter);
 const theme = computed(() => store.getters.getTheme);
 const themeIds = computed(() => store.getters.getThemes.map(x => x.themeId));
-const searchFragment = computed(() => { 
-    if(route.query?.search) {
-        return helper.decodeHtml(route.query?.search); 
+const searchResult = computed(() => { 
+    if(route.query?.searchFragment) {
+        return { searchFragment: helper.decodeHtml(route.query.searchFragment), index: route.query.index}; 
     }
     else {
         return null;
@@ -57,7 +57,7 @@ function nextTheme() {
         </div>
         <hr style="margin:5px"/>    
     </div>
-    <ThemeComponent v-if="theme" :theme="theme" :searchFragment="searchFragment"></ThemeComponent>
+    <ThemeComponent v-if="theme" :theme="theme" :searchResult="searchResult"></ThemeComponent>
     <div class="theme-buttons">
         <Button @click="previousTheme" icon="pi pi-arrow-left" rounded raised></Button>
         <Button @click="nextTheme" icon="pi pi-arrow-right" rounded raised></Button>

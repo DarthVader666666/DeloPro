@@ -96,7 +96,7 @@ router.afterEach(async (to) => {
         store.commit('renderSearchBar');
         store.commit('setShowChapterList', false);
 
-        if(to.query.search) {
+        if(to.query.searchFragment) {
           doScrollUp.value = false;
         }
     }

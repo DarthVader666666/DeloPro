@@ -144,7 +144,7 @@ export const helper = {
         })
     },
     trimTags(htmlTag) {
-        return htmlTag.replace(/<\/?[^>]+(>|$)/g, "");
+        return htmlTag.replace(/<\/?[^>]+(>|$)/g, "").trim();
     },
     decodeHtml(htmlString) {
         const txt = document.createElement("textarea");
