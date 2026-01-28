@@ -47,9 +47,10 @@ onMounted(() => {
             Object.assign(el.style, highlightingStyles);
 
             el.querySelectorAll('*').forEach(child => {
-                Object.assign(child.style, highlightingStyles);
-                child.scrollIntoView({ behavior: "smooth", block: "center" });
-            });            
+                Object.assign(child.style, highlightingStyles);                
+            });
+
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
             break;
           }
           else if (el.textContent.includes(props.searchResult.searchFragment) && index != props.searchResult.index) {
