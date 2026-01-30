@@ -225,7 +225,7 @@ const store = createStore({
                 return;
             }
 
-            commit('setPending', true);
+            //commit('setPending', true);
             
             try {
                 const theme = (await axios.get(url)
@@ -239,7 +239,7 @@ const store = createStore({
                 commit('setTheme', theme);
             }
             finally {
-                commit('setPending', false);
+                //commit('setPending', false);
             }
         },
         async downloadDocuments({commit, state}) {

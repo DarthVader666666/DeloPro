@@ -3,8 +3,10 @@ import { useStore } from 'vuex';
 import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import { helper } from '@/helper/helper';
+import SpinningCircle from '@/components/SpinningCircle.vue';
 
 const store = useStore();
+const pending = computed(() => store.getters.getPending);
 const chapters = computed(() => store.state.chapters);
 
 </script>
@@ -15,7 +17,11 @@ const chapters = computed(() => store.state.chapters);
             <h1>Документационное обеспечение управления</h1>    
         </div>
         <div class="chapter-links">
-            <div v-for="(chapter, index) in chapters" :key="index" class="chapter">
+        <div v-if="pending" style="display: flex; flex-direction: column; align-items: center;">
+            <h3>Загрузка...</h3>
+            <SpinningCircle></SpinningCircle>
+        </div>
+            <div v-else v-for="(chapter, index) in chapters" :key="index" class="chapter">
                 <RouterLink :to="`/chapters/${chapter.chapterId}${chapter.themes.length > 0 ? '/' + chapter.themes[0].themeId : '' }`" >
                     <img :src="helper.getImagePath() + chapter.imagePath" width="150px" height="auto">
                     <p>{{ chapter.chapterTitle }}</p>

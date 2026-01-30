@@ -88,6 +88,7 @@ const router = createRouter({
 });
 
 router.afterEach(async (to) => {
+    store.commit('setPending', true);
     store.commit('setShowRightColumn', false);
 
     if(to.name === 'chapter-details') {
@@ -184,6 +185,7 @@ router.afterEach(async (to) => {
     }
 
     doScrollUp.value = true;
+    store.commit('setPending', false);
 });
 
 export default router;
