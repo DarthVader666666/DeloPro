@@ -40,6 +40,7 @@ namespace Delopro.Data
                 user.Property(x => x.Avatar).HasMaxLength(maxBytesLength);
                 user.Property(x => x.IsConfirmed).HasDefaultValue(false);
                 user.Property(x => x.IsDeleted).HasDefaultValue(false);
+                user.HasMany(u => u.Visits).WithOne(v => v.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.NoAction);
                 user.HasData(
                     new User
                     {
@@ -140,7 +141,7 @@ namespace Delopro.Data
             {
                 captcha.HasKey(x => x.CaptchaId);
                 captcha.HasData(
-                    new Captcha 
+                    new Captcha
                     {
                         CaptchaId = 1,
                         Image = "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",
@@ -202,6 +203,14 @@ namespace Delopro.Data
                     }
                 );
             });
+            modelBuilder.Entity<Visit>(visit => 
+            {
+                visit.HasKey(v => v.VisitId);
+                visit.Property(v => v.UserId).IsRequired(false);
+                visit.HasOne(v => v.User).WithMany(u => u.Visits).HasForeignKey(v => v.UserId).IsRequired(false);
+                visit.Property(v => v.Url).HasMaxLength(maxTextLength);
+                visit.Property(v => v.IpAddress).HasMaxLength(maxTextLength).IsRequired(false);
+            });
         }
 
         public virtual DbSet<User> Users { get; set; }
@@ -212,5 +221,6 @@ namespace Delopro.Data
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Message> Messages { get; set; }
         public virtual DbSet<Captcha> Captchas { get; set; }
+        public virtual DbSet<Visit> Visits { get; set; }
     }
 }

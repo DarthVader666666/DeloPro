@@ -2,6 +2,7 @@
 using Delopro.Bll.Interfaces;
 using Delopro.Bll.Services;
 using Delopro.Data.Entities;
+using Delopro.Server.Attributes;
 using Delopro.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -32,6 +33,7 @@ namespace Delopro.Server.Controllers
 
         [HttpGet]
         [Route("[action]/{themeId:int}")]
+        [TrackIpAddress]
         public async Task<IActionResult> Get(int themeId)
         {
             if (!_memoryCache.TryGetValue($"theme_id={themeId}", out Theme? theme))

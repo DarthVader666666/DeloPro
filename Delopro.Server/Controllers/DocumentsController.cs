@@ -137,7 +137,7 @@ namespace Delopro.Server.Controllers
                     if (System.IO.File.Exists(path))
                     {
                         System.IO.File.Delete(path);
-                        Task.Run(() => _driveService.Delete(path));
+                        _ = Task.Run(() => _driveService.Delete(path));
                     }
                     else
                     {
@@ -154,7 +154,7 @@ namespace Delopro.Server.Controllers
                         }
 
                         Directory.Delete(path, recursive: true);
-                        Task.Run(() => _driveService.Delete(path, isFolder: true));
+                        _ = Task.Run(() => _driveService.Delete(path, isFolder: true));
                     }
                     else
                     {
@@ -186,7 +186,7 @@ namespace Delopro.Server.Controllers
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path ?? throw new NullReferenceException());
-                    Task.Run(() => _driveService.CreateFolder(folderPath));
+                    _ = Task.Run(() => _driveService.CreateFolder(folderPath));
                 }
                 else
                 {
@@ -236,7 +236,7 @@ namespace Delopro.Server.Controllers
                     }
                 }
 
-                Task.Run(() =>
+                _ = Task.Run(() =>
                 {
                     foreach (var filePath in filePaths)
                     {
@@ -247,7 +247,7 @@ namespace Delopro.Server.Controllers
                     }
                 });
             }
-            catch (GoogleApiException ex)
+            catch (GoogleApiException)
             {
                 return StatusCode(StatusCodes.Status304NotModified, new { warningText = $"Файл \"{fileNames}\" не был создан в облаке" });
             }
@@ -334,7 +334,7 @@ namespace Delopro.Server.Controllers
                 var overwrite = System.IO.File.Exists(newPath);
                 Directory.Move(oldPath, newPath);
 
-                Task.Run(() =>
+                _ = Task.Run(() =>
                 {
                     _driveService.Delete(oldPath);
 

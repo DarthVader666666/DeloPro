@@ -1,5 +1,6 @@
 ﻿using Delopro.Bll.Interfaces;
 using Delopro.Bll.Services;
+using Delopro.Server.Attributes;
 using Delopro.Server.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,9 @@ using System.Text;
 
 namespace Delopro.Server.Controllers
 {
-    [EnableCors("AllowClient")]
-    [ApiController]
+    [EnableCors("AllowClient")]    
     [Route("api/[controller]")]
+    [ApiController]
     public class AuthenticationController : ControllerBase
     {
         private readonly UserManager _userManager;
@@ -27,6 +28,7 @@ namespace Delopro.Server.Controllers
 
         [HttpPost]
         [Route("[action]")]
+        [TrackIpAddress]
         public async Task<IActionResult> LogIn([FromQuery]string? nickname = null, [FromQuery] bool? remember = false)
         {
             var userLogInRequestModel = JsonConvert.DeserializeObject<UserLogInRequestModel>(HttpContext.Request.Headers["Authentication"].ToString());
@@ -66,6 +68,7 @@ namespace Delopro.Server.Controllers
 
         [HttpGet]
         [Route("[action]")]
+        [TrackIpAddress]
         public IActionResult CookieCredentials()
         {
             var user = HttpContext.User;
@@ -88,6 +91,7 @@ namespace Delopro.Server.Controllers
 
         [HttpPost]
         [Route("[action]")]
+        [TrackIpAddress]
         public async Task<IActionResult> LogOut()
         {
             try
@@ -103,6 +107,7 @@ namespace Delopro.Server.Controllers
 
         [HttpPost]
         [Route("[action]")]
+        [TrackIpAddress]
         public async Task<IActionResult> RecoverPassword()
         {
             var email = HttpContext.Request.Headers["Email"].ToString();

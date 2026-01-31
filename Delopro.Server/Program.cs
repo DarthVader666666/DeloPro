@@ -83,6 +83,7 @@ if (!usePostgres)
     builder.Services.AddScoped<IRepository<Captcha>, CaptchaRepository>(ConfigureRepository<MssqlDeloproDbContext, CaptchaRepository>);
     builder.Services.AddScoped<IRepository<Message>, MessageRepository>(ConfigureRepository<MssqlDeloproDbContext, MessageRepository>);
     builder.Services.AddScoped<IRepository<UserRole>, UserRoleRepository>(ConfigureRepository<MssqlDeloproDbContext, UserRoleRepository>);
+    builder.Services.AddScoped<IRepository<Visit>, VisitRepository>(ConfigureRepository<MssqlDeloproDbContext, VisitRepository>);
 }
 else
 {
@@ -93,6 +94,7 @@ else
     builder.Services.AddScoped<IRepository<Captcha>, CaptchaRepository>(ConfigureRepository<PostgresDeloproDbContext, CaptchaRepository>);
     builder.Services.AddScoped<IRepository<Message>, MessageRepository>(ConfigureRepository<PostgresDeloproDbContext, MessageRepository>);
     builder.Services.AddScoped<IRepository<UserRole>, UserRoleRepository>(ConfigureRepository<PostgresDeloproDbContext, UserRoleRepository>);
+    builder.Services.AddScoped<IRepository<Visit>, VisitRepository>(ConfigureRepository<PostgresDeloproDbContext, VisitRepository>);
 }
 
 if (builder.Environment.IsDevelopment() || usePostgres)

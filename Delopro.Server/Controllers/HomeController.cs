@@ -1,4 +1,6 @@
 ﻿using Delopro.Bll;
+using Delopro.Server.Attributes;
+
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
