@@ -225,7 +225,7 @@ const store = createStore({
                 return;
             }
 
-            //commit('setPending', true);
+            commit('setPending', true);
 
             try {
                 const theme = (await axios.get(url)
