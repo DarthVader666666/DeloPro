@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 
 using Delopro.Bll.Interfaces;
 using Delopro.Data.Entities;
+using Delopro.Server.Attributes;
 using Delopro.Server.Models;
 
 using HtmlAgilityPack;
@@ -29,6 +30,7 @@ namespace Delopro.Server.Controllers
 
         [HttpPost]
         [Route("[action]")]
+        [TrackIpAddress]
         public async Task<IActionResult> GetSearchResult()
         {
             string? searchLine = null;

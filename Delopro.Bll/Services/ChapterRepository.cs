@@ -37,10 +37,10 @@ namespace Delopro.Bll.Services
                 return null;
             }
 
-            var deletedTheme = _dbContext.Chapters.Remove(chapter).Entity;
+            var deletedChapter = _dbContext.Chapters.Remove(chapter).Entity;
             await _dbContext.SaveChangesAsync();
 
-            return deletedTheme;
+            return deletedChapter;
         }
 
         public Task DeleteRangeAsync(IEnumerable<Chapter> items)

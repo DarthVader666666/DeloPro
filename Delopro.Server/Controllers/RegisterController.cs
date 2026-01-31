@@ -4,6 +4,7 @@ using AutoMapper;
 
 using Delopro.Bll.Services;
 using Delopro.Data.Entities;
+using Delopro.Server.Attributes;
 using Delopro.Server.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -30,6 +31,7 @@ namespace Delopro.Server.Controllers
         }
 
         [HttpPost]
+        [TrackIpAddress]
         public async Task<IActionResult> Index()
         {
             var userRegister = JsonConvert.DeserializeObject<RegisterRequestModel>(HttpContext.Request.Headers["Registration"].ToString());
@@ -73,6 +75,7 @@ namespace Delopro.Server.Controllers
 
         [HttpGet]
         [Route("[action]")]
+        [TrackIpAddress]
         public async Task<IActionResult> Confirm([FromQuery] int[]? key1, [FromQuery] int[]? key2)
         {
             var confirmedUser = await _userManager.ConfirmUserAsync(

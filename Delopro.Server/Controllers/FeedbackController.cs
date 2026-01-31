@@ -2,6 +2,7 @@
 using Delopro.Bll.Interfaces;
 using Delopro.Bll.Services;
 using Delopro.Data.Entities;
+using Delopro.Server.Attributes;
 using Delopro.Server.Models;
 
 using Microsoft.AspNetCore.Authorization;
@@ -17,17 +18,15 @@ namespace Delopro.Server.Controllers
     public class FeedbackController : ControllerBase
     {
         private readonly IEmailSender _emailSender;
-        private readonly UserManager _userManager;
         private readonly CryptoService _cryptoService;
         private readonly IRepository<Message> _messageRepository;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
 
-        public FeedbackController(IEmailSender emailSender, UserManager userManager, CryptoService cryptoService,
+        public FeedbackController(IEmailSender emailSender, CryptoService cryptoService,
             IRepository<Message> messageRepository, IMapper mapper, IConfiguration configuration)
         {
             _emailSender = emailSender;
-            _userManager = userManager;
             _cryptoService = cryptoService;
             _messageRepository = messageRepository;
             _mapper = mapper;
@@ -36,6 +35,7 @@ namespace Delopro.Server.Controllers
 
         [Route("[action]")]
         [HttpPost]
+        [TrackIpAddress]
         public async Task<IActionResult> Send([FromForm] MessageForm? messageForm)
         {
             if (messageForm == null)

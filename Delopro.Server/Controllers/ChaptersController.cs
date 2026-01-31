@@ -20,14 +20,12 @@ namespace Delopro.Server.Controllers
     {
         private readonly UserManager _userManager;
         private readonly IRepository<Chapter> _chapterRepository;
-        private readonly IRepository<Theme> _themeRepository;
         private readonly IMapper _mapper;
 
-        public ChaptersController(UserManager userManager, IRepository<Chapter> chapterRepository, IRepository<Theme> themeRepository, IMapper mapper)
+        public ChaptersController(UserManager userManager, IRepository<Chapter> chapterRepository, IMapper mapper)
         {
             _userManager = userManager;
             _chapterRepository = chapterRepository;
-            _themeRepository = themeRepository;
             _mapper = mapper;
         }
 
