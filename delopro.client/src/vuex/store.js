@@ -63,7 +63,7 @@ const store = createStore({
                     if(node.data.type === 'folder') {
                         state.folderPaths.push(node.data.path.split('\\').slice(1).join('\\'));
                         getPaths(node.children);
-                    }                        
+                    }
                 });
             };
 
@@ -106,7 +106,7 @@ const store = createStore({
             return state.showChapterList;
         },
         getShowRightColumn(state) {
-            return state.showRightColumn;  
+            return state.showRightColumn;
         },
         getCaptcha(state) {
             return state.captcha;
@@ -139,7 +139,7 @@ const store = createStore({
             state.title = value;
             state.showSearchBar = false;
         },
-        setChapter(state, chapter) {            
+        setChapter(state, chapter) {
             state.chapter = chapter;
         },
         setChapters(state, chapters) {
@@ -226,7 +226,7 @@ const store = createStore({
             }
 
             //commit('setPending', true);
-            
+
             try {
                 const theme = (await axios.get(url)
                 .then(response => response.data)
@@ -239,7 +239,7 @@ const store = createStore({
                 commit('setTheme', theme);
             }
             finally {
-                //commit('setPending', false);
+                commit('setPending', false);
             }
         },
         async downloadDocuments({commit, state}) {

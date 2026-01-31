@@ -3,7 +3,7 @@ import { useStore } from 'vuex';
 import Button from 'primevue/button';
 import { RouterLink, useRouter } from 'vue-router';
 import { helper } from '@/helper/helper';
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import SpinningCircle from './SpinningCircle.vue';
 
 const store = useStore();
@@ -47,7 +47,7 @@ onMounted(() => {
             Object.assign(el.style, highlightingStyles);
 
             el.querySelectorAll('*').forEach(child => {
-                Object.assign(child.style, highlightingStyles);                
+                Object.assign(child.style, highlightingStyles);
             });
 
             el.scrollIntoView({ behavior: "smooth", block: "center" });
