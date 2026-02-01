@@ -209,7 +209,9 @@ namespace Delopro.Data
                 visit.Property(v => v.UserId).IsRequired(false);
                 visit.HasOne(v => v.User).WithMany(u => u.Visits).HasForeignKey(v => v.UserId).IsRequired(false);
                 visit.Property(v => v.Url).HasMaxLength(maxTextLength);
-                visit.Property(v => v.IpAddress).HasMaxLength(maxTextLength).IsRequired(false);
+                visit.Property(v => v.IpAddress).HasMaxLength(maxNameLength).IsRequired(false);
+                visit.Property(v => v.Country).HasMaxLength(maxNameLength).IsRequired(false);
+                visit.Property(v => v.City).HasMaxLength(maxNameLength).IsRequired(false);
             });
         }
 
