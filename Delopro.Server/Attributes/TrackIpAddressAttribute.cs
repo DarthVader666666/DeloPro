@@ -18,38 +18,47 @@ namespace Delopro.Server.Attributes
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class TrackIpAddressAttribute : ActionFilterAttribute
-    {
-        private readonly string[] AdminIpAddresses = ["37.214.25.23", "46.216.112.76"];
-
+    {        
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
-        {
+        {            
             var httpContext = context.HttpContext;
-            var ipAddress = httpContext.Connection.RemoteIpAddress?.ToString();
-            var visitRepository = httpContext.RequestServices.GetRequiredService<IRepository<Visit>>();
+            var rootServiceProvider = httpContext.RequestServices;
+            var url = httpContext.Request.Path;
+            var ipAddress = httpContext.Connection?.RemoteIpAddress?.ToString();
 
+            await next();
+            _ = TrackIpAddressAsync(rootServiceProvider, url, ipAddress);
+        }
+
+        private static async Task TrackIpAddressAsync(IServiceProvider rootServiceProvider, string url, string? ipAddress)
+        {
+            string[] AdminIpAddresses = ["37.214.25.23", "46.216.112.76"];
+
+            using var scope = rootServiceProvider.CreateScope();
+            var serviceProvider = scope.ServiceProvider;
+            var visitRepository = serviceProvider.GetRequiredService<IRepository<Visit>>();
             using var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync($"https://ipinfo.io/{ipAddress}/json");
+            var response = await httpClient.GetAsync($"http://ip-api.com/json/{ipAddress}");
 
             Location? location = new();
 
             if (response.IsSuccessStatusCode)
             {
-                location = JsonSerializer.Deserialize<Location>(await response.Content.ReadAsStringAsync());
+                var r = await response.Content.ReadAsStringAsync();
+                location = JsonSerializer.Deserialize<Location>(r);
             }
 
             var visit = new Visit
             {
                 UserId = AdminIpAddresses.Contains(ipAddress) ? 2 : null,
                 IpAddress = ipAddress,
-                Url = httpContext.Request.Path,
+                Url = url,
                 Country = location?.Country,
                 City = location?.City,
                 VisitDate = DateTime.Now
-            }; 
-            
-            await visitRepository.CreateAsync(visit); 
-            
-            await next(); 
+            };
+
+            await visitRepository.CreateAsync(visit);
         }
     }
 }
