@@ -209,15 +209,17 @@ namespace Delopro.Data
             modelBuilder.Entity<Visit>(visit => 
             {
                 visit.HasKey(v => v.VisitId);
-                visit.HasOne(v => v.Visitor).WithMany(v => v.Visits).HasForeignKey(v => v.VisitorId).IsRequired(false);
                 visit.Property(v => v.Url).HasMaxLength(maxTextLength);
                 visit.Property(v => v.VisitDate).IsRequired();
             });
             modelBuilder.Entity<Visitor>(visitor =>
             {
+                visitor.HasKey(v => v.VisitorId);
                 visitor.Property(v => v.UserId).IsRequired(false);
                 visitor.HasOne(v => v.User).WithMany(u => u.Visitors).HasForeignKey(v => v.UserId).IsRequired(false);
-                visitor.Property(v => v.IpAddress).HasMaxLength(maxNameLength).IsUnicode(true).IsRequired(false);
+                visitor.HasMany(v => v.Visits).WithOne(v => v.Visitor).HasForeignKey(v => v.VisitorId).IsRequired(false).OnDelete(DeleteBehavior.Cascade);
+                visitor.Property(v => v.IpAddress).HasMaxLength(maxNameLength).IsRequired(true);
+                visitor.HasIndex(v => v.IpAddress).HasDatabaseName("IX_Visitors_IpAddress").IsUnique(true);
                 visitor.Property(v => v.Country).HasMaxLength(maxNameLength).IsRequired(false);
                 visitor.Property(v => v.City).HasMaxLength(maxNameLength).IsRequired(false);
                 visitor.HasData(
