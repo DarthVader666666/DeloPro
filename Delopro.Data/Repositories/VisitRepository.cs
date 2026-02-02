@@ -1,11 +1,10 @@
 ﻿
-using Delopro.Bll.Interfaces;
-using Delopro.Data;
+using Delopro.Data.Interfaces;
 using Delopro.Data.Entities;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Delopro.Bll.Services
+namespace Delopro.Data.Repositories
 {
     public class VisitRepository: IRepository<Visit>
     {

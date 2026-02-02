@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using Delopro.Bll.Interfaces;
+using Delopro.Data.Interfaces;
 using Delopro.Data.Entities;
 
 using Microsoft.AspNetCore.Mvc.Filters;

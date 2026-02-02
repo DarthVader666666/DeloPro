@@ -1,5 +1,6 @@
 ﻿using Delopro.Bll.Interfaces;
 using Delopro.Data.Entities;
+using Delopro.Data.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 
@@ -17,7 +18,6 @@ namespace Delopro.Bll.Services
         private readonly CryptoService _cryptoService;
         private readonly IEmailSender _emailSender;
 
-        private const char rolesSeperator = ',';
         private const string authorizationScheme = "Cookies";
         private const string key1 = "key1";
         private const string key2 = "key2";

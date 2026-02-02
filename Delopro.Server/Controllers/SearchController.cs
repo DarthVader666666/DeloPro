@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Text.RegularExpressions;
 
-using Delopro.Bll.Interfaces;
+using Delopro.Data.Interfaces;
 using Delopro.Data.Entities;
 using Delopro.Server.Attributes;
 using Delopro.Server.Models;

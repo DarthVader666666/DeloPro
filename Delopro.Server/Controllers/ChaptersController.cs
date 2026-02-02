@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-using Delopro.Bll.Interfaces;
+using Delopro.Data.Interfaces;
 using Delopro.Bll.Services;
 using Delopro.Data.Entities;
 using Delopro.Server.Models;

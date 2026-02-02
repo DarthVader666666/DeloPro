@@ -2,6 +2,7 @@
 using Delopro.Bll.Interfaces;
 using Delopro.Bll.Services;
 using Delopro.Data.Entities;
+using Delopro.Data.Interfaces;
 using Delopro.Server.Attributes;
 using Delopro.Server.Models;
 

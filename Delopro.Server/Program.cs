@@ -3,6 +3,8 @@ using Delopro.Bll.Interfaces;
 using Delopro.Bll.Services;
 using Delopro.Data;
 using Delopro.Data.Entities;
+using Delopro.Data.Interfaces;
+using Delopro.Data.Repositories;
 using Delopro.Server.Configurations;
 
 using Google.Apis.Auth.AspNetCore3;

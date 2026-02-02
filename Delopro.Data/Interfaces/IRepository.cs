@@ -1,4 +1,4 @@
-﻿namespace Delopro.Bll.Interfaces
+﻿namespace Delopro.Data.Interfaces
 {
     public interface IRepository<TEntity> where TEntity : class
     {

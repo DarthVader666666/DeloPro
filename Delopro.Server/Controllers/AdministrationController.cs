@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-using Delopro.Bll.Interfaces;
+using Delopro.Data.Interfaces;
 using Delopro.Data.Entities;
 using Delopro.Data.Enums;
 using Delopro.Server.Enums;

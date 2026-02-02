@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-
-using Delopro.Bll.Interfaces;
+﻿using Delopro.Data.Interfaces;
 using Delopro.Data.Entities;
 
 using Microsoft.AspNetCore.Cors;
@@ -14,12 +12,10 @@ namespace Delopro.Server.Controllers
     public class CaptchaController : ControllerBase
     {
         private readonly IRepository<Captcha> _captchaRepository;
-        private readonly IMapper _mapper;
 
-        public CaptchaController(IRepository<Captcha> captchaRepository, IMapper mapper)
+        public CaptchaController(IRepository<Captcha> captchaRepository)
         {
             _captchaRepository = captchaRepository;
-            _mapper = mapper;
         }
 
         [Route("[action]")]

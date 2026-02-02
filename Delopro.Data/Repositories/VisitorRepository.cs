@@ -1,9 +1,8 @@
 ﻿
-using Delopro.Bll.Interfaces;
-using Delopro.Data;
+using Delopro.Data.Interfaces;
 using Delopro.Data.Entities;
 
-namespace Delopro.Bll.Services
+namespace Delopro.Data.Repositories
 {
     public class VisitorRepository : IRepository<Visitor>
     {
