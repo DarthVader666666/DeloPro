@@ -11,6 +11,9 @@ namespace Delopro.Data
         const int maxTextLength = 1000;
         const int maxBytesLength = 8000;
 
+        const int ownerUserId = 1;
+        const int adminUserId = 2;
+
         public DeloproDbContext(DbContextOptions options) : base(options)
         {
         }
@@ -40,11 +43,11 @@ namespace Delopro.Data
                 user.Property(x => x.Avatar).HasMaxLength(maxBytesLength);
                 user.Property(x => x.IsConfirmed).HasDefaultValue(false);
                 user.Property(x => x.IsDeleted).HasDefaultValue(false);
-                user.HasMany(u => u.Visits).WithOne(v => v.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.NoAction);
+                user.HasMany(u => u.Visitors).WithOne(v => v.User).HasForeignKey(x => x.UserId).IsRequired(false).OnDelete(DeleteBehavior.NoAction);
                 user.HasData(
                     new User
                     {
-                        UserId = 1,
+                        UserId = ownerUserId,
                         Nickname = "alex",
                         Email = "mHdyjukniQqXvq8Ulori1g==",
                         Password = "eK+Th1R1aYQxoYblzPPL8w==",
@@ -52,7 +55,7 @@ namespace Delopro.Data
                     },
                     new User
                     {
-                        UserId = 2,
+                        UserId = adminUserId,
                         Nickname = "admin",
                         Email = "JtfP1IxKgKVGB4ADFXFnvA==",
                         Password = "efavXKTzRTFnR7w69A7OJA==",
@@ -91,13 +94,13 @@ namespace Delopro.Data
                 userRole.HasData(
                     new UserRole
                     { 
-                        UserId = 1,
-                        RoleId = 1
+                        UserId = ownerUserId,
+                        RoleId = (int)UserRoleType.Owner
                     },
                     new UserRole
                     {
-                        UserId = 2,
-                        RoleId = 2
+                        UserId = adminUserId,
+                        RoleId = (int)UserRoleType.Admin
                     }
                 );
             });
@@ -206,12 +209,35 @@ namespace Delopro.Data
             modelBuilder.Entity<Visit>(visit => 
             {
                 visit.HasKey(v => v.VisitId);
-                visit.Property(v => v.UserId).IsRequired(false);
-                visit.HasOne(v => v.User).WithMany(u => u.Visits).HasForeignKey(v => v.UserId).IsRequired(false);
+                visit.HasOne(v => v.Visitor).WithMany(v => v.Visits).HasForeignKey(v => v.VisitorId).IsRequired(false);
                 visit.Property(v => v.Url).HasMaxLength(maxTextLength);
-                visit.Property(v => v.IpAddress).HasMaxLength(maxNameLength).IsRequired(false);
-                visit.Property(v => v.Country).HasMaxLength(maxNameLength).IsRequired(false);
-                visit.Property(v => v.City).HasMaxLength(maxNameLength).IsRequired(false);
+                visit.Property(v => v.VisitDate).IsRequired();
+            });
+            modelBuilder.Entity<Visitor>(visitor =>
+            {
+                visitor.Property(v => v.UserId).IsRequired(false);
+                visitor.HasOne(v => v.User).WithMany(u => u.Visitors).HasForeignKey(v => v.UserId).IsRequired(false);
+                visitor.Property(v => v.IpAddress).HasMaxLength(maxNameLength).IsUnicode(true).IsRequired(false);
+                visitor.Property(v => v.Country).HasMaxLength(maxNameLength).IsRequired(false);
+                visitor.Property(v => v.City).HasMaxLength(maxNameLength).IsRequired(false);
+                visitor.HasData(
+                    new Visitor
+                    {
+                        VisitorId = 1,
+                        UserId = adminUserId,
+                        IpAddress = "37.214.25.23",
+                        Country = "Belarus",
+                        City = "Minsk"
+                    },
+                    new Visitor
+                    {
+                        VisitorId = 2,
+                        UserId = adminUserId,
+                        IpAddress = "46.216.112.76",
+                        Country = "Belarus",
+                        City = "Minsk"
+                    }
+                );
             });
         }
 
@@ -224,5 +250,6 @@ namespace Delopro.Data
         public virtual DbSet<Message> Messages { get; set; }
         public virtual DbSet<Captcha> Captchas { get; set; }
         public virtual DbSet<Visit> Visits { get; set; }
+        public virtual DbSet<Visitor> Visitors { get; set; }
     }
 }

@@ -66,7 +66,7 @@ namespace Delopro.Bll.Services
 
         public Task<IEnumerable<Visit?>> GetListAsync(int? id = null)
         {
-            return Task.FromResult(id != null ? _dbContext.Visits : _dbContext.Visits.Where(v => v.UserId == id).Include(v => v.User).AsEnumerable<Visit?>());
+            return Task.FromResult(id != null ? _dbContext.Visits : _dbContext.Visits.Where(v => v.VisitorId == id).Include(v => v.Visitor).AsEnumerable<Visit?>());
         }
 
         public Task<Visit?> UpdateAsync(Visit? item)

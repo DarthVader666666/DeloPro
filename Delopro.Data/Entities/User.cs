@@ -24,6 +24,6 @@
         public virtual ICollection<Theme>? Themes { get; set; }
         public virtual ICollection<Comment>? Comments { get; set; }
         public virtual ICollection<Message>? Messages { get; set; }
-        public virtual ICollection<Visit>? Visits { get; set; }
+        public virtual ICollection<Visitor>? Visitors { get; set; }
     }
 }

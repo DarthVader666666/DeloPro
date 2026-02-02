@@ -32,11 +32,11 @@ namespace Delopro.Server.Attributes
 
         private static async Task TrackIpAddressAsync(IServiceProvider rootServiceProvider, string url, string? ipAddress)
         {
-            string[] AdminIpAddresses = ["37.214.25.23", "46.216.112.76"];
-
             using var scope = rootServiceProvider.CreateScope();
             var serviceProvider = scope.ServiceProvider;
             var visitRepository = serviceProvider.GetRequiredService<IRepository<Visit>>();
+            var visitorRepository = serviceProvider.GetRequiredService<IRepository<Visitor>>();
+
             using var httpClient = new HttpClient();
             var response = await httpClient.GetAsync($"http://ip-api.com/json/{ipAddress}");
 
@@ -44,17 +44,25 @@ namespace Delopro.Server.Attributes
 
             if (response.IsSuccessStatusCode)
             {
-                var r = await response.Content.ReadAsStringAsync();
-                location = JsonSerializer.Deserialize<Location>(r);
+                var jsonPayload = await response.Content.ReadAsStringAsync();
+                location = JsonSerializer.Deserialize<Location>(jsonPayload);
             }
+
+            var visitor = await visitorRepository.FindByAsync(ipAddress);
+
+            visitor ??= await visitorRepository.CreateAsync(
+                new Visitor
+                {
+                    IpAddress = ipAddress,
+                    Country = location?.Country,
+                    City = location?.City
+                }
+            );
 
             var visit = new Visit
             {
-                UserId = AdminIpAddresses.Contains(ipAddress) ? 2 : null,
-                IpAddress = ipAddress,
                 Url = url,
-                Country = location?.Country,
-                City = location?.City,
+                VisitorId = visitor?.UserId,
                 VisitDate = DateTime.Now
             };
 
