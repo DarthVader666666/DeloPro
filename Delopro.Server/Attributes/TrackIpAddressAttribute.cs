@@ -62,7 +62,7 @@ namespace Delopro.Server.Attributes
             var visit = new Visit
             {
                 Url = url,
-                VisitorId = visitor?.UserId,
+                VisitorId = visitor?.VisitorId,
                 VisitDate = DateTime.Now
             };
 
