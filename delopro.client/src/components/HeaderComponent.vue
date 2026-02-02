@@ -23,18 +23,17 @@ const isAdmin = computed(() => store.getters.isAdmin);
 const isOwner = computed(() => store.getters.isOwner);
 const isUser = computed(() => store.getters.isUser);
 const unreadMessagesCount = computed(() => store.getters.getUnreadMessagesCount);
-const darkenBackground = computed(() => showLogin.value || showMenu.value || showAccountSettings.value);
+const darkenBackground = computed(() => showLogin.value || showMenu.value || showUserAccountSettings.value);
 
 const remember = ref(false);
 const showLogin = ref(false);
 const showMenu = ref(false);
-const showAccountSettings = ref(false);
-const header = ref(null);
+const showUserAccountSettings = ref(false);
 
 onMounted(async () => {
     window.addEventListener('click', (event) => { if(!helper.closeMenu(event, ['login-form', 'login-button'])) showLogin.value = false });
     window.addEventListener('click', (event) => { if(!helper.closeMenu(event, ['menu', 'burger-button'])) showMenu.value = false });
-    window.addEventListener('click', (event) => { if(!helper.closeMenu(event, ['account-settings', 'account-button'])) showAccountSettings.value = false });
+    window.addEventListener('click', (event) => { if(!helper.closeMenu(event, ['account-settings', 'account-button'])) showUserAccountSettings.value = false });
     window.addEventListener('resize', handleScreenSizeChange);
 });
 
@@ -125,7 +124,7 @@ const handleLogout = () => {
                 store.commit('setNickname', null);
                 store.commit('setRoles', []);
                 store.commit('setNickname', null);
-                showAccountSettings.value = false;
+                showUserAccountSettings.value = false;
                 router.push('/');
             }
         })
@@ -176,7 +175,7 @@ function handleBurgerClick() {
             <div class="menu" id="menu">
                 <div v-if="nickname" class="account">
                     <Button 
-                        @click="() => { showAccountSettings = !showAccountSettings; showMenu = false }"
+                        @click="() => { showUserAccountSettings = !showUserAccountSettings; showMenu = false }"
                         severity="secondary" rounded
                         id="account-button"
                     >
@@ -229,19 +228,25 @@ function handleBurgerClick() {
                     id="login-button"
                 />
             </div>            
-            <div v-if="nickname && showAccountSettings" class="slide-container" id="account-settings">
-                <div>
+            <div v-if="nickname && showUserAccountSettings" class="slide-container" id="account-settings">
+                <div style="text-align: center;">
                     <span style="font-size: large;">
                         {{ nickname }}
-                    </span>
-                    <Button @click="showAccountSettings = false" severity="contrast" rounded text icon="pi pi-times" style="position: absolute; right: 5px; top: 5px; height: 25px; width: 25px"></Button>
-                </div>                
+                    </span>                    
+                    <Button @click="showUserAccountSettings = false" severity="contrast" rounded text icon="pi pi-times" style="position: absolute; right: 5px; top: 5px; height: 25px; width: 25px"></Button>
+                </div>
+                <Button 
+                    @click="() => { showUserAccountSettings = false; router.push(`/user-account`);}"
+                    text label="Личный кабинет" 
+                    style="padding: 12px;">
+                </Button>
                 <Button 
                     @click="handleLogout" 
-                    severity="secondary" label="Выйти"
+                    text label="Выйти"
                     icon="pi pi-sign-out"
                     id="logout-button"
-                />
+                    style="padding: 12px;">
+                </Button>
             </div>
         </div>
     </div>

@@ -363,6 +363,18 @@ const store = createStore({
             ));
 
             commit('setUser', user);
+        },
+        async downloadCurrentUser({commit, state}) {
+            const user = (await axios.get(`${state.serverUrl}/useraccount/getcurrentuser`)
+                .then(response => response.data)
+                .catch(error => {
+                    if(error.response) {
+                        toast.error(error.response.data.errorText);
+                    }
+                }
+            ));
+
+            commit('setUser', user);
         }
     }
 });
