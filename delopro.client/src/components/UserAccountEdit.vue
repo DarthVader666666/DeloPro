@@ -22,7 +22,7 @@ const emit = defineEmits(['switchEditMode']);
             <div class="user-account-header">
                 <div>
                     <Button raised severity="secondary" style="border-radius: 50%; padding: 0;">
-                        <img v-if="props.user.avatar" :src="'data:image/png;base64,' + avatar" class="user-account-avatar">
+                        <img v-if="props.user.avatar" :src="`data:image/png;base64,' + ${(props.user.avatar ?? '')}`" class="user-account-avatar">
                         <i v-else class="user-account-avatar pi pi-user" style="font-size: 5rem;"></i>
                     </Button>
                 </div>
@@ -32,11 +32,11 @@ const emit = defineEmits(['switchEditMode']);
                     <span>{{ props.user.lastName }}</span>
                     <span>Роль: {{ props.user.roles }}</span>
                     <span v-if="props.user.registerDate">Дата регистрации: {{ props.user.registerDate }}</span>
-                </div>
-                <div>
-                    <Button type="submit" disabled raised severity="secondary" label="Сохранить" style="margin-right: 15px;"/>
-                    <Button type="button" @click="emit('switchEditMode', false)" raised severity="contrast" label="Отменить"/>      
-                </div>    
+                    <div>
+                        <Button type="submit" disabled raised severity="secondary" label="Сохранить" style="margin-right: 15px;"/>
+                        <Button type="button" @click="emit('switchEditMode', false)" raised severity="contrast" label="Отменить"/>      
+                    </div>
+                </div>                
             </div>
             <div class="user-account-input">
                 <span>Никнэйм:</span>
