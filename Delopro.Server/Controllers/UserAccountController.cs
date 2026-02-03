@@ -34,7 +34,7 @@ namespace Delopro.Server.Controllers
                 return StatusCode(400, new { errorText = "Пользователь не найден" });
             }
 
-            var userLongResponseModel = _mapper.Map<UserLongResponseModel>(user);
+            var userLongResponseModel = _mapper.Map<UserAccountResponseModel>(user);
 
             return Ok(userLongResponseModel);
         }

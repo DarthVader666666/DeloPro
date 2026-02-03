@@ -90,6 +90,19 @@ namespace Delopro.Server.Configurations
                         .ForMember(dest => dest.Status, opts => opts.MapFrom(src => src.IsDeleted ? UserStatus.Deleted :
                             (src.IsConfirmed ? UserStatus.Confirmed : UserStatus.NotConfirmed))
                         );
+
+                    autoMapperConfig.CreateMap<User, UserAccountResponseModel>()
+                        .ForMember(dest => dest.FirstName, opts => opts.MapFrom(src => cryptoService.Decrypt(src.FirstName)))
+                        .ForMember(dest => dest.LastName, opts => opts.MapFrom(src => cryptoService.Decrypt(src.LastName)))
+                        .ForMember(dest => dest.Email, opts => opts.MapFrom(src => cryptoService.Decrypt(src.Email)))
+                        .ForMember(dest => dest.Phone, opts => opts.MapFrom(src => cryptoService.Decrypt(src.Phone)))
+                        .ForMember(dest => dest.BirthDate, opts => opts.MapFrom(src => src.BirthDate != null ? ((DateTime)src.BirthDate).ToShortDateString() : string.Empty))
+                        .ForMember(dest => dest.BirthDate, opts => opts.MapFrom(src => src.RegisterDate != null ? ((DateTime)src.RegisterDate).ToShortDateString() : string.Empty))
+                        .ForMember(dest => dest.Roles, opts => opts.MapFrom(src =>
+                            src.UserRoles != null
+                            ? string.Join(", ", src.UserRoles.Select(x => GetEnumDescription((UserRoleType)x.RoleId)))
+                            : "")
+                        );
                 });
 
                 return config.CreateMapper();

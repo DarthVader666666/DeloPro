@@ -7,7 +7,7 @@ import { useStore } from 'vuex';
 import { computed, onMounted, watch } from 'vue';
 
 const store = useStore();
-const title = computed(() => store.state.title);
+const title = computed(() => store.getters.getTitle);
 const showRightColumn = computed(() => store.getters.getShowRightColumn);
 
 onMounted(() => {

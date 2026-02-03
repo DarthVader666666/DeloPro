@@ -52,8 +52,8 @@ namespace Delopro.Data.Repositories
                 return Task.FromResult<User?>(null);
             }
 
-            var user = _dbContext.Users.FirstOrDefault(user => user.Email == parameter as string);
-            user ??= _dbContext.Users.FirstOrDefault(user => user.Nickname == parameter as string);
+            var user = _dbContext.Users.Include(x => x.UserRoles).FirstOrDefault(user => user.Email == parameter as string);
+            user ??= _dbContext.Users.Include(x => x.UserRoles).FirstOrDefault(user => user.Nickname == parameter as string);
 
             return Task.FromResult(user);
         }

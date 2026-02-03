@@ -7,7 +7,7 @@ import SpinningCircle from '@/components/SpinningCircle.vue';
 
 const store = useStore();
 const pending = computed(() => store.getters.getPending);
-const chapters = computed(() => store.state.chapters);
+const chapters = computed(() => store.getters.getChapters);
 
 </script>
 

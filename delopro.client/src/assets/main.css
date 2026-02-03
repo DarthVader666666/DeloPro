@@ -122,6 +122,58 @@ body {
   background-color: var(--CENTRAL-BCKGND-CLR);
 }
 
+/* UserAccount */
+.user-account-properties {
+    background-color: white;
+    padding: 25px;
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.user-account-header {
+    display: flex;
+    gap: 25px;
+    margin-bottom: 20px;
+}
+
+.user-account-short-info {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: small;
+    width: 50%;
+}
+
+.user-account-input {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-account-input span {
+    font-weight: bold;
+    padding: 3px;
+}
+
+.user-account-input input, textarea {
+    width: 60%;
+}
+
+.user-account-property-name {
+    font-weight: bold;
+    padding-right: 10px;
+}
+
+.user-account-avatar {
+    width:150px; 
+    height:150px; 
+    border-radius:50%;
+    align-content: center;
+    text-align: center;
+}
+
 @media (max-width: 1500px) {
   #app {
     width: 100%;

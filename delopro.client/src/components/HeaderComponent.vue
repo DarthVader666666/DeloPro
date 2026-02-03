@@ -17,7 +17,7 @@ const store = useStore();
 const toast = useToast();
 const router = useRouter();
 
-const nickname = computed(() => store.state.nickname);
+const nickname = computed(() => store.getters.getNickname);
 const isAuthenticated = computed(() => store.getters.isAuthenticated);
 const isAdmin = computed(() => store.getters.isAdmin);
 const isOwner = computed(() => store.getters.isOwner);

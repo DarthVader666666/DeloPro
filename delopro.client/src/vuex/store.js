@@ -75,6 +75,9 @@ const store = createStore({
         getMessage(state) {
             return state.message;
         },
+        getNickname(state) {
+            return state.nickname;
+        },
         getUnreadMessagesCount(state) {
             return state.unreadMessagesCount;
         },
@@ -98,9 +101,9 @@ const store = createStore({
         },
         isAuthenticated(state) {
             return state.nickname && state.roles && state.roles.length > 0;
-        },
-        getUserRoles(state) {
-            return state.roles;
+        },        
+        getPending(state) {
+            return state.pending;
         },
         getShowChapterList(state) {
             return state.showChapterList;
@@ -108,12 +111,12 @@ const store = createStore({
         getShowRightColumn(state) {
             return state.showRightColumn;
         },
+        getTitle(state) {
+            return state.title;
+        },
         getCaptcha(state) {
             return state.captcha;
-        },
-        getPending(state) {
-            return state.pending;
-        },
+        },        
         getImageNames(state) {
             return state.imageNames;
         },
@@ -122,7 +125,10 @@ const store = createStore({
         },
         getUser(state) {
             return state.user;
-        }
+        },
+        getUserRoles(state) {
+            return state.roles;
+        },
     },
     mutations: {
         setRoles(state, userRoles) {
