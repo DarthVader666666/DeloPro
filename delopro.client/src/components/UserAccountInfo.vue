@@ -7,7 +7,7 @@ import UserAccountProperty from './UserAccountProperty.vue';
        user: 
         {
             type: Object,
-            define: null
+            default: {}
         }
     });
 
@@ -27,10 +27,11 @@ import UserAccountProperty from './UserAccountProperty.vue';
                 <span>{{ props.user.lastName }}</span>
                 <span>Роль: {{ props.user.roles }}</span>
                 <span v-if="props.user.registerDate">Дата регистрации: {{ props.user.registerDate }}</span>
+                <div style="padding-top: 10px;">
+                    <Button @click="emit('switchEditMode', true)" severity="contrast" raised>Редактировать</Button>
+                </div>
             </div>
-            <div>
-                <Button @click="emit('switchEditMode', true)" severity="contrast" raised>Редактировать</Button>
-            </div>
+            
         </div>
         <UserAccountProperty propertyName="Никнэйм" :propertyValue="props.user.nickname" />
         <UserAccountProperty propertyName="Email" :propertyValue="props.user.email" />

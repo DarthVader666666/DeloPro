@@ -96,13 +96,20 @@ namespace Delopro.Server.Configurations
                         .ForMember(dest => dest.LastName, opts => opts.MapFrom(src => cryptoService.Decrypt(src.LastName)))
                         .ForMember(dest => dest.Email, opts => opts.MapFrom(src => cryptoService.Decrypt(src.Email)))
                         .ForMember(dest => dest.Phone, opts => opts.MapFrom(src => cryptoService.Decrypt(src.Phone)))
-                        .ForMember(dest => dest.BirthDate, opts => opts.MapFrom(src => src.BirthDate != null ? ((DateTime)src.BirthDate).ToShortDateString() : string.Empty))
-                        .ForMember(dest => dest.BirthDate, opts => opts.MapFrom(src => src.RegisterDate != null ? ((DateTime)src.RegisterDate).ToShortDateString() : string.Empty))
+                        .ForMember(dest => dest.BirthDate, opts => opts.MapFrom(src => src.BirthDate != null ? ((DateTime)src.BirthDate).ToShortDateString() : null))
+                        .ForMember(dest => dest.BirthDate, opts => opts.MapFrom(src => src.RegisterDate != null ? ((DateTime)src.RegisterDate).ToShortDateString() : null))
+                        .ForMember(dest => dest.Avatar, opts => opts.MapFrom(src => src.Avatar != null ? Convert.ToBase64String(Enumerable.Empty<byte>().ToArray()) : null))
                         .ForMember(dest => dest.Roles, opts => opts.MapFrom(src =>
                             src.UserRoles != null
                             ? string.Join(", ", src.UserRoles.Select(x => GetEnumDescription((UserRoleType)x.RoleId)))
                             : "")
                         );
+
+                    autoMapperConfig.CreateMap<UserAccountUpdateModel, User>()                        
+                        .ForMember(dest => dest.FirstName, opts => opts.MapFrom(src => cryptoService.Encrypt(src.FirstName)))
+                        .ForMember(dest => dest.LastName, opts => opts.MapFrom(src => cryptoService.Encrypt(src.LastName)))
+                        .ForMember(dest => dest.Email, opts => opts.MapFrom(src => cryptoService.Encrypt(src.Email)))
+                        .ForMember(dest => dest.Phone, opts => opts.MapFrom(src => cryptoService.Encrypt(src.Phone)));
                 });
 
                 return config.CreateMapper();

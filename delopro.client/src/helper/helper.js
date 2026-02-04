@@ -150,5 +150,18 @@ export const helper = {
         const txt = document.createElement("textarea");
         txt.innerHTML = htmlString;
         return txt.value;
+    },
+    getByteArray(canvas) {
+        if (canvas) { 
+            canvas.toBlob((blob) => {
+                const reader = new FileReader(); 
+                reader.onloadend = () => {
+                    const arrayBuffer = reader.result; 
+                    const byteArray = new Uint8Array(arrayBuffer); 
+
+                }; 
+                reader.readAsArrayBuffer(blob); 
+            }, 'image/png');
+        }
     }
 }

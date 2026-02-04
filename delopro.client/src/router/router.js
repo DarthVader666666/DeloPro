@@ -13,7 +13,7 @@ import PersonalDataAgreement from "@/views/PersonalDataAgreement.vue";
 import RecoverPasswordView from "@/views/RecoverPasswordView.vue";
 import UsersView from "@/views/UsersView.vue";
 import { ref } from "vue";
-import UserAccountEditView from "@/views/UserAccountEditView.vue";
+import UserAccountView from "@/views/UserAccountView.vue";
 
 const doScrollUp = ref(true);
 
@@ -87,8 +87,8 @@ const router = createRouter({
         },
         {
             path: '/user-account',
-            name: 'edit-user-account',
-            component: UserAccountEditView
+            name: 'user-account',
+            component: UserAccountView
         }
     ]
 });
@@ -178,7 +178,7 @@ router.afterEach(async (to) => {
         store.commit('setTitle', 'Пользователи');
     }
 
-    if(to.name === 'edit-user-account') {
+    if(to.name === 'user-account') {
         store.commit('setTitle', 'Личный кабинет');
         store.dispatch('downloadCurrentUser');
     }

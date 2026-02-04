@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 
 using Delopro.Bll.Services;
+using Delopro.Data.Entities;
+using Delopro.Data.Interfaces;
 using Delopro.Server.Attributes;
 using Delopro.Server.Models;
 
@@ -14,11 +16,13 @@ namespace Delopro.Server.Controllers
     public class UserAccountController: ControllerBase
     {
         private readonly UserManager _userManager;
+        private readonly IRepository<User> _userRepository;
         private readonly IMapper _mapper;
 
-        public UserAccountController(UserManager userManager, IMapper mapper)
+        public UserAccountController(UserManager userManager, IRepository<User> userRepository, IMapper mapper)
         {
             _userManager = userManager;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
 
@@ -37,6 +41,22 @@ namespace Delopro.Server.Controllers
             var userLongResponseModel = _mapper.Map<UserAccountResponseModel>(user);
 
             return Ok(userLongResponseModel);
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        [TrackIpAddress]
+        public async Task<IActionResult> UpdateCurrentUser([FromBody] UserAccountUpdateModel userAccountModel)
+        {
+            var user = await _userManager.GetCurrentUserAsync(HttpContext);
+
+            if (user == null)
+            {
+                return StatusCode(400, new { errorText = "Ошибка сервера" });
+            }
+
+
+            return Ok();
         }
     }
 }

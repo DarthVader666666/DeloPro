@@ -18,8 +18,13 @@ namespace Delopro.Bll.Services
             IV = Encoding.UTF8.GetBytes(_configuration["AesIV"] ?? throw new ArgumentNullException("IV is null"));
         }
 
-        public string Encrypt(string? plainText)
+        public string? Encrypt(string? plainText)
         {
+            if (plainText is null)
+            {
+                return null;
+            }
+
             using var aesAlg = Aes.Create();
             aesAlg.Key = Key;
             aesAlg.IV = IV;
@@ -35,8 +40,13 @@ namespace Delopro.Bll.Services
             return Convert.ToBase64String(memoryStream.ToArray());
         }
 
-        public string Decrypt(string? encryptedText)
+        public string? Decrypt(string? encryptedText)
         {
+            if (encryptedText is null)
+            {
+                return null;
+            }
+
             using var aesAlg = Aes.Create();
             aesAlg.Key = Key;
             aesAlg.IV = IV;

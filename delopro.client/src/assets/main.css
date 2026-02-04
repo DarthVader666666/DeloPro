@@ -208,6 +208,14 @@ body {
   .create-form-container {
     width: 100%;
   }
+
+  .user-account-properties {
+    margin: 0;    
+  }
+
+  .user-account-input input, textarea {
+    width: 100%;
+  }
 }
 
 @keyframes slide {
