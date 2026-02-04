@@ -23,7 +23,7 @@ export const helper = {
 
             return value;
         };
-    
+
         return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds;
     },
     getDateString(dateValue, short = false) {
@@ -38,7 +38,7 @@ export const helper = {
         }
         else {
             return date.toLocaleDateString('ru-RU', {day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'});
-        }        
+        }
     },
     getQueryString(array, key) {
         const queryString = array.map(value => `${key}=${value}&`).join('').slice(0, -1);
@@ -54,7 +54,7 @@ export const helper = {
             for (let item of links) {
                 item.classList.remove('active');
             }
-        
+
             document.getElementById(`listItem_${themeId}`).classList.add('active');
         }
     },
@@ -64,12 +64,12 @@ export const helper = {
         if(hasSelect) {
             let select = document.getElementsByClassName('p-select-list-container')[0];
 
-            if(anyChildren(event, select)) 
+            if(anyChildren(event, select))
                 isValidClick = true;
         }
-        
+
         ids.forEach(id => {
-            if(anyChildren(event, document.getElementById(id))) 
+            if(anyChildren(event, document.getElementById(id)))
                 isValidClick = true;
         });
 
@@ -80,7 +80,7 @@ export const helper = {
                 if(event.target === element) {
                     return true;
                 }
-        
+
                 for (let i = 0; i < element.children.length; i++) {
                     if(event.target === element.children[i]) {
                         return true;
@@ -90,9 +90,9 @@ export const helper = {
                             return true;
                         }
                     }
-                }        
+                }
             }
-        
+
             return false;
         }
     },
@@ -101,13 +101,13 @@ export const helper = {
         switch (status) {
             case 0:
                 return 'success';
-    
+
             case 1:
                 return 'warn';
-    
+
             case 2:
                 return 'danger';
-    
+
             default:
                 return null;
         }
@@ -129,7 +129,7 @@ export const helper = {
     ],
     darkenBackground() {
         this.darkenContainers.forEach(items => {
-            for(let item of items) {            
+            for(let item of items) {
                 item.style.opacity = 0.8;
                 item.style.filter = 'brightness(50%)';
             }
@@ -151,17 +151,40 @@ export const helper = {
         txt.innerHTML = htmlString;
         return txt.value;
     },
-    getByteArray(canvas) {
-        if (canvas) { 
-            canvas.toBlob((blob) => {
-                const reader = new FileReader(); 
-                reader.onloadend = () => {
-                    const arrayBuffer = reader.result; 
-                    const byteArray = new Uint8Array(arrayBuffer); 
+    base64ToBytes(base64) {
+      const binary = atob(base64.split(",")[1]);
+      const len = binary.length;
+      const bytes = new Uint8Array(len);
 
-                }; 
-                reader.readAsArrayBuffer(blob); 
-            }, 'image/png');
-        }
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+
+      return bytes;
+    },
+    bytesToBase64(bytes) {
+      let binary = "";
+      const len = bytes.byteLength;
+
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+
+      const r = 'data:image/png;base64,' + btoa(binary);
+      return r;
+    },
+    fileToBytes(file)
+    {
+      return new Promise((resolve, reject) => {
+         const reader = new FileReader();
+         reader.onload = () => {
+           const arrayBuffer = reader.result;
+           const bytes = new Uint8Array(arrayBuffer);
+           resolve(bytes);
+        };
+
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+      });
     }
 }

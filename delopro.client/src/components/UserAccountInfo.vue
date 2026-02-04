@@ -4,10 +4,10 @@ import UserAccountProperty from './UserAccountProperty.vue';
 
     const props = defineProps(
     {
-       user: 
+       user:
         {
             type: Object,
-            default: {}
+            default: () => {}
         }
     });
 
@@ -18,7 +18,7 @@ import UserAccountProperty from './UserAccountProperty.vue';
     <div class="user-account-properties">
         <div class="user-account-header">
             <div>
-                <img v-if="props.user.avatar" :src="`data:image/png;base64,' + ${(props.user.avatar ?? '')}`" class="user-account-avatar">
+                <img v-if="props.user.avatar" :src="`${(props.user.avatar ?? 'data:image/png;base64,')}`" class="user-account-avatar">
                 <i v-else class="user-account-avatar pi pi-user" style="font-size: 5rem; color: rgb(71, 85, 105, 1); background-color: rgb(241,245,249,1)"></i>
             </div>
             <div class="user-account-short-info">
@@ -31,7 +31,7 @@ import UserAccountProperty from './UserAccountProperty.vue';
                     <Button @click="emit('switchEditMode', true)" severity="contrast" raised>Редактировать</Button>
                 </div>
             </div>
-            
+
         </div>
         <UserAccountProperty propertyName="Никнэйм" :propertyValue="props.user.nickname" />
         <UserAccountProperty propertyName="Email" :propertyValue="props.user.email" />

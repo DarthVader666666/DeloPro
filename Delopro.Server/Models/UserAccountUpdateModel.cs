@@ -10,7 +10,7 @@
         public string? City { get; set; }
         public string? UserTitle { get; set; }
         public string? Info { get; set; }
-        public string? Avatar { get; set; }
+        public byte[]? Avatar { get; set; }
         public string? Email { get; set; }
         public string? Phone { get; set; }
     }

@@ -3,24 +3,29 @@ import { ref } from 'vue';
 import Button from 'primevue/button';
 import { Cropper, CircleStencil } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
+import { helper } from '@/helper/helper';
 
 const cropper = ref(null);
 
 const props = defineProps({
     avatar:
     {
-        type: String,
+        type: Uint8Array,
         default: null
     }
 })
 
 const emit = defineEmits(['setAvatar','switchAvatarMode','switchEditMode']);
 
-const handleCrop = () => {
+async function handleCrop() {
 	const { canvas } = cropper.value.getResult();
+
 	if (canvas) {
-        emit('setAvatar', canvas);
-        emit('switchAvatarMode', false);
+    const base64 = canvas.toDataURL("image/png");
+    const bytes = helper.base64ToBytes(base64);
+
+    emit('setAvatar', bytes);
+    emit('switchAvatarMode', false);
 
         // To download:
         // const link = document.createElement('a');
@@ -35,13 +40,12 @@ const handleCrop = () => {
 	<div style="align-content: center;">
 		<Cropper
 			ref="cropper"
-			:src="props.avatar"
+			:src="helper.bytesToBase64(props.avatar)"
 			:stencil-props="{ aspectRatio: 1 }"
 			:stencil-component="CircleStencil"
 		/>
 		<Button severity="secondary" raised @click="handleCrop">OK</Button>
-        
-        <!-- <img :src="croppedResult" v-if="croppedResult" alt="Cropped" /> -->
+
 	</div>
 </template>
 

@@ -19,8 +19,8 @@ function switchAvatarMode(value) {
     avatarMode.value = value;
 }
 
-function setAvatar(canvas) {
-    avatar.value = canvas;
+function setAvatar(bytes) {
+    avatar.value = bytes;
 }
 
 </script>
@@ -30,5 +30,5 @@ function setAvatar(canvas) {
         <UserAccountEdit v-if="user && editMode && !avatarMode" :user="user" :avatar="avatar" @switch-edit-mode="switchEditMode" @switch-avatar-mode="switchAvatarMode" @set-avatar="setAvatar"></UserAccountEdit>
         <UserAccountInfo v-if="user && !editMode && !avatarMode" :user="user" @switch-edit-mode="switchEditMode"></UserAccountInfo>
         <AvatarCropper v-if="avatarMode" :avatar="avatar" @switch-edit-mode="switchEditMode" @switch-avatar-mode="switchAvatarMode" @set-avatar="setAvatar"></AvatarCropper>
-    </div>    
+    </div>
 </template>
