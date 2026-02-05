@@ -25,7 +25,7 @@ async function handleCrop() {
 	const { canvas } = cropper.value.getResult();
 
 	if (canvas) {
-        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png")); 
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
         const file = new File([blob], `${props.user.userId}.png`, { type: "image/png" });
 
         emit('setAvatarFile', file);
@@ -48,10 +48,10 @@ function handleCancel() {
 			:src="props.avatarBase64"
 			:stencil-props="{ aspectRatio: 1 }"
 			:stencil-component="CircleStencil"
-		/>        		
+		/>
 	</div>
     <div style="display: flex; flex-direction: row; gap: 10px; padding: 10px; justify-content: center;">
-        <Button severity="secondary" raised @click="handleCrop">OK</Button>
+        <Button severity="secondary" raised @click="handleCrop" style="width: 90px;">OK</Button>
         <Button severity="contrast" raised @click="handleCancel">Отмена</Button>
     </div>
 </template>

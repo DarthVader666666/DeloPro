@@ -20,9 +20,11 @@ namespace Delopro.Bll
             DocsPath = Path.Combine(webRootPath, DocsFolderName ?? string.Empty);
             DocsFolderId = Configuration["GoogleDrive:FolderId"];
             ChapterImagesPath = environmentName.Equals("Development", StringComparison.OrdinalIgnoreCase)
-                ? Path.GetFullPath("../delopro.client/src/assets/")
-                : WebRootPath;
-            AvatarsPath = Path.Combine(webRootPath, "avatars");
+                ? Path.GetFullPath("../delopro.client/src/assets/chapters/")
+                : Path.Combine(WebRootPath, "avatars");
+            AvatarsPath = environmentName.Equals("Development", StringComparison.OrdinalIgnoreCase)
+                ? Path.GetFullPath("../delopro.client/src/assets/avatars/")
+                : Path.Combine(WebRootPath, "avatars");
         }
     }
 }

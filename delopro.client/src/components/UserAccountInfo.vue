@@ -1,14 +1,20 @@
 <script setup>
 import Button from 'primevue/button';
 import UserAccountProperty from './UserAccountProperty.vue';
+import UserAccountAvatar from './UserAccountAvatar.vue';
 
     const props = defineProps(
     {
-       user:
+        user:
         {
             type: Object,
             default: null
-        }
+        },
+        avatarBase64:
+        {
+            type: String,
+            default: null
+        },
     });
 
     const emit = defineEmits(['switchToEditMode']);
@@ -17,10 +23,9 @@ import UserAccountProperty from './UserAccountProperty.vue';
 <template>
     <div class="user-account-properties">
         <div class="user-account-header">
-            <div>
-                <img v-if="props.user.avatarPath" :src="props.user.avatarPath" class="user-account-avatar">
-                <i v-else class="user-account-avatar pi pi-user" style="font-size: 5rem; color: rgb(71, 85, 105, 1); background-color: rgb(241,245,249,1)"></i>
-            </div>
+
+            <UserAccountAvatar :user="props.user" :avatarBase64="props.avatarBase64"></UserAccountAvatar>
+
             <div class="user-account-short-info">
                 <span style="font-weight: bold; font-size: large">{{ props.user.nickname }}</span>
                 <span>{{ props.user.firstName }}</span>

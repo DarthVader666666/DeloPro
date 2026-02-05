@@ -6,12 +6,10 @@ import { reactive, watch } from 'vue';
 import { useStore } from 'vuex';
 import axios from 'axios';
 import { useToast } from 'vue-toastification';
-import { useRouter } from 'vue-router';
 import UserAccountAvatar from './UserAccountAvatar.vue';
 
 const store = useStore();
 const toast = useToast();
-const router = useRouter();
 
 const props = defineProps(
 {
@@ -51,7 +49,7 @@ let updatedUser = reactive({
     deleteAvatar: false
 });
 
-watch(updatedUser, (newValue) => {
+watch(updatedUser, () => {
     emit('setIsSaveDisabled', false);
 });
 
@@ -70,7 +68,7 @@ async function handleUserAccountUpdate() {
     const formData = new FormData();
 
     formData.append('user', JSON.stringify(updatedUser));
-    
+
     if(props.avatarFile) {
         formData.append('avatar', props.avatarFile);
     }
@@ -80,7 +78,7 @@ async function handleUserAccountUpdate() {
 
     const url = store.state.serverUrl;
 
-    await axios.put(`${url}/useraccount/updatecurrentuser`, formData,
+    const propmise = axios.put(`${url}/useraccount/updatecurrentuser`, formData,
     {
         headers: {
             'Content-Type': 'multipart/form-data'
@@ -90,7 +88,6 @@ async function handleUserAccountUpdate() {
         if(response.status === 200) {
             toast.success(`Параметры пользователя ${updatedUser.value.nickname} обновлены`);
             store.dispatch('downloadCurrentUser');
-            router.push('/user-account');
         }
     })
     .catch(error => {
@@ -98,6 +95,10 @@ async function handleUserAccountUpdate() {
             toast.error(error.response.data.errorText)
         }
     });
+
+    await propmise;
+
+    emit('switchToInfoMode');
 }
 
 function handleDeleteAvatar() {
@@ -121,7 +122,7 @@ function handleDeleteAvatar() {
                   <label for="fileInput" id="avatar-label" title="Загрузить фото">
                         <div class="avatar-button" style="bottom: 30%; left: 55%;">
                             <i class="pi pi-camera" style="font-size: 2rem;" ></i>
-                        </div>                        
+                        </div>
                   </label>
                   <div class="avatar-button" style="bottom: 30%; left: 10%;" title="Удалить фото" @click="handleDeleteAvatar">
                         <i class="pi pi-times" style="font-size: 1.7rem; padding-top: 5px;"></i>
@@ -142,7 +143,7 @@ function handleDeleteAvatar() {
             </div>
             <div class="user-account-input">
                 <span>Никнэйм:</span>
-                <InputText type="text" placeholder="Никнэйм" v-model="updatedUser.nickname" @change=""></InputText>
+                <InputText type="text" placeholder="Никнэйм" v-model="updatedUser.nickname"></InputText>
             </div>
             <div class="user-account-input">
                 <span>Email:</span>

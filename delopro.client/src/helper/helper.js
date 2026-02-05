@@ -45,7 +45,7 @@ export const helper = {
         return '?' + queryString;
     },
     getImagePath() {
-        return store.getters.environment === 'development' ? '/src/assets/chapter-' : '/chapter-';
+        return store.getters.environment === 'development' ? '/src/assets/chapters/chapter-' : '/chapters/chapter-';
     },
     scrollToTheme(themeId) {
         if(themeId) {
@@ -192,18 +192,18 @@ export const helper = {
             return null;
         }
 
-        return new Promise((resolve, reject) => { 
+        return new Promise((resolve, reject) => {
             const reader = new FileReader();
 
             reader.onload = () => {
                 resolve(reader.result);
             }
-                
+
             reader.onerror = (error) => {
-                reject(error); 
-            }; 
-            
-            reader.readAsDataURL(file); 
+                reject(error);
+            };
+
+            reader.readAsDataURL(file);
         })
     }
 }

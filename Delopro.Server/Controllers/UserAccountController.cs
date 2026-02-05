@@ -2,6 +2,7 @@
 
 using AutoMapper;
 
+using Delopro.Bll;
 using Delopro.Bll.Services;
 using Delopro.Data.Entities;
 using Delopro.Data.Interfaces;
@@ -19,12 +20,14 @@ namespace Delopro.Server.Controllers
     {
         private readonly UserManager _userManager;
         private readonly IRepository<User> _userRepository;
+        private readonly CryptoService _cryptoService;
         private readonly IMapper _mapper;
 
-        public UserAccountController(UserManager userManager, IRepository<User> userRepository, IMapper mapper)
+        public UserAccountController(UserManager userManager, IRepository<User> userRepository, CryptoService cryptoService, IMapper mapper)
         {
             _userManager = userManager;
             _userRepository = userRepository;
+            _cryptoService = cryptoService;
             _mapper = mapper;
         }
 
@@ -51,11 +54,60 @@ namespace Delopro.Server.Controllers
         public async Task<IActionResult> UpdateCurrentUser([FromForm] UserAccountUpdateRequestModel userAccountUpdateRequestModel)
         {
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var user = JsonSerializer.Deserialize<UserAccountUpdateModel>(userAccountUpdateRequestModel.User!, options);
+            var userAccount = JsonSerializer.Deserialize<UserAccountUpdateModel>(userAccountUpdateRequestModel.User!, options);
 
-            if (user == null)
+            if (userAccount == null)
             {
-                return StatusCode(400, new { errorText = "Ошибка сервера" });
+                return StatusCode(500, new { errorText = "Ошибка сервера" });
+            }
+
+            try
+            {
+                var user = await _userManager.GetCurrentUserAsync(HttpContext);
+
+                if (user is null)
+                {
+                    return StatusCode(500, new { errorText = "Ошибка сервера" });
+                }
+
+                var filePath = Path.Combine(ConfigurationHelper.AvatarsPath!, userAccountUpdateRequestModel!.Avatar?.FileName ?? $"{user.UserId}.png");
+
+                user.Nickname = userAccount.Nickname;
+                user.FirstName = _cryptoService.Encrypt(userAccount.FirstName);
+                user.LastName = _cryptoService.Encrypt(userAccount.LastName);
+                user.BirthDate = userAccount.BirthDate;
+                user.Country = userAccount.Country;
+                user.City = userAccount.City;
+                user.UserTitle = userAccount.UserTitle;
+                user.Info = userAccount.Info;
+                user.Email = _cryptoService.Encrypt(userAccount.Email);
+                user.Phone = _cryptoService.Encrypt(userAccount.Phone);
+
+                if (userAccountUpdateRequestModel.Avatar is not null)
+                {
+                    if (!userAccount.DeleteAvatar)
+                    {                        
+                        using var stream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
+                        await userAccountUpdateRequestModel.Avatar.CopyToAsync(stream);
+                        user.AvatarPath = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" 
+                            ? $"/src/assets/avatars/{user.UserId}.png"
+                            : filePath;
+                    }
+                    else
+                    {
+                        if (System.IO.File.Exists(filePath))
+                        { 
+                            System.IO.File.Delete(filePath);
+                            user.AvatarPath = null;
+                        }
+                    }
+                }
+
+                await _userRepository.UpdateAsync(user);
+            }
+            catch
+            {
+                return StatusCode(500, new { errorText = "Ошибка сервера" });
             }
 
             return Ok();
