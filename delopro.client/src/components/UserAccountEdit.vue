@@ -80,9 +80,11 @@ async function handleUserAccountUpdate() {
 
     const propmise = axios.put(`${url}/useraccount/updatecurrentuser`, formData,
     {
-        headers: {
+        headers:
+        {
             'Content-Type': 'multipart/form-data'
-        }
+        },
+        withCredentials: true
     })
     .then(response => {
         if(response.status === 200) {
