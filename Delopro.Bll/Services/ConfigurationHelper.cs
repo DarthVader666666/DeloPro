@@ -21,7 +21,7 @@ namespace Delopro.Bll
             DocsFolderId = Configuration["GoogleDrive:FolderId"];
             ChapterImagesPath = environmentName.Equals("Development", StringComparison.OrdinalIgnoreCase)
                 ? Path.GetFullPath("../delopro.client/src/assets/chapters/")
-                : Path.Combine(WebRootPath, "avatars");
+                : Path.Combine(WebRootPath, "chapters");
             AvatarsPath = environmentName.Equals("Development", StringComparison.OrdinalIgnoreCase)
                 ? Path.GetFullPath("../delopro.client/src/assets/avatars/")
                 : Path.Combine(WebRootPath, "avatars");
