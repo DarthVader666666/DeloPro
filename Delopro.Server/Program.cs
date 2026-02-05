@@ -145,6 +145,11 @@ using var scope = provider?.CreateScope();
 MigrateDatabase(scope);
 UploadDocuments(scope);
 
+if (ConfigurationHelper.AvatarsPath is not null && !Directory.Exists(ConfigurationHelper.AvatarsPath))
+{
+    Directory.CreateDirectory(ConfigurationHelper.AvatarsPath);
+}
+
 var app = builder.Build();
 
 app.UseStatusCodePagesWithReExecute("/home/api/error/{0}");

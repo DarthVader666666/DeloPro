@@ -1,34 +1,74 @@
 <script setup>
-import AvatarCropper from '@/components/AvatarCropper.vue';
+import UserAccountCropper from '@/components/UserAccountCropper.vue';
 import UserAccountEdit from '@/components/UserAccountEdit.vue';
 import UserAccountInfo from '@/components/UserAccountInfo.vue';
-import { computed, ref } from 'vue';
+import { helper } from '@/helper/helper';
+import { computed, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 
 const store = useStore();
-const user = computed(() => store.getters.getUser);
-const editMode = ref(false);
-const avatarMode = ref(false);
-const avatar = ref(null);
+const user = computed(() => store.getters.getCurrentUser);
+let avatarFile = ref(null);
+let avatarBase64 = ref(null);
 
-function switchEditMode(value) {
-    editMode.value = value;
+const modes = {
+    info: 'INFO',
+    edit: 'EDIT',
+    avatar: 'AVATAR'
+};
+
+const currentMode = ref(modes.info);
+
+const isSaveDisabled = ref(true);
+
+// watch(avatarFile, async (newValue, oldValue) => {
+//     avatarBase64.value = await helper.fileToBase64Async(newValue);
+// });
+
+function switchToInfoMode() {
+    currentMode.value = modes.info;
+    avatarFile.value = null;
+    avatarBase64.value = null;
+    isSaveDisabled.value = true;
 }
 
-function switchAvatarMode(value) {
-    avatarMode.value = value;
+function switchToEditMode() {
+    currentMode.value = modes.edit;
 }
 
-function setAvatar(bytes) {
-    avatar.value = bytes;
+function switchToAvatarMode() {
+    currentMode.value = modes.avatar;
+}
+
+async function setAvatarFile(file) {
+    avatarFile.value = file;
+    await setAvatarBase64(file);
+    console.log(avatarBase64.value);
+};
+
+async function setAvatarBase64(file) {
+    avatarBase64.value = await helper.fileToBase64Async(file);
+};
+
+function setIsSaveDisabled(value) {
+    isSaveDisabled.value = value;
 }
 
 </script>
 
 <template>
     <div>
-        <UserAccountEdit v-if="user && editMode && !avatarMode" :user="user" :avatar="avatar" @switch-edit-mode="switchEditMode" @switch-avatar-mode="switchAvatarMode" @set-avatar="setAvatar"></UserAccountEdit>
-        <UserAccountInfo v-if="user && !editMode && !avatarMode" :user="user" @switch-edit-mode="switchEditMode"></UserAccountInfo>
-        <AvatarCropper v-if="avatarMode" :avatar="avatar" @switch-edit-mode="switchEditMode" @switch-avatar-mode="switchAvatarMode" @set-avatar="setAvatar"></AvatarCropper>
+        <UserAccountInfo v-if="user && currentMode === modes.info" 
+            :user="user" 
+            @switch-to-edit-mode="switchToEditMode">
+        </UserAccountInfo>
+        <UserAccountEdit v-else-if="user && currentMode === modes.edit" 
+            :user="user" :avatarFile="avatarFile" :avatarBase64="avatarBase64" :isSaveDisabled="isSaveDisabled" 
+            @switch-to-info-mode="switchToInfoMode" @switch-to-avatar-mode="switchToAvatarMode" @set-avatar-file="setAvatarFile" @set-is-save-disabled="setIsSaveDisabled">
+        </UserAccountEdit>
+        <UserAccountCropper v-else="user && currentMode === modes.avatar" 
+            :user="user" :avatarBase64="avatarBase64" 
+            @switch-to-edit-mode="switchToEditMode" @switch-to-avatar-mode="switchToAvatarMode" @set-avatar-file="setAvatarFile" @set-is-save-disabled="setIsSaveDisabled">
+        </UserAccountCropper>
     </div>
 </template>

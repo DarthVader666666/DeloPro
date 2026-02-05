@@ -7,18 +7,18 @@ import UserAccountProperty from './UserAccountProperty.vue';
        user:
         {
             type: Object,
-            default: () => {}
+            default: null
         }
     });
 
-    const emit = defineEmits(['switchEditMode']);
+    const emit = defineEmits(['switchToEditMode']);
 </script>
 
 <template>
     <div class="user-account-properties">
         <div class="user-account-header">
             <div>
-                <img v-if="props.user.avatar" :src="`${(props.user.avatar ?? 'data:image/png;base64,')}`" class="user-account-avatar">
+                <img v-if="props.user.avatarPath" :src="props.user.avatarPath" class="user-account-avatar">
                 <i v-else class="user-account-avatar pi pi-user" style="font-size: 5rem; color: rgb(71, 85, 105, 1); background-color: rgb(241,245,249,1)"></i>
             </div>
             <div class="user-account-short-info">
@@ -28,10 +28,9 @@ import UserAccountProperty from './UserAccountProperty.vue';
                 <span>Роль: {{ props.user.roles }}</span>
                 <span v-if="props.user.registerDate">Дата регистрации: {{ props.user.registerDate }}</span>
                 <div style="padding-top: 10px;">
-                    <Button @click="emit('switchEditMode', true)" severity="contrast" raised>Редактировать</Button>
+                    <Button @click="async () => emit('switchToEditMode')" severity="contrast" raised>Редактировать</Button>
                 </div>
             </div>
-
         </div>
         <UserAccountProperty propertyName="Никнэйм" :propertyValue="props.user.nickname" />
         <UserAccountProperty propertyName="Email" :propertyValue="props.user.email" />

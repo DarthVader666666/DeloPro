@@ -2,12 +2,12 @@
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Textarea from 'primevue/textarea';
-import { onMounted, reactive } from 'vue';
+import { reactive, watch } from 'vue';
 import { useStore } from 'vuex';
 import axios from 'axios';
 import { useToast } from 'vue-toastification';
 import { useRouter } from 'vue-router';
-import { helper } from '@/helper/helper';
+import UserAccountAvatar from './UserAccountAvatar.vue';
 
 const store = useStore();
 const toast = useToast();
@@ -18,16 +18,26 @@ const props = defineProps(
     user:
     {
         type: Object,
-        default: () => {}
-    },
-    avatar:
-    {
-        type: Uint8Array,
         default: null
+    },
+    avatarFile:
+    {
+        type: File,
+        default: null
+    },
+    avatarBase64:
+    {
+        type: String,
+        default: null
+    },
+    isSaveDisabled:
+    {
+        type: Boolean,
+        default: true
     }
 });
 
-const updatedUser = reactive({
+let updatedUser = reactive({
     nickname: props.user.nickname,
     firstName: props.user.firstName,
     lastName: props.user.lastName,
@@ -36,51 +46,44 @@ const updatedUser = reactive({
     city: props.user.city,
     userTitle: props.user.userTitle,
     info: props.user.info,
-    avatar: props.user.avatar,
     email: props.user.email,
-    phone: props.user.phone
+    phone: props.user.phone,
+    deleteAvatar: false
 });
 
-const emit = defineEmits(['switchEditMode','switchAvatarMode','setAvatar']);
-
-onMounted(() => {
-    // updatedUser.nickname = props.user.nickname;
-    // updatedUser.firstName = props.user.firstName;
-    // updatedUser.lastName = props.user.lastName;
-    // updatedUser.birthDate = props.user.birthDate;
-    // updatedUser.country = props.user.country;
-    // updatedUser.city = props.user.city;
-    // updatedUser.userTitle = props.user.userTitle;
-    // updatedUser.info = props.user.info;
-    // updatedUser.avatar = props.user.avatar;
-    // updatedUser.email = props.user.email;
-    // updatedUser.phone = props.user.phone;
-
-    // console.log(updatedUser)
+watch(updatedUser, (newValue) => {
+    emit('setIsSaveDisabled', false);
 });
+
+const emit = defineEmits(['switchToInfoMode','switchToAvatarMode','setAvatarFile', 'setIsSaveDisabled']);
 
 async function onFileChange(e) {
   const file = e.target.files[0];
 
   if (file) {
-    const bytes = await helper.fileToBytes(file);
-
-    emit('setAvatar', bytes);
-    emit('switchAvatarMode', true);
+    emit('setAvatarFile', file);
+    emit('switchToAvatarMode');
   }
 }
 
 async function handleUserAccountUpdate() {
-    if(props.avatar) {
-        updatedUser.avatar = Array.from(props.avatar);
+    const formData = new FormData();
+
+    formData.append('user', JSON.stringify(updatedUser));
+    
+    if(props.avatarFile) {
+        formData.append('avatar', props.avatarFile);
+    }
+    else {
+        formData.append('avatar', null);
     }
 
     const url = store.state.serverUrl;
 
-    await axios.put(`${url}/useraccount/updatecurrentuser`,  JSON.parse(JSON.stringify(updatedUser)),
+    await axios.put(`${url}/useraccount/updatecurrentuser`, formData,
     {
         headers: {
-            'Content': 'application/json'
+            'Content-Type': 'multipart/form-data'
         }
     })
     .then(response => {
@@ -97,6 +100,13 @@ async function handleUserAccountUpdate() {
     });
 }
 
+function handleDeleteAvatar() {
+    if (window.confirm("Вы уверены, что хотите удалить аватар?")) {
+        emit('setAvatarFile', null);
+        updatedUser.deleteAvatar = true;
+    }
+}
+
 </script>
 
 <template>
@@ -106,32 +116,33 @@ async function handleUserAccountUpdate() {
                 <div style="position: relative;">
                   <input type="file" id="fileInput" @change="onFileChange" accept="image/*" hidden />
 
-                  <img v-if="props.user.avatar" :src="helper.bytesToBase64(props.user.avatar)" class="user-account-avatar">
-                  <img v-else-if="props.avatar" :src="helper.bytesToBase64(props.avatar)" class="user-account-avatar">
+                  <UserAccountAvatar :user="props.user" :avatarBase64="props.avatarBase64"></UserAccountAvatar>
 
-                  <i v-else class="user-account-avatar pi pi-user" style="font-size: 5rem; color: rgb(71, 85, 105, 1); background-color: rgb(241,245,249,1)"></i>
-
-                  <label for="fileInput" id="avatar-label">
-                        <div class="avatar-camera-icon">
-                            <i class="pi pi-camera" style="font-size: 3rem;" ></i>
-                        </div>
+                  <label for="fileInput" id="avatar-label" title="Загрузить фото">
+                        <div class="avatar-button" style="bottom: 30%; left: 55%;">
+                            <i class="pi pi-camera" style="font-size: 2rem;" ></i>
+                        </div>                        
                   </label>
+                  <div class="avatar-button" style="bottom: 30%; left: 10%;" title="Удалить фото" @click="handleDeleteAvatar">
+                        <i class="pi pi-times" style="font-size: 1.7rem; padding-top: 5px;"></i>
+                  </div>
+
                 </div>
                 <div class="user-account-short-info">
-                    <span style="font-weight: bold; font-size: large">{{ updatedUser.nickname }}</span>
-                    <span>{{ updatedUser.firstName }}</span>
-                    <span>{{ updatedUser.lastName }}</span>
+                    <span style="font-weight: bold; font-size: large">{{ props.user.nickname }}</span>
+                    <span>{{ props.user.firstName }}</span>
+                    <span>{{ props.user.lastName }}</span>
                     <span>Роль: {{ props.user.roles }}</span>
                     <span v-if="updatedUser.registerDate">Дата регистрации: {{ updatedUser.registerDate }}</span>
                     <div style="padding-top: 10px;">
-                        <Button type="submit" raised severity="secondary" label="Сохранить" style="width: 100px; margin-bottom: 10px; margin-right: 10px;"/>
-                        <Button raised severity="contrast" label="Отменить" style="width: 100px;" @click="emit('switchEditMode', false)"/>
+                        <Button type="submit" raised severity="secondary" label="Сохранить" style="width: 100px; margin-bottom: 10px; margin-right: 10px;" :disabled="props.isSaveDisabled"/>
+                        <Button raised severity="contrast" label="Отменить" style="width: 100px;" @click="emit('switchToInfoMode')"/>
                     </div>
                 </div>
             </div>
             <div class="user-account-input">
                 <span>Никнэйм:</span>
-                <InputText type="text" placeholder="Никнэйм" v-model="updatedUser.nickname"></InputText>
+                <InputText type="text" placeholder="Никнэйм" v-model="updatedUser.nickname" @change=""></InputText>
             </div>
             <div class="user-account-input">
                 <span>Email:</span>
@@ -174,21 +185,19 @@ async function handleUserAccountUpdate() {
 </template>
 
 <style>
-    #avatar-label :hover{
+    .avatar-button :hover{
         cursor: pointer;
         opacity: 0.6;
     }
 
-    .avatar-camera-icon {
+    .avatar-button {
         align-content: center;
         text-align: center;
         position: absolute;
-        right: 27%;
-        bottom: 27%;
         background-color: lightgray;
         opacity: 0.4;
         border-radius: 50%;
-        width: 70px;
-        height: 70px;
+        width: 50px;
+        height: 50px;
     }
 </style>

@@ -40,7 +40,7 @@ namespace Delopro.Data
                 user.Property(x => x.Country).HasMaxLength(maxNameLength);
                 user.Property(x => x.City).HasMaxLength(maxNameLength);
                 user.Property(x => x.Info).HasMaxLength(maxTextLength);
-                user.Property(x => x.Avatar).HasMaxLength(maxBytesLength);
+                user.Property(x => x.AvatarPath).HasMaxLength(maxTextLength);
                 user.Property(x => x.IsConfirmed).HasDefaultValue(false);
                 user.Property(x => x.IsDeleted).HasDefaultValue(false);
                 user.HasMany(u => u.Visitors).WithOne(v => v.User).HasForeignKey(x => x.UserId).IsRequired(false).OnDelete(DeleteBehavior.NoAction);

@@ -10,6 +10,7 @@ namespace Delopro.Bll
         public static string? DocsFolderName;
         public static string? DocsFolderId;
         public static string? ChapterImagesPath;
+        public static string? AvatarsPath;
 
         public static void Initialize(IConfiguration configuration, string webRootPath, string environmentName)
         {
@@ -21,6 +22,7 @@ namespace Delopro.Bll
             ChapterImagesPath = environmentName.Equals("Development", StringComparison.OrdinalIgnoreCase)
                 ? Path.GetFullPath("../delopro.client/src/assets/")
                 : WebRootPath;
+            AvatarsPath = Path.Combine(webRootPath, "avatars");
         }
     }
 }

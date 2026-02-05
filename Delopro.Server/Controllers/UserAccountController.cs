@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Text.Json;
+
+using AutoMapper;
 
 using Delopro.Bll.Services;
 using Delopro.Data.Entities;
@@ -46,15 +48,15 @@ namespace Delopro.Server.Controllers
         [HttpPut]
         [Route("[action]")]
         [TrackIpAddress]
-        public async Task<IActionResult> UpdateCurrentUser([FromBody] UserAccountUpdateModel userAccountModel)
+        public async Task<IActionResult> UpdateCurrentUser([FromForm] UserAccountUpdateRequestModel userAccountUpdateRequestModel)
         {
-            var user = await _userManager.GetCurrentUserAsync(HttpContext);
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var user = JsonSerializer.Deserialize<UserAccountUpdateModel>(userAccountUpdateRequestModel.User!, options);
 
             if (user == null)
             {
                 return StatusCode(400, new { errorText = "Ошибка сервера" });
             }
-
 
             return Ok();
         }

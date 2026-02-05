@@ -30,7 +30,8 @@ const store = createStore({
         showRightColumn: false,
         pending: false,
         users: [],
-        user: null
+        user: null,
+        currentUser: null
     },
     getters: {
         getChapter(state) {
@@ -41,6 +42,9 @@ const store = createStore({
         },
         getChapterNodes(state) {
             return state.chapterNodes;
+        },
+        getCurrentUser(state) {
+            return state.currentUser;
         },
         getTheme(state) {
             return state.theme;
@@ -153,6 +157,9 @@ const store = createStore({
         },
         setChapterNodes(state, chapterNodes) {
             state.chapterNodes = chapterNodes;
+        },
+        setCurrentUser(state, currentUser) {
+            state.currentUser = currentUser;
         },
         setTheme(state, theme) {
             state.theme = theme;
@@ -380,7 +387,7 @@ const store = createStore({
                 }
             ));
 
-            commit('setUser', user);
+            commit('setCurrentUser', user);
         }
     }
 });

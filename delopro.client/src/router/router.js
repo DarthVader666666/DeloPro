@@ -180,7 +180,7 @@ router.afterEach(async (to) => {
 
     if(to.name === 'user-account') {
         store.commit('setTitle', 'Личный кабинет');
-        store.dispatch('downloadCurrentUser');
+        await store.dispatch('downloadCurrentUser');
     }
 
     await store.dispatch('downloadChapters');

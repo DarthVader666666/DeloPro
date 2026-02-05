@@ -173,7 +173,7 @@ export const helper = {
       const r = 'data:image/png;base64,' + btoa(binary);
       return r;
     },
-    fileToBytes(file)
+    async fileToBytesAsync(file)
     {
       return new Promise((resolve, reject) => {
          const reader = new FileReader();
@@ -186,5 +186,24 @@ export const helper = {
         reader.onerror = reject;
         reader.readAsArrayBuffer(file);
       });
+    },
+    async fileToBase64Async(file) {
+        if(!file) {
+            return null;
+        }
+
+        return new Promise((resolve, reject) => { 
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                resolve(reader.result);
+            }
+                
+            reader.onerror = (error) => {
+                reject(error); 
+            }; 
+            
+            reader.readAsDataURL(file); 
+        })
     }
 }
