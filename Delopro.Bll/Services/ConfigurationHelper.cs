@@ -24,7 +24,7 @@ namespace Delopro.Bll
                 : Path.Combine(WebRootPath, "chapters");
             AvatarsPath = environmentName.Equals("Development", StringComparison.OrdinalIgnoreCase)
                 ? Path.GetFullPath("../delopro.client/src/assets/avatars/")
-                : "/avatars/";
+                : Path.Combine(WebRootPath, "avatars");
         }
     }
 }
