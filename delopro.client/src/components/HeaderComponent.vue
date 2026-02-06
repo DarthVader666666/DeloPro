@@ -24,6 +24,7 @@ const isOwner = computed(() => store.getters.isOwner);
 const isUser = computed(() => store.getters.isUser);
 const unreadMessagesCount = computed(() => store.getters.getUnreadMessagesCount);
 const darkenBackground = computed(() => showLogin.value || showMenu.value || showUserAccountSettings.value);
+const user = computed(() => store.getters.getCurrentUser);
 
 const remember = ref(false);
 const showLogin = ref(false);
@@ -178,7 +179,8 @@ function handleBurgerClick() {
                         severity="secondary" rounded
                         id="account-button"
                     >
-                    <i class="pi pi-user" style="font-size: x-large;"></i>
+                    <img v-if="user && user.avatarPath" :src="user.avatarPath" width="50px" height="50px">
+                    <i v-else class="pi pi-user" style="font-size: x-large;"></i>
                     </Button>
                     <span>{{ nickname }}</span>
                 </div>

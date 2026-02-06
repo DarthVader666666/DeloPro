@@ -67,7 +67,8 @@ namespace Delopro.Server.Controllers
                     return StatusCode(500, new { errorText = "Ошибка сервера" });
                 }
 
-                var filePath = Path.Combine(ConfigurationHelper.AvatarsPath!, userAccountUpdateRequestModel!.Avatar?.FileName ?? $"{user.UserId}.png");
+                var fileName = userAccountUpdateRequestModel!.Avatar?.FileName ?? String.Empty;
+                var filePath = Path.Combine(ConfigurationHelper.AvatarsPath!, fileName);
 
                 user.Nickname = userAccount.Nickname;
                 user.FirstName = _cryptoService.Encrypt(userAccount.FirstName);
@@ -84,10 +85,18 @@ namespace Delopro.Server.Controllers
                 {
                     if (!userAccount.DeleteAvatar)
                     {
+                        var oldAvatars = Directory.GetFiles(ConfigurationHelper.AvatarsPath!, $"user_{user.UserId}*");
+
+                        foreach (var oldAvatar in oldAvatars)
+                        {
+                            System.IO.File.Delete(oldAvatar);
+                        }
+
                         using var stream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
                         await userAccountUpdateRequestModel.Avatar.CopyToAsync(stream);
+
                         user.AvatarPath = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"
-                            ? $"/src/assets/avatars/{user.UserId}.png"
+                            ? $"/src/assets/avatars/{fileName}"
                             : filePath;
                     }
                     else

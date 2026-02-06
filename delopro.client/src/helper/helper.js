@@ -8,7 +8,7 @@ export const helper = {
     },
     validateEmail: (email) => email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/),
     timeoutAsync: (ms) => new Promise(resolve => setTimeout(resolve, ms)),
-    getCurrentDate: () => {
+    getCurrentDate(letters = false) {
         const today = new Date();
         const day = String(today.getDate()).padStart(2, '0');
         const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -25,7 +25,9 @@ export const helper = {
             return value;
         };
 
-        return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds;
+        return year + '-' + month + '-' + day + 'T' + (!letters 
+            ? hours + ':' + minutes + ':' + seconds 
+            : hours + 'h' + minutes + 'm' + seconds + 's');
     },
     getDateString(dateValue, short = false) {
         if(!dateValue) {

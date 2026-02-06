@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import Button from 'primevue/button';
 import { Cropper, CircleStencil } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
+import { helper } from '@/helper/helper';
 
 const cropper = ref(null);
 
@@ -26,7 +27,7 @@ async function handleCrop() {
 
 	if (canvas) {
         const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
-        const file = new File([blob], `${props.user.userId}.png`, { type: "image/png" });
+        const file = new File([blob], `user_${props.user.userId}_${helper.getCurrentDate(true)}.png`, { type: "image/png" });
 
         emit('setAvatarFile', file);
         emit('switchToEditMode');

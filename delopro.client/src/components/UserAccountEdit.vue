@@ -133,7 +133,6 @@ async function handleUserAccountUpdate() {
     if(!needLogout.value) {
         await store.dispatch('downloadCurrentUser');
         emit('switchToInfoMode');
-        //setTimeout(() => location.reload(), 2000);
     }
     else {                
         await axios.post(`${store.getters.serverUrl}/authentication/logout`, {
