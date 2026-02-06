@@ -97,7 +97,7 @@ namespace Delopro.Server.Controllers
 
                         user.AvatarPath = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"
                             ? $"/src/assets/avatars/{fileName}"
-                            : filePath;
+                            : filePath.Replace(ConfigurationHelper.WebRootPath!, string.Empty);
                     }
                     else
                     {
