@@ -48,24 +48,21 @@ namespace Delopro.Server.Controllers
             return Ok(userLongResponseModel);
         }
 
-        [HttpPut]
+        [HttpPost]
         [Route("[action]")]
         [TrackIpAddress]
         public async Task<IActionResult> UpdateCurrentUser([FromForm] UserAccountUpdateRequestModel userAccountUpdateRequestModel)
         {
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var userAccount = JsonSerializer.Deserialize<UserAccountUpdateModel>(userAccountUpdateRequestModel.User!, options);
-
-            if (userAccount == null)
-            {
-                return StatusCode(500, new { errorText = "Ошибка сервера" });
-            }
+            UserAccountUpdateModel? userAccount;
+            User? user;
 
             try
             {
-                var user = await _userManager.GetCurrentUserAsync(HttpContext);
+                user = await _userManager.GetCurrentUserAsync(HttpContext);
+                userAccount = JsonSerializer.Deserialize<UserAccountUpdateModel?>(userAccountUpdateRequestModel.User!, options);
 
-                if (user is null)
+                if (user is null || userAccount is null)
                 {
                     return StatusCode(500, new { errorText = "Ошибка сервера" });
                 }
@@ -86,17 +83,17 @@ namespace Delopro.Server.Controllers
                 if (userAccountUpdateRequestModel.Avatar is not null)
                 {
                     if (!userAccount.DeleteAvatar)
-                    {                        
+                    {
                         using var stream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
                         await userAccountUpdateRequestModel.Avatar.CopyToAsync(stream);
-                        user.AvatarPath = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" 
+                        user.AvatarPath = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"
                             ? $"/src/assets/avatars/{user.UserId}.png"
                             : filePath;
                     }
                     else
                     {
                         if (System.IO.File.Exists(filePath))
-                        { 
+                        {
                             System.IO.File.Delete(filePath);
                             user.AvatarPath = null;
                         }
@@ -105,12 +102,12 @@ namespace Delopro.Server.Controllers
 
                 await _userRepository.UpdateAsync(user);
             }
-            catch
+            catch(Exception ex)
             {
                 return StatusCode(500, new { errorText = "Ошибка сервера" });
             }
 
-            return Ok();
+            return StatusCode(200, new { okText = $"Данные пользователя {user.Nickname} успешно обговлены"});
         }
     }
 }

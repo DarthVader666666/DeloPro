@@ -112,8 +112,7 @@ const handleLogin = () => {
 };
 
 const handleLogout = () => {
-    if(window.confirm('Вы уверены, что хотите выйти?'))
-    {
+    if(window.confirm('Вы уверены, что хотите выйти?')) {
         axios.post(`${store.getters.serverUrl}/authentication/logout/`, {
         headers: {
             'Content-Type': 'application/json'

@@ -48,6 +48,7 @@ function handleCancel() {
 			:src="props.avatarBase64"
 			:stencil-props="{ aspectRatio: 1 }"
 			:stencil-component="CircleStencil"
+            :auto-zoom="false"
 		/>
 	</div>
     <div style="display: flex; flex-direction: row; gap: 10px; padding: 10px; justify-content: center;">

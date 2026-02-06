@@ -97,7 +97,7 @@ namespace Delopro.Server.Configurations
                         .ForMember(dest => dest.Email, opts => opts.MapFrom(src => cryptoService.Decrypt(src.Email)))
                         .ForMember(dest => dest.Phone, opts => opts.MapFrom(src => cryptoService.Decrypt(src.Phone)))
                         .ForMember(dest => dest.BirthDate, opts => opts.MapFrom(src => src.BirthDate != null ? ((DateTime)src.BirthDate).ToShortDateString() : null))
-                        .ForMember(dest => dest.BirthDate, opts => opts.MapFrom(src => src.RegisterDate != null ? ((DateTime)src.RegisterDate).ToShortDateString() : null))
+                        .ForMember(dest => dest.RegisterDate, opts => opts.MapFrom(src => src.RegisterDate != null ? ((DateTime)src.RegisterDate).ToShortDateString() : null))
                         .ForMember(dest => dest.Roles, opts => opts.MapFrom(src =>
                             src.UserRoles != null
                             ? string.Join(", ", src.UserRoles.Select(x => GetEnumDescription((UserRoleType)x.RoleId)))

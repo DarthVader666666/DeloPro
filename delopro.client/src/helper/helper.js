@@ -1,4 +1,5 @@
 import store from "@/vuex/store";
+import axios from "axios";
 
 export const helper = {
     getUnicodeByteArray: (text) => {

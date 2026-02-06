@@ -24,7 +24,7 @@ import UserAccountAvatar from './UserAccountAvatar.vue';
     <div class="user-account-properties">
         <div class="user-account-header">
 
-            <UserAccountAvatar :user="props.user" :avatarBase64="props.avatarBase64"></UserAccountAvatar>
+            <UserAccountAvatar :avatarBase64="props.avatarBase64"></UserAccountAvatar>
 
             <div class="user-account-short-info">
                 <span style="font-weight: bold; font-size: large">{{ props.user.nickname }}</span>

@@ -2,14 +2,17 @@
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Textarea from 'primevue/textarea';
-import { reactive, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 import axios from 'axios';
 import { useToast } from 'vue-toastification';
 import UserAccountAvatar from './UserAccountAvatar.vue';
+import { helper } from '@/helper/helper';
+import { useRouter } from 'vue-router';
 
 const store = useStore();
 const toast = useToast();
+const router = useRouter();
 
 const props = defineProps(
 {
@@ -36,24 +39,47 @@ const props = defineProps(
 });
 
 let updatedUser = reactive({
-    nickname: props.user.nickname,
-    firstName: props.user.firstName,
-    lastName: props.user.lastName,
-    birthDate: props.user.birthDate,
-    country: props.user.country,
-    city: props.user.city,
-    userTitle: props.user.userTitle,
-    info: props.user.info,
-    email: props.user.email,
-    phone: props.user.phone,
+    nickname: props.user ? props.user.nickname : null,
+    firstName: props.user ? props.user.firstName : null,
+    lastName: props.user ? props.user.lastName : null,
+    birthDate: props.user ? getConvertedDate() : null,
+    country: props.user ? props.user.country : null,
+    city: props.user ? props.user.city : null,
+    userTitle: props.user ? props.user.userTitle : null,
+    info: props.user ? props.user.info : null,
+    email: props.user ? props.user.email : null,
+    phone: props.user ? props.user.phone : null,
     deleteAvatar: false
 });
+
+const showNicknameError = ref(false);
+const showEmailError = ref(false);
+
+const needLogout = computed(() => updatedUser.nickname != props.user.nickname || updatedUser.email != props.user.email);
 
 watch(updatedUser, () => {
     emit('setIsSaveDisabled', false);
 });
 
+watch(showNicknameError, (newValue) => {
+    emit('setIsSaveDisabled', newValue);
+});
+
+watch(showEmailError, (newValue) => {
+    emit('setIsSaveDisabled', newValue);
+});
+
 const emit = defineEmits(['switchToInfoMode','switchToAvatarMode','setAvatarFile', 'setIsSaveDisabled']);
+
+function getConvertedDate() {
+    if(props.user.birthDate) {
+        const [day, month, year] = props.user.birthDate.split('.'); 
+        return `${year}-${month}-${day}`
+    }
+    else {
+        return props.user.birthDate;
+    }
+}
 
 async function onFileChange(e) {
   const file = e.target.files[0];
@@ -65,8 +91,15 @@ async function onFileChange(e) {
 }
 
 async function handleUserAccountUpdate() {
-    const formData = new FormData();
+    if(needLogout.value) {
+        window.confirm('Внимание! После обновления данных необходимо будет заново войти в систему');
+    }
+    
+    if(!updatedUser.birthDate) {
+        updatedUser.birthDate = null;
+    }   
 
+    const formData = new FormData();
     formData.append('user', JSON.stringify(updatedUser));
 
     if(props.avatarFile) {
@@ -78,35 +111,87 @@ async function handleUserAccountUpdate() {
 
     const url = store.state.serverUrl;
 
-    const propmise = axios.put(`${url}/useraccount/updatecurrentuser`, formData,
+    await axios.post(`${url}/useraccount/updatecurrentuser`, formData,
     {
-        headers:
-        {
+        headers: {
             'Content-Type': 'multipart/form-data'
-        },
-        withCredentials: true
+        }
     })
-    .then(response => {
-        if(response.status === 200) {
-            toast.success(`Параметры пользователя ${updatedUser.value.nickname} обновлены`);
-            store.dispatch('downloadCurrentUser');
+    .then(async response => {
+        const status = response.status;
+
+        if(status === 200) {
+            toast.success(response.data.okText);            
         }
     })
     .catch(error => {
         if(error.response) {
-            toast.error(error.response.data.errorText)
+            toast.error(error.response.data.errorText);
         }
     });
 
-    await propmise;
-
-    emit('switchToInfoMode');
+    if(!needLogout.value) {
+        await store.dispatch('downloadCurrentUser');
+        emit('switchToInfoMode');
+        //setTimeout(() => location.reload(), 2000);
+    }
+    else {                
+        await axios.post(`${store.getters.serverUrl}/authentication/logout`, {
+        headers: {
+            'Content-Type': 'application/json'
+        }})
+        .then(response => {
+            if(response.status === 200) {
+                localStorage.removeItem('Delopro_Cookies');
+                store.commit('setNickname', null);
+                store.commit('setRoles', []);
+                store.commit('setNickname', null);
+                router.push('/');
+            }
+        })
+        .catch(error => {
+            if(error.response) {
+                toast.error(error.response.data.errorText)
+            }
+        });
+    }
 }
 
 function handleDeleteAvatar() {
     if (window.confirm("Вы уверены, что хотите удалить аватар?")) {
         emit('setAvatarFile', null);
         updatedUser.deleteAvatar = true;
+    }
+}
+
+async function doesUserExist (nickname, email) {
+    await helper.timeoutAsync(500);
+
+    let url = `${store.getters.serverUrl}/register/userExists?` + (nickname ? `nickname=${nickname}` : `email=${email}`);
+    let response = await axios.get(url);
+
+    if(response.status === 200) {
+        return response.data.userExists;
+    }
+
+    return false;
+}
+
+async function handleNicknameMatch(event) {
+    const nickname = event.target.value;
+    if(nickname === props.user.nickname) {
+        return;
+    }
+    showNicknameError.value = await doesUserExist(nickname, null);
+}
+
+async function handleEmailMatch(event) {
+    const email = event.target.value;
+    if(email === props.user.email) {
+        return;
+    }
+    if(helper.validateEmail(email)) {
+        showEmailError.value = await doesUserExist(null, email);
     }
 }
 
@@ -144,12 +229,12 @@ function handleDeleteAvatar() {
                 </div>
             </div>
             <div class="user-account-input">
-                <span>Никнэйм:</span>
-                <InputText type="text" placeholder="Никнэйм" v-model="updatedUser.nickname"></InputText>
+                <span>Никнэйм: <span v-if="showNicknameError" style="color: red; font-weight: lighter;">Никнэйм занят</span></span>
+                <InputText type="text" placeholder="Никнэйм" v-model="updatedUser.nickname" @input.prevent="handleNicknameMatch" maxlength="30" required></InputText>
             </div>
             <div class="user-account-input">
-                <span>Email:</span>
-                <InputText type="text" placeholder="Email" v-model="updatedUser.email"></InputText>
+                <span>Email: <span v-if="showEmailError" style="color: red; font-weight: lighter;">Email занят</span></span>
+                <InputText type="email" placeholder="Email" v-model="updatedUser.email" @input.prevent="handleEmailMatch" maxlength="50" required></InputText>
             </div>
             <div class="user-account-input">
                 <span>Телефон:</span>
