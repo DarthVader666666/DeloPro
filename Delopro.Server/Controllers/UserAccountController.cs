@@ -45,10 +45,10 @@ namespace Delopro.Server.Controllers
             {
                 var user = await _userManager.GetCurrentUserAsync(HttpContext);
 
-                if (user == null)
-                {
-                    return Ok("Пользователь не аутентифицирован");
-                }
+                //if (user == null)
+                //{
+                //    return Ok("Пользователь не аутентифицирован");
+                //}
 
                 userAccountResponseModel = _mapper.Map<UserAccountResponseModel>(user);
                 _memoryCache.Set(CurrentUserKey, userAccountResponseModel, TimeSpan.FromMinutes(5));

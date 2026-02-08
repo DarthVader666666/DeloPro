@@ -1,12 +1,16 @@
 import store from "@/vuex/store";
 
 export const helper = {
-    getUnicodeByteArray: (text) => {
+    getUnicodeByteArray(text) {
         const utf8Encode = new TextEncoder();
         return Object.values(utf8Encode.encode(text));
     },
-    validateEmail: (email) => email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/),
-    timeoutAsync: (ms) => new Promise(resolve => setTimeout(resolve, ms)),
+    validateEmail(email) {
+      email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
+    },
+    timeoutAsync(ms) {
+      new Promise(resolve => setTimeout(resolve, ms))
+    },
     getCurrentDate(hmsFormat = false) {
         const today = new Date();
         const day = String(today.getDate()).padStart(2, '0');
@@ -207,5 +211,16 @@ export const helper = {
 
             reader.readAsDataURL(file);
         })
+    },
+    clearSession() {
+      const keys = store.state.sessionStorageKeys;
+
+      for(const key in keys) {
+        sessionStorage.removeItem(keys[key]);
+      }
+
+      store.commit('setNickname', null);
+      store.commit('setRoles', null);
+      store.commit('setNickname', null);
     }
 }

@@ -73,7 +73,7 @@ const handleLogin = () => {
     axios.defaults.withCredentials = true;
     axios.post(`${store.getters.serverUrl}/authentication/login?nickname=${nicknameValue.trimEnd()}&remember=${remember.value}`, null,
     {
-        headers: 
+        headers:
         {
             'Content-Type': 'application/json',
             'Authentication': JSON.stringify({
@@ -82,21 +82,22 @@ const handleLogin = () => {
             })
         }
     })
-    .then(response => {
+    .then(async response => {
         if(response.status === 200) {
             loginRequestForm.value.nicknameOrEmail = null;
             loginRequestForm.value.password = null;
 
             if(response.data.remember === true) {
                 const cookie = document.cookie.split('=');
-            
+
                 if(cookie && cookie.length === 2) {
                     localStorage.setItem(cookie[0], cookie[1]);
-                }  
+                }
             }
 
             store.commit('setRoles', response.data.roles);
             store.commit('setNickname', response.data.nickname);
+            await store.dispatch('downloadCurrentUser');
             toast.success(`Вы вошли, как ${response.data.nickname}`);
             showLogin.value = false;
             router.push('/');
@@ -114,30 +115,28 @@ const handleLogin = () => {
 
 const handleLogout = () => {
     if(window.confirm('Вы уверены, что хотите выйти?')) {
-        axios.post(`${store.getters.serverUrl}/authentication/logout/`, {
-        headers: {
-            'Content-Type': 'application/json'
-        }})
-        .then(response => {
-            if(response.status === 200) {
-                localStorage.removeItem('Delopro_Cookies');
-                store.commit('setNickname', null);
-                store.commit('setRoles', []);
-                store.commit('setNickname', null);
-                showUserAccountSettings.value = false;
-                router.push('/');
-            }
-        })
-        .catch(error => {
-            if(error.response) {
-                toast.error(error.response.data.errorText)
-            }
-        });
+      axios.post(`${store.getters.serverUrl}/authentication/logout/`, {
+      headers: {
+        'Content-Type': 'application/json'
+      }})
+      .then(response => {
+        if(response.status === 200) {
+          localStorage.removeItem('Delopro_Cookies');
+          helper.clearSession();
+          showUserAccountSettings.value = false;
+          router.push('/');
+        }
+      })
+      .catch(error => {
+        if(error.response) {
+          toast.error(error.response.data.errorText)
+        }
+      });
     }
 }
 
 const handleLoginButtonClick = async () => {
-    showMenu.value = false; 
+    showMenu.value = false;
     showLogin.value = !showLogin.value;
 
     if(showLogin.value) {
@@ -159,13 +158,13 @@ function handleBurgerClick() {
 <template>
     <div class="header-container" ref="header">
         <div class="logo">
-            <RouterLink to="/"><h1>DeloPro</h1></RouterLink>            
+            <RouterLink to="/"><h1>DeloPro</h1></RouterLink>
         </div>
         <div class="account-and-menu">
             <div class="menu-burger" >
                 <span v-if="nickname" style="font-weight: bold;">{{ nickname }}</span>
                 <Button
-                    @click="handleBurgerClick" 
+                    @click="handleBurgerClick"
                     security="contrast" rounded text
                     id="burger-button"
                 >
@@ -174,7 +173,7 @@ function handleBurgerClick() {
             </div>
             <div class="menu" id="menu">
                 <div v-if="nickname" class="account">
-                    <Button 
+                    <Button
                         @click="() => { showUserAccountSettings = !showUserAccountSettings; showMenu = false }"
                         severity="secondary" rounded
                         id="account-button"
@@ -185,13 +184,13 @@ function handleBurgerClick() {
                     <span>{{ nickname }}</span>
                 </div>
                 <Button
-                    @click="() => { showMenu = false; router.push('/'); }" 
-                    severity="contrast" text label="Главная" 
+                    @click="() => { showMenu = false; router.push('/'); }"
+                    severity="contrast" text label="Главная"
                     id="home-button"
                 />
                 <div v-if="isOwner">
                     <Button
-                        @click="() => { showMenu = false; router.push('/messages'); }" 
+                        @click="() => { showMenu = false; router.push('/messages'); }"
                         severity="contrast" text
                         id="messages-button"
                     >
@@ -205,44 +204,44 @@ function handleBurgerClick() {
                         @click="() => { showMenu = false; router.push('/chapters/create'); }"
                         severity="contrast" text label="Создать раздел"
                         id="create-chapter-button"
-                    />                    
+                    />
                     <Button
-                        @click="() => { showMenu = false; router.push('/users'); }" 
+                        @click="() => { showMenu = false; router.push('/users'); }"
                         severity="contrast" text label="Пользователи"
                     >
                     </Button>
                 </div>
                 <div v-if="!isAuthenticated || isUser">
                     <Button
-                        @click="() => { showMenu = false; router.push('/feedback'); }" 
+                        @click="() => { showMenu = false; router.push('/feedback'); }"
                         severity="contrast" text label="Обратная связь"
                         id="feedback-button"
-                    />                    
-                    <Button 
-                        @click="() => { showMenu = false; showLogin = false; router.push('/register'); }" 
+                    />
+                    <Button
+                        @click="() => { showMenu = false; showLogin = false; router.push('/register'); }"
                         severity="contrast" text label="Регистрация"
                         id="register-button"
                     />
-                </div>                
+                </div>
                 <Button v-if="!isAuthenticated" @click="handleLoginButtonClick"
                     severity="contrast" text label="Войти" icon="pi pi-sign-in"
                     id="login-button"
                 />
-            </div>            
+            </div>
             <div v-if="nickname && showUserAccountSettings" class="slide-container" id="account-settings">
                 <div style="text-align: center;">
                     <span style="font-size: large;">
                         {{ nickname }}
-                    </span>                    
+                    </span>
                     <Button @click="showUserAccountSettings = false" severity="contrast" rounded text icon="pi pi-times" style="position: absolute; right: 5px; top: 5px; height: 25px; width: 25px"></Button>
                 </div>
-                <Button 
+                <Button
                     @click="() => { showUserAccountSettings = false; router.push(`/user-account`);}"
-                    text label="Личный кабинет" 
+                    text label="Личный кабинет"
                     style="padding: 12px;">
                 </Button>
-                <Button 
-                    @click="handleLogout" 
+                <Button
+                    @click="handleLogout"
                     text label="Выйти"
                     icon="pi pi-sign-out"
                     id="logout-button"
@@ -405,7 +404,7 @@ function handleBurgerClick() {
         background:red;
         color:white !important;
         font-size: small;
-        font-weight:normal !important; 
+        font-weight:normal !important;
         padding:3px 0 0 0;
         border-radius:50%;
         height:20px;

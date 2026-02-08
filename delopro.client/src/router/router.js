@@ -12,10 +12,11 @@ import SearchResultView from "@/views/SearchResultView.vue";
 import PersonalDataAgreement from "@/views/PersonalDataAgreement.vue";
 import RecoverPasswordView from "@/views/RecoverPasswordView.vue";
 import UsersView from "@/views/UsersView.vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import UserAccountView from "@/views/UserAccountView.vue";
 
 const doScrollUp = ref(true);
+const currentUser = computed(() => store.getters.getCurrentUser);
 
 const router = createRouter({
     history: createWebHistory(),
@@ -102,9 +103,7 @@ router.beforeEach(async (to, from, next) => {
     await store.dispatch('downloadDocumentNodes');
     await store.dispatch('downloadCurrentUser');
 
-    const roles = store.getters.getRoles;
-
-    if (to.meta.roles && !to.meta.roles.some(r => roles.includes(r))) {
+    if (to.meta.roles && !to.meta.roles.some(r => currentUser.value ? currentUser.value.roles.includes(r) : false)) {
       return next('/');
     }
 
