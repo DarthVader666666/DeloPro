@@ -36,7 +36,7 @@ const router = createRouter({
             component: ChapterCreateView
         },
         {
-            path: '/chapters/:chapterId/:themeId',
+            path: '/chapters/:chapterId/:themeId?',
             name: 'chapter-details',
             component: ChapterDetailsView
         },
@@ -63,6 +63,7 @@ const router = createRouter({
         {
             path: '/messages',
             name: 'messages',
+            meta: { requiresAuth: true, roles: ['Owner'] },
             component: MessagesView
         },
         {
@@ -83,14 +84,31 @@ const router = createRouter({
         {
             path: '/users',
             name: 'users',
+            meta: { requiresAuth: true, roles: ['Owner', 'Admin'] },
             component: UsersView
         },
         {
             path: '/user-account',
             name: 'user-account',
+            meta: { requiresAuth: true, roles: ['Owner', 'Admin', 'User'] },
             component: UserAccountView
         }
     ]
+});
+
+router.beforeEach(async (to, from, next) => {
+    await store.dispatch('downloadChapters');
+    await store.dispatch('downloadDocuments');
+    await store.dispatch('downloadDocumentNodes');
+    await store.dispatch('downloadCurrentUser');
+
+    const roles = store.getters.getRoles;
+
+    if (to.meta.roles && !to.meta.roles.some(r => roles.includes(r))) {
+      return next('/');
+    }
+
+    next();
 });
 
 router.afterEach(async (to) => {
@@ -99,7 +117,11 @@ router.afterEach(async (to) => {
 
     if(to.name === 'chapter-details') {
         await store.dispatch('downloadChapter', to.params['chapterId']);
-        await store.dispatch('downloadTheme', to.params['themeId']);
+
+        if(to.params['themeId']) {
+          await store.dispatch('downloadTheme', to.params['themeId']);
+        }
+
         store.commit('renderSearchBar');
         store.commit('setShowChapterList', false);
 
@@ -180,13 +202,7 @@ router.afterEach(async (to) => {
 
     if(to.name === 'user-account') {
         store.commit('setTitle', 'Личный кабинет');
-        await store.dispatch('downloadCurrentUser');
     }
-
-    await store.dispatch('downloadChapters');
-    await store.dispatch('downloadChapterNodes');
-    await store.dispatch('downloadDocuments');
-    await store.dispatch('downloadDocumentNodes');
 
     if(store.getters.isOwner)
         await store.dispatch('downloadUnreadMessagesCount');

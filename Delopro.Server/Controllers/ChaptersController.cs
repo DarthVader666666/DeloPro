@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Delopro.Server.Controllers
 {
@@ -18,15 +19,20 @@ namespace Delopro.Server.Controllers
     [ApiController]
     public class ChaptersController : ControllerBase
     {
+        private const string ChaptersKey = "chapters";
+        private const string ChapterNodesKey = "chapterNodes";
+
         private readonly UserManager _userManager;
         private readonly IRepository<Chapter> _chapterRepository;
         private readonly IMapper _mapper;
+        private readonly IMemoryCache _memoryCache;
 
-        public ChaptersController(UserManager userManager, IRepository<Chapter> chapterRepository, IMapper mapper)
+        public ChaptersController(UserManager userManager, IRepository<Chapter> chapterRepository, IMapper mapper, IMemoryCache memoryCache)
         {
             _userManager = userManager;
             _chapterRepository = chapterRepository;
             _mapper = mapper;
+            _memoryCache = memoryCache;
         }
 
         [HttpPost]
@@ -61,6 +67,9 @@ namespace Delopro.Server.Controllers
                 return StatusCode(500, new { errorText = "Ошибка сервера" });
             }
 
+            _memoryCache.Remove(ChaptersKey);
+            _memoryCache.Remove(ChapterNodesKey);
+
             return Ok(createdChapter);
         }
 
@@ -73,6 +82,8 @@ namespace Delopro.Server.Controllers
             try
             {
                 await _chapterRepository.DeleteAsync(chapterId);
+                _memoryCache.Remove(ChaptersKey);
+                _memoryCache.Remove(ChapterNodesKey);
             }
             catch (SqlException)
             {
@@ -86,23 +97,25 @@ namespace Delopro.Server.Controllers
         [Route("[action]")]
         public async Task<IActionResult> GetList() 
         {
-            IEnumerable<Chapter?> chapters;
-
-            try
+            if (!_memoryCache.TryGetValue(ChaptersKey, out IEnumerable<ChapterResponseModel>? response))
             {
-                chapters = await _chapterRepository.GetListAsync();
-
-                if (chapters == null)
+                try
                 {
-                    return StatusCode(500, new { errorText = "Ошибка сервера" });
-                }
-            }
-            catch (Exception ex) 
-            {
-                return StatusCode(500, new { errorText = ex.Message });
-            }
+                    var chapters = await _chapterRepository.GetListAsync();
 
-            var response = _mapper.Map<IEnumerable<ChapterResponseModel>>(chapters);
+                    if (chapters == null)
+                    {
+                        return StatusCode(500, new { errorText = "Ошибка сервера" });
+                    }
+
+                    response = _mapper.Map<IEnumerable<ChapterResponseModel>>(chapters);
+                    _memoryCache.Set(ChaptersKey, response, TimeSpan.FromMinutes(5));
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, new { errorText = ex.Message });
+                }                
+            }
 
             return Ok(response);
         }
@@ -111,14 +124,18 @@ namespace Delopro.Server.Controllers
         [Route("[action]")]
         public async Task<IActionResult> GetNodes()
         {
-            var chapters = await _chapterRepository.GetListAsync();
-
-            if (chapters == null)
+            if (!_memoryCache.TryGetValue(ChapterNodesKey, out IEnumerable<ChapterNode>? response))
             {
-                return StatusCode(500, new { errorText = "Ошибка сервера" });
-            }
+                var chapters = await _chapterRepository.GetListAsync();
 
-            var response = _mapper.Map<IEnumerable<ChapterNode>>(chapters);
+                if (chapters == null)
+                {
+                    return StatusCode(500, new { errorText = "Ошибка сервера" });
+                }
+
+                response = _mapper.Map<IEnumerable<ChapterNode>>(chapters);
+                _memoryCache.Set(ChapterNodesKey, response, TimeSpan.FromMinutes(5));
+            }
 
             return Ok(response);
         }
@@ -149,6 +166,8 @@ namespace Delopro.Server.Controllers
             try
             {
                 await _chapterRepository.UpdateAsync(chapter);
+                _memoryCache.Remove(ChaptersKey);
+                _memoryCache.Remove(ChapterNodesKey);
             }
             catch (SqlException)
             {

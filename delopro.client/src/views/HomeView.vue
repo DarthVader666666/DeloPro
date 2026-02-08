@@ -1,6 +1,6 @@
 <script setup>
 import { useStore } from 'vuex';
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { RouterLink } from 'vue-router';
 import { helper } from '@/helper/helper';
 import SpinningCircle from '@/components/SpinningCircle.vue';
@@ -9,12 +9,18 @@ const store = useStore();
 const pending = computed(() => store.getters.getPending);
 const chapters = computed(() => store.getters.getChapters);
 
+onMounted(async () => {
+  if(!store.getters.getCurrentUser) {
+    await store.dispatch('downloadCurrentUser');
+  }
+});
+
 </script>
 
 <template>
     <div class="chapters-container">
         <div class="chapters-header">
-            <h1>Документационное обеспечение управления</h1>    
+            <h1>Документационное обеспечение управления</h1>
         </div>
         <div class="chapter-links">
         <div v-if="pending" style="display: flex; flex-direction: column; align-items: center;">
@@ -22,7 +28,7 @@ const chapters = computed(() => store.getters.getChapters);
             <SpinningCircle></SpinningCircle>
         </div>
             <div v-else v-for="(chapter, index) in chapters" :key="index" class="chapter">
-                <RouterLink :to="`/chapters/${chapter.chapterId}${chapter.themes.length > 0 ? '/' + chapter.themes[0].themeId : '' }`" >
+                <RouterLink :to="`/chapters/${chapter.chapterId}`+`${chapter.themes.length > 0 ? '/' + chapter.themes[0].themeId : '' }`" >
                     <img :src="helper.getImagePath() + chapter.imagePath" width="150px" height="auto">
                     <p>{{ chapter.chapterTitle }}</p>
                 </RouterLink>
@@ -59,12 +65,12 @@ const chapters = computed(() => store.getters.getChapters);
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-decoration: none;    
+    text-decoration: none;
 }
 
 .chapter a {
     text-decoration: none;
-    color: var(--TEXT-COLOR);    
+    color: var(--TEXT-COLOR);
 }
 
 .chapter p {
@@ -99,7 +105,7 @@ const chapters = computed(() => store.getters.getChapters);
 
   .chapter p {
     font-size: small;
-  } 
+  }
 
   h1 {
     font-size: large;

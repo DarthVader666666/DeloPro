@@ -21,7 +21,7 @@ namespace Delopro.Server.Controllers
         private readonly UserManager _userManager;
         private readonly IMapper _mapper;
         private readonly IMemoryCache _memoryCache;
-        private const string baseThemeKey = "theme_id=";
+        private const string BaseThemeKey = "theme_id=";
 
         public ThemesController(IRepository<Theme> themesRepository, UserManager userManager, IMapper mapper, IMemoryCache memoryCache)
         {
@@ -36,11 +36,11 @@ namespace Delopro.Server.Controllers
         [TrackIpAddress]
         public async Task<IActionResult> Get(int themeId)
         {
-            if (!_memoryCache.TryGetValue($"theme_id={themeId}", out Theme? theme))
+            if (!_memoryCache.TryGetValue($"{BaseThemeKey}{themeId}", out Theme? theme))
             {
                 theme = await _themeRepository.GetAsync(themeId);
 
-                _memoryCache.Set($"{baseThemeKey}{themeId}", theme, TimeSpan.FromMinutes(5));
+                _memoryCache.Set($"{BaseThemeKey}{themeId}", theme, TimeSpan.FromMinutes(5));
             }
 
             return Ok(theme);
@@ -114,7 +114,7 @@ namespace Delopro.Server.Controllers
                 return StatusCode(500, new { errorText = "Ошибка базы данных" });
             }
 
-            _memoryCache.Remove($"{baseThemeKey}{theme.ThemeId}");
+            _memoryCache.Remove($"{BaseThemeKey}{theme.ThemeId}");
 
             return Ok();
         }

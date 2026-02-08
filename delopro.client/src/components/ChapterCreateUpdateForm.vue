@@ -100,12 +100,12 @@ function handleSelect(value) {
             <div class="buttons">
                 <Button type="submit" disabled raised severity="secondary" label="Сохранить" id="save-button"/>
                 <Button type="button" @click="handleCancel" raised severity="contrast" label="Отменить"/>
-            </div>        
+            </div>
         </form>
         <div class="image">
             <img :src="imagePath ? imagePath : (helper.getImagePath() + chapter.imagePath)" width="150px" height="120px">
         </div>
-    </div>    
+    </div>
 </template>
 
 <style scoped>

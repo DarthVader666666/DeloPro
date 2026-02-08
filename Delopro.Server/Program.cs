@@ -33,6 +33,9 @@ builder.Services.AddLogging(logs =>
 builder.Services.AddControllers().AddJsonOptions(x =>
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultChallengeScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
@@ -164,12 +167,16 @@ app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseCors("AllowClient");
 app.UseCookiePolicy(
     new CookiePolicyOptions
     {
         Secure = CookieSecurePolicy.Always
     });
+
+app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();

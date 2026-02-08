@@ -54,7 +54,7 @@ async function removeTheme(themeId) {
         }
     });
 
-    clearNewTheme();    
+    clearNewTheme();
 }
 
 function changeFormStatus() {
@@ -72,32 +72,30 @@ async function addNewTheme() {
 
     const url = store.state.serverUrl;
 
-    await axios.post(`${url}/themes/create`,  newTheme.value,
-    {
+    const response = await axios.post(`${url}/themes/create`,  newTheme.value, {
         headers: {
             'Content': 'application/json',
             'Accept': '*/*'
         }
-    })
-    .then(response => {
-        if(response.status === 200) {
-            toast.success('Тема успешно добавлена');
-            store.dispatch('downloadChapters');
-            store.dispatch('downloadChapter',  chapter.value.chapterId);
-        }
-    })
-    .catch(error => {
-        if(error.response) {
-            toast.error(error.response.data.errorText);
-        }
     });
+
+    if(response.status === 200) {
+      toast.success('Тема успешно добавлена');
+      store.dispatch('downloadChapter',  chapter.value.chapterId);
+      sessionStorage.removeItem(store.state.sessionStorageKeys.chaptersKey);
+      sessionStorage.removeItem(store.state.sessionStorageKeys.chapterNodesKey);
+      await store.dispatch('downloadChapters');
+    }
+    else {
+      toast.error(response.data.errorText);
+    }
 
     changeFormStatus();
     clearNewTheme();
 }
 
-function Cancel() {
-    router.push(`/chapters/${chapter.value.chapterId}`)
+function cancel() {
+    router.push(`/chapters/${chapter.value.chapterId}${chapter.value.themes.length > 0 ? '/' + chapter.value.themes[0].themeId : '' }`)
 }
 
 function clearNewTheme() {
@@ -105,55 +103,15 @@ function clearNewTheme() {
     newTheme.value.content = null;
 }
 
-function handleDeleteChapter() {
-    if(!window.confirm('Этот раздел и его темы будут удалены. Вы уверены?')) {
-        return;
-    }
-
-    const url = `${store.state.serverUrl}/chapters/delete/` + chapter.value.chapterId;
-
-    axios.delete(url, null)
-        .then(async response => {
-            const status = response.status
-            if(status === 200) {
-                toast.success('Раздел успешно удален');
-                await store.dispatch('downloadChapters');
-                router.push(`/`);
-            }
-        })
-        .catch(error => {
-            if(error.response) {
-                toast.error(error.response.data.errorText)
-            }
-        });
+async function handleDeleteChapter() {
+  await store.dispatch('deleteChapter', chapter.value);
 }
 
 async function updateChapter(updatedChapter) {
     chapter.value.chapterTitle = updatedChapter.chapterTitle;
     chapter.value.imagePath = updatedChapter.imagePath;
 
-    const url = store.state.serverUrl;
-
-    await axios.put(`${url}/chapters/update`,  chapter.value,
-    {
-        headers: {
-            'Content': 'application/json',
-            'Accept': '*/*'
-        }
-    })
-    .then(response => {
-        if(response.status === 200) {
-            toast.success('Раздел успешно обновлен');
-            store.dispatch('downloadChapters');
-            store.dispatch('downloadChapter',  chapter.value.chapterId);
-            router.push(`/chapters/${chapter.value.chapterId}`)
-        }
-    })
-    .catch(error => {
-        if(error.response) {
-            toast.error(error.response.data.errorText)
-        }
-    });
+    await store.dispatch('updateChapter', chapter.value);
 }
 
 </script>
@@ -161,10 +119,10 @@ async function updateChapter(updatedChapter) {
 <template>
 <div v-if="chapter && (isAdmin || isOwner)" class="edit-chapter-container">
     <div>
-        <ChapterCreateUpdateForm v-if="!isFormActive" :chapter="chapter" @updateChapter="updateChapter" @cancel="Cancel"/>
+        <ChapterCreateUpdateForm v-if="!isFormActive" :chapter="chapter" @updateChapter="updateChapter" @cancel="cancel"/>
         <hr v-if="!isFormActive"/>
         <div class="add-new-theme">
-            <h3>Темы:</h3>            
+            <h3>Темы:</h3>
             <Button @click="changeFormStatus" raised :severity="isFormActive ? 'contrast' : 'secondary'">
                 <i :class="isFormActive ? 'pi pi-minus' : 'pi pi-plus'"></i><span>Новая тема</span>
             </Button>
@@ -187,7 +145,7 @@ async function updateChapter(updatedChapter) {
             <i class="pi pi-trash"></i>
             <span>Удалить</span>
         </Button>
-    </div>        
+    </div>
 </div>
 
 </template>
@@ -231,7 +189,7 @@ async function updateChapter(updatedChapter) {
     margin-top: 0;
 }
 
-.expanded {    
+.expanded {
     animation-name: slide-in;
     animation-duration: 1s;
 }

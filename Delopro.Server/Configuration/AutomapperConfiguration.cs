@@ -15,7 +15,7 @@ namespace Delopro.Server.Configurations
     {
         public static void ConfigureAutomapper(this IServiceCollection services)
         {
-            services.AddSingleton(provider =>
+            _ = services.AddSingleton(provider =>
             {
                 var cryptoService = provider.GetRequiredService<CryptoService>();
 
@@ -28,9 +28,9 @@ namespace Delopro.Server.Configurations
                         .ForMember(dest => dest.IsConfirmed, opts => opts.Ignore());
 
                     autoMapperConfig.CreateMap<Chapter, ChapterResponseModel>()
-                        .ForMember(dest => dest.Themes, opts => opts.MapFrom(src => 
-                            src.Themes == null 
-                            ? Array.Empty<ThemeResponseModel>() 
+                        .ForMember(dest => dest.Themes, opts => opts.MapFrom(src =>
+                            src.Themes == null
+                            ? Array.Empty<ThemeResponseModel>()
                             : src.Themes.Select(x => new ThemeResponseModel
                             {
                                 ThemeId = x.ThemeId,
@@ -69,12 +69,12 @@ namespace Delopro.Server.Configurations
 
                     autoMapperConfig.CreateMap<User, UserShortResponseModel>()
                         .ForMember(dest => dest.Email, opts => opts.MapFrom(src => cryptoService.Decrypt(src.Email)))
-                        .ForMember(dest => dest.Roles, opts => opts.MapFrom(src => 
-                            src.UserRoles != null 
-                            ? string.Join(", ", src.UserRoles.Select(x => GetEnumDescription((UserRoleType)x.RoleId))) 
+                        .ForMember(dest => dest.Roles, opts => opts.MapFrom(src =>
+                            src.UserRoles != null
+                            ? string.Join(", ", src.UserRoles.Select(x => GetEnumDescription((UserRoleType)x.RoleId)))
                             : "")
                         )
-                        .ForMember(dest => dest.Status, opts => opts.MapFrom(src => src.IsDeleted ? UserStatus.Deleted : 
+                        .ForMember(dest => dest.Status, opts => opts.MapFrom(src => src.IsDeleted ? UserStatus.Deleted :
                             (src.IsConfirmed ? UserStatus.Confirmed : UserStatus.NotConfirmed))
                         )
                         .ForMember(dest => dest.Avatar, opts => opts.MapFrom(src =>
@@ -100,11 +100,11 @@ namespace Delopro.Server.Configurations
                         .ForMember(dest => dest.RegisterDate, opts => opts.MapFrom(src => src.RegisterDate != null ? ((DateTime)src.RegisterDate).ToShortDateString() : null))
                         .ForMember(dest => dest.Roles, opts => opts.MapFrom(src =>
                             src.UserRoles != null
-                            ? string.Join(", ", src.UserRoles.Select(x => GetEnumDescription((UserRoleType)x.RoleId)))
-                            : "")
+                            ? src.UserRoles.Select(x => GetEnumDescription((UserRoleType)x.RoleId))
+                            : Enumerable.Empty<string?>())
                         );
 
-                    autoMapperConfig.CreateMap<UserAccountUpdateModel, User>()                        
+                    autoMapperConfig.CreateMap<UserAccountUpdateModel, User>()
                         .ForMember(dest => dest.FirstName, opts => opts.MapFrom(src => cryptoService.Encrypt(src.FirstName)))
                         .ForMember(dest => dest.LastName, opts => opts.MapFrom(src => cryptoService.Encrypt(src.LastName)))
                         .ForMember(dest => dest.Email, opts => opts.MapFrom(src => cryptoService.Encrypt(src.Email)))

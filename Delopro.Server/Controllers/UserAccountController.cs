@@ -9,8 +9,10 @@ using Delopro.Data.Interfaces;
 using Delopro.Server.Attributes;
 using Delopro.Server.Models;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Delopro.Server.Controllers
 {
@@ -18,38 +20,46 @@ namespace Delopro.Server.Controllers
     [Route("api/[controller]")]
     public class UserAccountController: ControllerBase
     {
+        private const string CurrentUserKey = "currentUser";
+
         private readonly UserManager _userManager;
         private readonly IRepository<User> _userRepository;
         private readonly CryptoService _cryptoService;
         private readonly IMapper _mapper;
+        private readonly IMemoryCache _memoryCache;
 
-        public UserAccountController(UserManager userManager, IRepository<User> userRepository, CryptoService cryptoService, IMapper mapper)
+        public UserAccountController(UserManager userManager, IRepository<User> userRepository, CryptoService cryptoService, IMapper mapper, IMemoryCache memoryCache)
         {
             _userManager = userManager;
             _userRepository = userRepository;
             _cryptoService = cryptoService;
             _mapper = mapper;
+            _memoryCache = memoryCache;
         }
 
         [HttpGet]
         [Route("[action]")]
-        [TrackIpAddress]
         public async Task<IActionResult> GetCurrentUser()
         {
-            var user = await _userManager.GetCurrentUserAsync(HttpContext);
-
-            if (user == null)
+            if (!_memoryCache.TryGetValue(CurrentUserKey, out UserAccountResponseModel? userAccountResponseModel))
             {
-                return StatusCode(400, new { errorText = "Пользователь не найден" });
+                var user = await _userManager.GetCurrentUserAsync(HttpContext);
+
+                if (user == null)
+                {
+                    return Ok("Пользователь не аутентифицирован");
+                }
+
+                userAccountResponseModel = _mapper.Map<UserAccountResponseModel>(user);
+                _memoryCache.Set(CurrentUserKey, userAccountResponseModel, TimeSpan.FromMinutes(5));
             }
 
-            var userLongResponseModel = _mapper.Map<UserAccountResponseModel>(user);
-
-            return Ok(userLongResponseModel);
+            return Ok(userAccountResponseModel);
         }
 
         [HttpPost]
         [Route("[action]")]
+        [Authorize]
         [TrackIpAddress]
         public async Task<IActionResult> UpdateCurrentUser([FromForm] UserAccountUpdateRequestModel userAccountUpdateRequestModel)
         {
@@ -83,7 +93,7 @@ namespace Delopro.Server.Controllers
 
                 if (userAccountUpdateRequestModel.Avatar is not null)
                 {
-                    if (!userAccount.DeleteAvatar)
+                    if (userAccount.DeleteAvatar)
                     {
                         var oldAvatars = Directory.GetFiles(ConfigurationHelper.AvatarsPath!, $"user_{user.UserId}*");
 
@@ -91,7 +101,9 @@ namespace Delopro.Server.Controllers
                         {
                             System.IO.File.Delete(oldAvatar);
                         }
-
+                    }
+                    else
+                    {
                         using var stream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
                         await userAccountUpdateRequestModel.Avatar.CopyToAsync(stream);
 
@@ -99,17 +111,20 @@ namespace Delopro.Server.Controllers
                             ? $"/src/assets/avatars/{fileName}"
                             : filePath.Replace(ConfigurationHelper.WebRootPath!, string.Empty);
                     }
-                    else
+                }                
+                
+                if(userAccount.DeleteAvatar)
+                {
+                    if (System.IO.File.Exists(filePath))
                     {
-                        if (System.IO.File.Exists(filePath))
-                        {
-                            System.IO.File.Delete(filePath);
-                            user.AvatarPath = null;
-                        }
+                        System.IO.File.Delete(filePath);                        
                     }
+
+                    user.AvatarPath = null;
                 }
 
                 await _userRepository.UpdateAsync(user);
+                _memoryCache.Remove(CurrentUserKey);
             }
             catch(Exception ex)
             {

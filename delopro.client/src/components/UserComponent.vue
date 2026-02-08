@@ -33,7 +33,7 @@ function defineUpdatedUserFileds(user = null) {
     updatedUser.value.status = user.status;
     updatedUser.value.roles = user.roles;
 
-    selectedRoles.value = helper.userRoles.filter(x => user.roles.includes(helper.userRoles.indexOf(x)));
+    selectedRoles.value = helper.roles.filter(x => user.roles.includes(helper.roles.indexOf(x)));
 }
 
 function handleUpdateStatus(status) {
@@ -49,7 +49,7 @@ function handleUpdateStatus(status) {
 }
 
 async function handleUpdateRoles(roles) {
-    updatedUser.value.roles = roles.map(x => helper.userRoles.indexOf(x));
+    updatedUser.value.roles = roles.map(x => helper.roles.indexOf(x));
 }
 
 function handleCancel() {
@@ -83,7 +83,7 @@ async function updateUser() {
 
 </script>
 
-<template>    
+<template>
 
 <div class="user">
     <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 30px;">
@@ -132,7 +132,7 @@ async function updateUser() {
                 </template>
             </Select>
             <span style="font-weight: bold;">Роли:</span>
-            <MultiSelect @update:model-value="handleUpdateRoles" v-model:model-value="selectedRoles" :options="helper.userRoles" class="selector" />
+            <MultiSelect @update:model-value="handleUpdateRoles" v-model:model-value="selectedRoles" :options="helper.roles" class="selector" />
         </div>
     </div>
     <div class="buttons">
@@ -144,7 +144,7 @@ async function updateUser() {
             <i class="pi pi-ban"></i>
             <span>Отменить</span>
         </Button>
-    </div>  
+    </div>
 </div>
 </template>
 
@@ -167,8 +167,8 @@ async function updateUser() {
 }
 
 .user-fields {
-    display: flex; 
-    flex-direction: column; 
+    display: flex;
+    flex-direction: column;
     gap: 5px;
 }
 

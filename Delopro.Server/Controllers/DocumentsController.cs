@@ -8,8 +8,9 @@ using Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Delopro.Server.Controllers
 {
@@ -18,41 +19,49 @@ namespace Delopro.Server.Controllers
     [ApiController]
     public class DocumentsController : ControllerBase
     {
+        private const string DocumentsKey = "documents";
+        private const string DocumentNodesKey = "documentNodes";
+
         private readonly string? docsPath;
         private readonly string? documentsDirectoryName;
         private readonly string? webRootPath;
 
         private readonly IDriveService _driveService;
+        private readonly IMemoryCache _memoryCache;
 
-        public DocumentsController(IDriveService driveService)
+        public DocumentsController(IDriveService driveService, IMemoryCache memoryCache)
         {
             docsPath = ConfigurationHelper.DocsPath;
             webRootPath = ConfigurationHelper.WebRootPath;
             documentsDirectoryName = ConfigurationHelper.DocsFolderName;
             _driveService = driveService;
+            _memoryCache = memoryCache;
         }
 
         [HttpGet]
         [Route("[action]")]
         public IActionResult GetList()
         {
-            var documentResponseModels = Enumerable.Empty<DocumentResponseModel>();
+            if (!_memoryCache.TryGetValue(DocumentNodesKey, out IEnumerable<DocumentResponseModel>? documentResponseModels))
+            {
+                try
+                {
+                    documentResponseModels = new DirectoryInfo(docsPath ?? throw new NullReferenceException("Не задан путь к фалу")).GetFiles()
+                        .Select(x =>
+                            new DocumentResponseModel
+                            {
+                                Name = x.Name,
+                                Path = docsPath
+                            }
+                        );
 
-            try
-            {
-                documentResponseModels = new DirectoryInfo(docsPath ?? throw new NullReferenceException("Не задан путь к фалу")).GetFiles()
-                .Select(x =>
-                    new DocumentResponseModel
-                    {
-                        Name = x.Name,
-                        Path = docsPath
-                    }
-                );
+                    _memoryCache.Set(DocumentsKey, documentResponseModels, TimeSpan.FromMinutes(5));
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = ex.Message });
+                }
             }
-            catch(Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = ex.Message });
-            }            
 
             return Ok(documentResponseModels);
         }
@@ -102,17 +111,21 @@ namespace Delopro.Server.Controllers
         [Route("[action]")]
         public IActionResult GetNodes()
         {
-            try
+            if (!_memoryCache.TryGetValue(DocumentNodesKey, out DocumentNode? node))
             {
-                var node = new DocumentNode();
-                FillNodes(docsPath, node);
+                try
+                {
+                    node = new DocumentNode();
+                    FillNodes(docsPath, node);
+                    _memoryCache.Set(DocumentNodesKey, node, TimeSpan.FromMinutes(5));
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = ex.Message });
+                }
+            }
 
-                return Ok(new List<DocumentNode> { node });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = ex.Message });
-            }
+            return Ok(new List<DocumentNode?> { node });
         }
 
         [HttpPost]
@@ -121,7 +134,7 @@ namespace Delopro.Server.Controllers
         public async Task<IActionResult> Delete()
         {
             var reader = new StreamReader(HttpContext.Request.Body);
-            var documentPathModel = JsonConvert.DeserializeObject<DocumentPathModel>(await reader.ReadToEndAsync());
+            var documentPathModel = JsonSerializer.Deserialize<DocumentPathModel>(await reader.ReadToEndAsync());
 
             if (documentPathModel == null || documentPathModel.Path == null || documentPathModel.Type == null)
             {
@@ -138,6 +151,9 @@ namespace Delopro.Server.Controllers
                     {
                         System.IO.File.Delete(path);
                         _ = Task.Run(() => _driveService.Delete(path));
+
+                        _memoryCache.Remove(DocumentsKey);
+                        _memoryCache.Remove(DocumentNodesKey);
                     }
                     else
                     {
@@ -178,7 +194,7 @@ namespace Delopro.Server.Controllers
         public async Task<IActionResult> AddFolder()
         {
             var reader = new StreamReader(HttpContext.Request.Body);
-            var folderPath = JsonConvert.DeserializeObject<FolderPathModel>(await reader.ReadToEndAsync())?.FolderPath?.Replace('-', ' ');
+            var folderPath = JsonSerializer.Deserialize<FolderPathModel>(await reader.ReadToEndAsync())?.FolderPath?.Replace('-', ' ');
             var path = Path.Combine(webRootPath!, folderPath!);
 
             try
@@ -187,6 +203,9 @@ namespace Delopro.Server.Controllers
                 {
                     Directory.CreateDirectory(path ?? throw new NullReferenceException());
                     _ = Task.Run(() => _driveService.CreateFolder(folderPath));
+
+                    _memoryCache.Remove(DocumentsKey);
+                    _memoryCache.Remove(DocumentNodesKey);
                 }
                 else
                 {
@@ -245,6 +264,9 @@ namespace Delopro.Server.Controllers
                             _driveService.CreateFile(filePath);
                         }
                     }
+
+                    _memoryCache.Remove(DocumentsKey);
+                    _memoryCache.Remove(DocumentNodesKey);
                 });
             }
             catch (GoogleApiException)
@@ -294,6 +316,9 @@ namespace Delopro.Server.Controllers
                 {
                     return BadRequest(new { errorText = "Не указан тип документа" });
                 }
+
+                _memoryCache.Remove(DocumentsKey);
+                _memoryCache.Remove(DocumentNodesKey);
             }
             catch
             {
@@ -309,7 +334,7 @@ namespace Delopro.Server.Controllers
         public async Task<IActionResult> Move()
         {
             var reader = new StreamReader(HttpContext.Request.Body);
-            var moveFileModel = JsonConvert.DeserializeObject<MoveFileModel>(await reader.ReadToEndAsync());
+            var moveFileModel = JsonSerializer.Deserialize<MoveFileModel>(await reader.ReadToEndAsync());
 
             if (moveFileModel == null || moveFileModel.OldPath == null || moveFileModel.NewPath == null)
             {
@@ -344,7 +369,10 @@ namespace Delopro.Server.Controllers
                     }
 
                     _driveService.CreateFile(newPath);
-                });                
+                });
+
+                _memoryCache.Remove(DocumentsKey);
+                _memoryCache.Remove(DocumentNodesKey);
 
                 return Ok(new { okText = $"Файл \"{Path.GetFileName(oldPath)}\" успешно перемещен" });
             }

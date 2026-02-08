@@ -114,7 +114,7 @@ export const helper = {
                 return null;
         }
     },
-    userRoles: ['Owner','Admin','User'],
+    roles: ['Owner','Admin','User'],
     getFutureDate(days) {
         let date = this.getCurrentDate();
         const result = new Date(date);

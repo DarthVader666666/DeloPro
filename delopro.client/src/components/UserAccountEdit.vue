@@ -2,7 +2,7 @@
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Textarea from 'primevue/textarea';
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 import axios from 'axios';
 import { useToast } from 'vue-toastification';
@@ -38,7 +38,8 @@ const props = defineProps(
     }
 });
 
-let updatedUser = reactive({
+let updatedUser = computed(() => {
+  return {
     nickname: props.user ? props.user.nickname : null,
     firstName: props.user ? props.user.firstName : null,
     lastName: props.user ? props.user.lastName : null,
@@ -50,12 +51,13 @@ let updatedUser = reactive({
     email: props.user ? props.user.email : null,
     phone: props.user ? props.user.phone : null,
     deleteAvatar: false
+  }
 });
 
 const showNicknameError = ref(false);
 const showEmailError = ref(false);
 
-const needLogout = computed(() => updatedUser.nickname != props.user.nickname || updatedUser.email != props.user.email);
+const needLogout = computed(() => updatedUser.value.nickname != props.user.nickname || updatedUser.value.email != props.user.email);
 
 watch(updatedUser, () => {
     emit('setIsSaveDisabled', false);
@@ -73,7 +75,7 @@ const emit = defineEmits(['switchToInfoMode','switchToAvatarMode','setAvatarFile
 
 function getConvertedDate() {
     if(props.user.birthDate) {
-        const [day, month, year] = props.user.birthDate.split('.'); 
+        const [day, month, year] = props.user.birthDate.split('.');
         return `${year}-${month}-${day}`
     }
     else {
@@ -94,13 +96,13 @@ async function handleUserAccountUpdate() {
     if(needLogout.value) {
         window.confirm('Внимание! После обновления данных необходимо будет заново войти в систему');
     }
-    
-    if(!updatedUser.birthDate) {
-        updatedUser.birthDate = null;
-    }   
+
+    if(!updatedUser.value.birthDate) {
+        updatedUser.value.birthDate = null;
+    }
 
     const formData = new FormData();
-    formData.append('user', JSON.stringify(updatedUser));
+    formData.append('user', JSON.stringify(updatedUser.value));
 
     if(props.avatarFile) {
         formData.append('avatar', props.avatarFile);
@@ -121,7 +123,7 @@ async function handleUserAccountUpdate() {
         const status = response.status;
 
         if(status === 200) {
-            toast.success(response.data.okText);            
+            toast.success(response.data.okText);
         }
     })
     .catch(error => {
@@ -134,7 +136,7 @@ async function handleUserAccountUpdate() {
         await store.dispatch('downloadCurrentUser');
         emit('switchToInfoMode');
     }
-    else {                
+    else {
         await axios.post(`${store.getters.serverUrl}/authentication/logout`, {
         headers: {
             'Content-Type': 'application/json'
@@ -159,7 +161,7 @@ async function handleUserAccountUpdate() {
 function handleDeleteAvatar() {
     if (window.confirm("Вы уверены, что хотите удалить аватар?")) {
         emit('setAvatarFile', null);
-        updatedUser.deleteAvatar = true;
+        updatedUser.value.deleteAvatar = true;
     }
 }
 
