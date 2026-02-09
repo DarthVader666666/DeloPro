@@ -93,11 +93,14 @@ namespace Delopro.Server.Controllers
 
                 var oldAvatars = Directory.GetFiles(ConfigurationHelper.AvatarsPath!, $"user_{user.UserId}*");
 
-                foreach (var oldAvatar in oldAvatars)
+                if (userAccount.DeleteAvatar || userAccountUpdateRequestModel.Avatar is not null)
                 {
-                    System.IO.File.Delete(oldAvatar);
+                    foreach (var oldAvatar in oldAvatars)
+                    {
+                        System.IO.File.Delete(oldAvatar);
+                    }
                 }
-
+                
                 if (userAccount.DeleteAvatar)
                 {
                     user.AvatarPath = null;
