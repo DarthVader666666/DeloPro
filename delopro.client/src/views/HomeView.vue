@@ -9,11 +9,11 @@ const store = useStore();
 const pending = computed(() => store.getters.getPending);
 const chapters = computed(() => store.getters.getChapters);
 
-onMounted(async () => {
-  if(!store.getters.getCurrentUser) {
-    await store.dispatch('downloadCurrentUser');
-  }
-});
+// onMounted(async () => {
+//   if(store.getters.isAuthenticated) {
+//     await store.dispatch('downloadCurrentUser');
+//   }
+// });
 
 </script>
 

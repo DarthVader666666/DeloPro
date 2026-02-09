@@ -1,5 +1,6 @@
 ﻿using Delopro.Bll;
 using Delopro.Bll.Interfaces;
+using Delopro.Server.Configuration;
 using Delopro.Server.Enums;
 using Delopro.Server.Models;
 
@@ -19,9 +20,6 @@ namespace Delopro.Server.Controllers
     [ApiController]
     public class DocumentsController : ControllerBase
     {
-        private const string DocumentsKey = "documents";
-        private const string DocumentNodesKey = "documentNodes";
-
         private readonly string? docsPath;
         private readonly string? documentsDirectoryName;
         private readonly string? webRootPath;
@@ -42,7 +40,7 @@ namespace Delopro.Server.Controllers
         [Route("[action]")]
         public IActionResult GetList()
         {
-            if (!_memoryCache.TryGetValue(DocumentNodesKey, out IEnumerable<DocumentResponseModel>? documentResponseModels))
+            if (!_memoryCache.TryGetValue(CacheKeys.DocumentNodesKey, out IEnumerable<DocumentResponseModel>? documentResponseModels))
             {
                 try
                 {
@@ -55,7 +53,7 @@ namespace Delopro.Server.Controllers
                             }
                         );
 
-                    _memoryCache.Set(DocumentsKey, documentResponseModels, TimeSpan.FromMinutes(5));
+                    _memoryCache.Set(CacheKeys.DocumentsKey, documentResponseModels, TimeSpan.FromMinutes(5));
                 }
                 catch (Exception ex)
                 {
@@ -111,13 +109,13 @@ namespace Delopro.Server.Controllers
         [Route("[action]")]
         public IActionResult GetNodes()
         {
-            if (!_memoryCache.TryGetValue(DocumentNodesKey, out DocumentNode? node))
+            if (!_memoryCache.TryGetValue(CacheKeys.DocumentNodesKey, out DocumentNode? node))
             {
                 try
                 {
                     node = new DocumentNode();
                     FillNodes(docsPath, node);
-                    _memoryCache.Set(DocumentNodesKey, node, TimeSpan.FromMinutes(5));
+                    _memoryCache.Set(CacheKeys.DocumentNodesKey, node, TimeSpan.FromMinutes(5));
                 }
                 catch (Exception ex)
                 {
@@ -152,8 +150,8 @@ namespace Delopro.Server.Controllers
                         System.IO.File.Delete(path);
                         _ = Task.Run(() => _driveService.Delete(path));
 
-                        _memoryCache.Remove(DocumentsKey);
-                        _memoryCache.Remove(DocumentNodesKey);
+                        _memoryCache.Remove(CacheKeys.DocumentsKey);
+                        _memoryCache.Remove(CacheKeys.DocumentNodesKey);
                     }
                     else
                     {
@@ -204,8 +202,8 @@ namespace Delopro.Server.Controllers
                     Directory.CreateDirectory(path ?? throw new NullReferenceException());
                     _ = Task.Run(() => _driveService.CreateFolder(folderPath));
 
-                    _memoryCache.Remove(DocumentsKey);
-                    _memoryCache.Remove(DocumentNodesKey);
+                    _memoryCache.Remove(CacheKeys.DocumentsKey);
+                    _memoryCache.Remove(CacheKeys.DocumentNodesKey);
                 }
                 else
                 {
@@ -265,8 +263,8 @@ namespace Delopro.Server.Controllers
                         }
                     }
 
-                    _memoryCache.Remove(DocumentsKey);
-                    _memoryCache.Remove(DocumentNodesKey);
+                    _memoryCache.Remove(CacheKeys.DocumentsKey);
+                    _memoryCache.Remove(CacheKeys.DocumentNodesKey);
                 });
             }
             catch (GoogleApiException)
@@ -317,8 +315,8 @@ namespace Delopro.Server.Controllers
                     return BadRequest(new { errorText = "Не указан тип документа" });
                 }
 
-                _memoryCache.Remove(DocumentsKey);
-                _memoryCache.Remove(DocumentNodesKey);
+                _memoryCache.Remove(CacheKeys.DocumentsKey);
+                _memoryCache.Remove(CacheKeys.DocumentNodesKey);
             }
             catch
             {
@@ -371,8 +369,8 @@ namespace Delopro.Server.Controllers
                     _driveService.CreateFile(newPath);
                 });
 
-                _memoryCache.Remove(DocumentsKey);
-                _memoryCache.Remove(DocumentNodesKey);
+                _memoryCache.Remove(CacheKeys.DocumentsKey);
+                _memoryCache.Remove(CacheKeys.DocumentNodesKey);
 
                 return Ok(new { okText = $"Файл \"{Path.GetFileName(oldPath)}\" успешно перемещен" });
             }

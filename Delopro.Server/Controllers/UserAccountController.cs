@@ -7,6 +7,7 @@ using Delopro.Bll.Services;
 using Delopro.Data.Entities;
 using Delopro.Data.Interfaces;
 using Delopro.Server.Attributes;
+using Delopro.Server.Configuration;
 using Delopro.Server.Models;
 
 using Microsoft.AspNetCore.Authorization;
@@ -20,8 +21,6 @@ namespace Delopro.Server.Controllers
     [Route("api/[controller]")]
     public class UserAccountController: ControllerBase
     {
-        private const string CurrentUserKey = "currentUser";
-
         private readonly UserManager _userManager;
         private readonly IRepository<User> _userRepository;
         private readonly CryptoService _cryptoService;
@@ -41,17 +40,18 @@ namespace Delopro.Server.Controllers
         [Route("[action]")]
         public async Task<IActionResult> GetCurrentUser()
         {
-            if (!_memoryCache.TryGetValue(CurrentUserKey, out UserAccountResponseModel? userAccountResponseModel))
+            if (!_memoryCache.TryGetValue(CacheKeys.CurrentUserKey, out UserAccountResponseModel? userAccountResponseModel))
             {
                 var user = await _userManager.GetCurrentUserAsync(HttpContext);
 
-                //if (user == null)
-                //{
-                //    return Ok("Пользователь не аутентифицирован");
-                //}
+                if (user == null)
+                {
+                    _memoryCache.Remove(CacheKeys.CurrentUserKey);
+                    return Ok();
+                }
 
                 userAccountResponseModel = _mapper.Map<UserAccountResponseModel>(user);
-                _memoryCache.Set(CurrentUserKey, userAccountResponseModel, TimeSpan.FromMinutes(5));
+                _memoryCache.Set(CacheKeys.CurrentUserKey, userAccountResponseModel, TimeSpan.FromMinutes(5));
             }
 
             return Ok(userAccountResponseModel);
@@ -91,40 +91,32 @@ namespace Delopro.Server.Controllers
                 user.Email = _cryptoService.Encrypt(userAccount.Email);
                 user.Phone = _cryptoService.Encrypt(userAccount.Phone);
 
-                if (userAccountUpdateRequestModel.Avatar is not null)
-                {
-                    if (userAccount.DeleteAvatar)
-                    {
-                        var oldAvatars = Directory.GetFiles(ConfigurationHelper.AvatarsPath!, $"user_{user.UserId}*");
+                var oldAvatars = Directory.GetFiles(ConfigurationHelper.AvatarsPath!, $"user_{user.UserId}*");
 
-                        foreach (var oldAvatar in oldAvatars)
-                        {
-                            System.IO.File.Delete(oldAvatar);
-                        }
-                    }
-                    else
+                foreach (var oldAvatar in oldAvatars)
+                {
+                    System.IO.File.Delete(oldAvatar);
+                }
+
+                if (userAccount.DeleteAvatar)
+                {
+                    user.AvatarPath = null;
+                }
+                else
+                {
+                    if (userAccountUpdateRequestModel.Avatar is not null)
                     {
                         using var stream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
                         await userAccountUpdateRequestModel.Avatar.CopyToAsync(stream);
+                    }
 
-                        user.AvatarPath = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"
+                    user.AvatarPath = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"
                             ? $"/src/assets/avatars/{fileName}"
                             : filePath.Replace(ConfigurationHelper.WebRootPath!, string.Empty);
-                    }
-                }                
-                
-                if(userAccount.DeleteAvatar)
-                {
-                    if (System.IO.File.Exists(filePath))
-                    {
-                        System.IO.File.Delete(filePath);                        
-                    }
-
-                    user.AvatarPath = null;
                 }
 
                 await _userRepository.UpdateAsync(user);
-                _memoryCache.Remove(CurrentUserKey);
+                _memoryCache.Remove(CacheKeys.CurrentUserKey);
             }
             catch(Exception ex)
             {

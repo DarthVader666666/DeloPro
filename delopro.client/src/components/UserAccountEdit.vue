@@ -2,17 +2,15 @@
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Textarea from 'primevue/textarea';
-import { computed, ref, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 import axios from 'axios';
 import { useToast } from 'vue-toastification';
 import UserAccountAvatar from './UserAccountAvatar.vue';
 import { helper } from '@/helper/helper';
-import { useRouter } from 'vue-router';
 
 const store = useStore();
 const toast = useToast();
-const router = useRouter();
 
 const props = defineProps(
 {
@@ -38,26 +36,25 @@ const props = defineProps(
     }
 });
 
-let updatedUser = computed(() => {
-  return {
-    nickname: props.user ? props.user.nickname : null,
-    firstName: props.user ? props.user.firstName : null,
-    lastName: props.user ? props.user.lastName : null,
-    birthDate: props.user ? getConvertedDate() : null,
-    country: props.user ? props.user.country : null,
-    city: props.user ? props.user.city : null,
-    userTitle: props.user ? props.user.userTitle : null,
-    info: props.user ? props.user.info : null,
-    email: props.user ? props.user.email : null,
-    phone: props.user ? props.user.phone : null,
-    deleteAvatar: false
-  }
+const updatedUser = reactive({
+  nickname: props.user.nickname,
+  firstName: props.user.firstName,
+  lastName: props.user.lastName,
+  birthDate: getConvertedDate(props.user.birthDate),
+  country: props.user.country,
+  city: props.user.city,
+  userTitle: props.user.userTitle,
+  info: props.user.info,
+  email: props.user.email,
+  phone: props.user.phone,
+  deleteAvatar: false
 });
 
 const showNicknameError = ref(false);
 const showEmailError = ref(false);
+const needLogout = computed(() => updatedUser.nickname != props.user.nickname || updatedUser.email != props.user.email);
 
-const needLogout = computed(() => updatedUser.value.nickname != props.user.nickname || updatedUser.value.email != props.user.email);
+const emit = defineEmits(['switchToInfoMode','switchToAvatarMode','setAvatarFile', 'setIsSaveDisabled']);
 
 watch(updatedUser, () => {
     emit('setIsSaveDisabled', false);
@@ -71,15 +68,13 @@ watch(showEmailError, (newValue) => {
     emit('setIsSaveDisabled', newValue);
 });
 
-const emit = defineEmits(['switchToInfoMode','switchToAvatarMode','setAvatarFile', 'setIsSaveDisabled']);
-
-function getConvertedDate() {
-    if(props.user.birthDate) {
-        const [day, month, year] = props.user.birthDate.split('.');
+function getConvertedDate(date) {
+    if(date) {
+        const [day, month, year] = date.split('.');
         return `${year}-${month}-${day}`
     }
     else {
-        return props.user.birthDate;
+        return date;
     }
 }
 
@@ -97,12 +92,12 @@ async function handleUserAccountUpdate() {
         window.confirm('Внимание! После обновления данных необходимо будет заново войти в систему');
     }
 
-    if(!updatedUser.value.birthDate) {
-        updatedUser.value.birthDate = null;
+    if(!updatedUser.birthDate) {
+        updatedUser.birthDate = null;
     }
 
     const formData = new FormData();
-    formData.append('user', JSON.stringify(updatedUser.value));
+    formData.append('user', JSON.stringify(updatedUser));
 
     if(props.avatarFile) {
         formData.append('avatar', props.avatarFile);
@@ -111,57 +106,40 @@ async function handleUserAccountUpdate() {
         formData.append('avatar', null);
     }
 
-    const url = store.state.serverUrl;
+    await store.dispatch('updateCurrentUser', formData);
 
-    await axios.post(`${url}/useraccount/updatecurrentuser`, formData,
-    {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    })
-    .then(async response => {
-        const status = response.status;
-
-        if(status === 200) {
-            toast.success(response.data.okText);
-        }
-    })
-    .catch(error => {
-        if(error.response) {
-            toast.error(error.response.data.errorText);
-        }
-    });
+    updatedUser.deleteAvatar = false;
 
     if(!needLogout.value) {
         await store.dispatch('downloadCurrentUser');
         emit('switchToInfoMode');
     }
     else {
-        await axios.post(`${store.getters.serverUrl}/authentication/logout`, {
-        headers: {
-            'Content-Type': 'application/json'
-        }})
-        .then(response => {
-            if(response.status === 200) {
-                localStorage.removeItem('Delopro_Cookies');
-                store.commit('setNickname', null);
-                store.commit('setRoles', []);
-                store.commit('setNickname', null);
-                router.push('/');
-            }
-        })
-        .catch(error => {
-            if(error.response) {
-                toast.error(error.response.data.errorText)
-            }
-        });
+        store.dispatch('logOut');
     }
+}
+
+async function handleCancel() {
+    updatedUser.nickname = props.user.nickname,
+    updatedUser.firstName = props.user.firstName,
+    updatedUser.lastName = props.user?.lastName ?? null,
+    updatedUser.birthDate = getConvertedDate(props.user.birthDate),
+    updatedUser.country = props.user.country,
+    updatedUser.city = props.user.city,
+    updatedUser.userTitle = props.user.userTitle,
+    updatedUser.info = props.user.info,
+    updatedUser.email = props.user.email,
+    updatedUser.phone = props.user.phone,
+    updatedUser.deleteAvatar = false
+
+    await helper.timeoutAsync(20);
+    emit('switchToInfoMode');
 }
 
 function handleDeleteAvatar() {
     if (window.confirm("Вы уверены, что хотите удалить аватар?")) {
         emit('setAvatarFile', null);
-        updatedUser.value.deleteAvatar = true;
+        updatedUser.deleteAvatar = true;
     }
 }
 
@@ -224,8 +202,8 @@ async function handleEmailMatch(event) {
                     <span>Роль: {{ props.user.roles }}</span>
                     <span v-if="updatedUser.registerDate">Дата регистрации: {{ updatedUser.registerDate }}</span>
                     <div style="padding-top: 10px;">
-                        <Button type="submit" raised severity="secondary" label="Сохранить" style="width: 100px; margin-bottom: 10px; margin-right: 10px;" :disabled="props.isSaveDisabled"/>
-                        <Button raised severity="contrast" label="Отменить" style="width: 100px;" @click="emit('switchToInfoMode')"/>
+                        <Button type="submit" raised severity="secondary" label="Сохранить" style="width: 100px; margin-bottom: 10px; margin-right: 10px;" :disabled="props.isSaveDisabled"></Button>
+                        <Button raised severity="contrast" label="Отменить" style="width: 100px;" @click="handleCancel"/>
                     </div>
                 </div>
             </div>

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Caching.Memory;
+using Delopro.Server.Configuration;
 
 namespace Delopro.Server.Controllers
 {
@@ -17,11 +18,12 @@ namespace Delopro.Server.Controllers
     [ApiController]
     public class ThemesController : ControllerBase
     {
+        private const string BaseThemeKey = "theme_id=";
+
         private readonly IRepository<Theme> _themeRepository;
         private readonly UserManager _userManager;
         private readonly IMapper _mapper;
-        private readonly IMemoryCache _memoryCache;
-        private const string BaseThemeKey = "theme_id=";
+        private readonly IMemoryCache _memoryCache;        
 
         public ThemesController(IRepository<Theme> themesRepository, UserManager userManager, IMapper mapper, IMemoryCache memoryCache)
         {
@@ -67,6 +69,9 @@ namespace Delopro.Server.Controllers
                 theme.UserId = userId;
 
                 await _themeRepository.CreateAsync(theme);
+
+                _memoryCache.Remove(CacheKeys.ChaptersKey);
+                _memoryCache.Remove(CacheKeys.ChapterNodesKey);
             }
             catch (SqlException)
             {
@@ -89,6 +94,9 @@ namespace Delopro.Server.Controllers
             try
             {
                 await _themeRepository.DeleteAsync(themeId);
+
+                _memoryCache.Remove(CacheKeys.ChaptersKey);
+                _memoryCache.Remove(CacheKeys.ChapterNodesKey);
             }
             catch (SqlException)
             {

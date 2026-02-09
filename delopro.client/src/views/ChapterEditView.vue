@@ -5,7 +5,6 @@ import axios from 'axios';
 import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 import { helper } from '@/helper/helper';
-import { useToast } from 'vue-toastification';
 import { useRouter } from 'vue-router';
 import Editor from 'primevue/editor';
 import Button from 'primevue/button';
@@ -13,7 +12,6 @@ import InputText from 'primevue/inputtext';
 import { Form } from '@primevue/forms';
 
 const store = useStore();
-const toast = useToast();
 const router = useRouter();
 
 const isAdmin = computed(() => store.getters.isAdmin);
@@ -31,28 +29,9 @@ async function removeTheme(themeId) {
     if(!window.confirm('Вы уверены, что хотите удалить тему?')) {
         return;
     }
-
-    const url = store.state.serverUrl;
-
-    await axios.delete(`${url}/themes/delete/${themeId}`,  null,
-    {
-        headers: {
-            'Content': 'application/json',
-            'Accept': '*/*'
-        }
-    })
-    .then(response => {
-        if(response.status === 200) {
-            toast.success('Тема успешно удалена');
-            store.dispatch('downloadChapters');
-            store.dispatch('downloadChapter',  chapter.value.chapterId);
-        }
-    })
-    .catch(error => {
-        if(error.response) {
-            toast.error(error.response.data.errorText)
-        }
-    });
+    
+    await store.dispatch('deleteTheme', themeId);
+    await store.dispatch('downloadChapter',  chapter.value.chapterId);
 
     clearNewTheme();
 }
@@ -68,27 +47,10 @@ function changeFormStatus() {
 
 async function addNewTheme() {
     newTheme.value.chapterId = chapter.value.chapterId;
-    newTheme.value.dateCreated = helper.getCurrentDate();
+    newTheme.value.dateCreated = helper.getCurrentDate();    
 
-    const url = store.state.serverUrl;
-
-    const response = await axios.post(`${url}/themes/create`,  newTheme.value, {
-        headers: {
-            'Content': 'application/json',
-            'Accept': '*/*'
-        }
-    });
-
-    if(response.status === 200) {
-      toast.success('Тема успешно добавлена');
-      store.dispatch('downloadChapter',  chapter.value.chapterId);
-      sessionStorage.removeItem(store.state.sessionStorageKeys.chaptersKey);
-      sessionStorage.removeItem(store.state.sessionStorageKeys.chapterNodesKey);
-      await store.dispatch('downloadChapters');
-    }
-    else {
-      toast.error(response.data.errorText);
-    }
+    await store.dispatch('createTheme', newTheme.value);
+    await store.dispatch('downloadChapter',  chapter.value.chapterId);
 
     changeFormStatus();
     clearNewTheme();
@@ -104,6 +66,10 @@ function clearNewTheme() {
 }
 
 async function handleDeleteChapter() {
+  if(!window.confirm('Этот раздел и его темы будут удалены. Вы уверены?')) {
+      return;
+  }
+
   await store.dispatch('deleteChapter', chapter.value);
 }
 

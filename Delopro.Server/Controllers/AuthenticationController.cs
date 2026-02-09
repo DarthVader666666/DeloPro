@@ -1,9 +1,11 @@
 ﻿using Delopro.Bll.Interfaces;
 using Delopro.Bll.Services;
 using Delopro.Server.Attributes;
+using Delopro.Server.Configuration;
 using Delopro.Server.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 using Newtonsoft.Json;
 
@@ -19,11 +21,13 @@ namespace Delopro.Server.Controllers
     {
         private readonly UserManager _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly IMemoryCache _memoryCache;
 
-        public AuthenticationController(UserManager userManager, IEmailSender emailSender)
+        public AuthenticationController(UserManager userManager, IEmailSender emailSender, IMemoryCache memoryCache)
         {
             _userManager = userManager;
             _emailSender = emailSender;
+            _memoryCache = memoryCache;
         }
 
         [HttpPost]
@@ -97,6 +101,7 @@ namespace Delopro.Server.Controllers
             try
             {
                 await _userManager.LogOut(HttpContext);
+                _memoryCache.Remove(CacheKeys.CurrentUserKey);
                 return Ok();
             }
             catch (Exception ex)

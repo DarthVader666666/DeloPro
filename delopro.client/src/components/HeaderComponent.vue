@@ -10,7 +10,8 @@ import InputText from 'primevue/inputtext';
 
 const loginRequestForm = ref({
     nicknameOrEmail: null,
-    password: null
+    password: null,
+    remember: false
 });
 
 const store = useStore();
@@ -26,7 +27,6 @@ const unreadMessagesCount = computed(() => store.getters.getUnreadMessagesCount)
 const darkenBackground = computed(() => showLogin.value || showMenu.value || showUserAccountSettings.value);
 const user = computed(() => store.getters.getCurrentUser);
 
-const remember = ref(false);
 const showLogin = ref(false);
 const showMenu = ref(false);
 const showUserAccountSettings = ref(false);
@@ -66,73 +66,25 @@ const handleScreenSizeChange = () => {
     }
 };
 
-const handleLogin = () => {
-    const nicknameValue = helper.validateEmail(loginRequestForm.value.nicknameOrEmail) ? '' : loginRequestForm.value.nicknameOrEmail
-    const emailValue = helper.validateEmail(loginRequestForm.value.nicknameOrEmail) ? loginRequestForm.value.nicknameOrEmail : null;
+async function handleLogIn () {
+    axios.defaults.withCredentials = true;    
+    await store.dispatch('logIn', loginRequestForm.value);
 
-    axios.defaults.withCredentials = true;
-    axios.post(`${store.getters.serverUrl}/authentication/login?nickname=${nicknameValue.trimEnd()}&remember=${remember.value}`, null,
-    {
-        headers:
-        {
-            'Content-Type': 'application/json',
-            'Authentication': JSON.stringify({
-                email: emailValue,
-                password: helper.getUnicodeByteArray(loginRequestForm.value.password)
-            })
-        }
-    })
-    .then(async response => {
-        if(response.status === 200) {
-            loginRequestForm.value.nicknameOrEmail = null;
-            loginRequestForm.value.password = null;
-
-            if(response.data.remember === true) {
-                const cookie = document.cookie.split('=');
-
-                if(cookie && cookie.length === 2) {
-                    localStorage.setItem(cookie[0], cookie[1]);
-                }
-            }
-
-            store.commit('setRoles', response.data.roles);
-            store.commit('setNickname', response.data.nickname);
-            await store.dispatch('downloadCurrentUser');
-            toast.success(`Вы вошли, как ${response.data.nickname}`);
-            showLogin.value = false;
-            router.push('/');
-        }
-    })
-    .catch(error => {
-        if(error.response) {
-            toast.error(error.response.data.errorText)
-        }
-
-        loginRequestForm.value.nicknameOrEmail = null;
-        loginRequestForm.value.password = null;
-    })
+    loginRequestForm.value.nicknameOrEmail = null;
+    loginRequestForm.value.password = null;
+    loginRequestForm.value.nicknameOrEmail = null;
+    loginRequestForm.value.password = null;
+    showLogin.value = false;
 };
 
-const handleLogout = () => {
-    if(window.confirm('Вы уверены, что хотите выйти?')) {
-      axios.post(`${store.getters.serverUrl}/authentication/logout/`, {
-      headers: {
-        'Content-Type': 'application/json'
-      }})
-      .then(response => {
-        if(response.status === 200) {
-          localStorage.removeItem('Delopro_Cookies');
-          helper.clearSession();
-          showUserAccountSettings.value = false;
-          router.push('/');
-        }
-      })
-      .catch(error => {
-        if(error.response) {
-          toast.error(error.response.data.errorText)
-        }
-      });
+function handleLogout() {
+    if(!window.confirm('Вы уверены, что хотите выйти?')) {
+        return;
     }
+    
+    store.dispatch('logOut');
+
+    showUserAccountSettings.value = false;
 }
 
 const handleLoginButtonClick = async () => {
@@ -251,7 +203,7 @@ function handleBurgerClick() {
         </div>
     </div>
 
-    <form v-show="showLogin" class="slide-container" @submit.prevent="handleLogin" @keydown.enter.prevent="handleLogin" id="login-form">
+    <form v-show="showLogin" class="slide-container" @submit.prevent="handleLogIn" @keydown.enter.prevent="handleLogIn" id="login-form">
         <div class="login-input">
             <label>Логин: </label>
             <InputText v-model="loginRequestForm.nicknameOrEmail" type="text" placeholder="Почта или никнэйм" required id="login-input"/>
@@ -263,7 +215,7 @@ function handleBurgerClick() {
         <div class="bottom-part">
             <div class="remember">
                 <label for="remember-checkbox">Запомнить</label>
-                <input v-model="remember" type="checkbox" id="remember-checkbox"/>
+                <input v-model="loginRequestForm.remember" type="checkbox" id="remember-checkbox"/>
             </div>
             <Button type="submit" severity="secondary" icon="pi pi-sign-in" label="Войти" raised form="login-form"></Button>
         </div>

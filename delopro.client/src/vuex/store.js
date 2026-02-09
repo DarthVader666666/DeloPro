@@ -2,7 +2,8 @@ import { createStore } from "vuex";
 import axios from "axios";
 import { useToast } from "vue-toastification";
 import router from "@/router/router";
-
+import { helper } from "@/helper/helper";
+// vueQuery ?
 const toast = useToast();
 
 const store = createStore({
@@ -39,7 +40,8 @@ const store = createStore({
           documentsKey: 'documents',
           documentNodesKey: 'documentNodes',
           currentUserKey: 'currentUser',
-        }
+        },
+        coockieName: 'Delopro_Cookies'
     },
     getters: {
       // CHAPTERS
@@ -76,28 +78,13 @@ const store = createStore({
             return state.nickname;
         },
         isAdmin(state) {
-          if(state.roles) {
-            return state.roles.includes('Admin');
-          }
-          else {
-            return false
-          }
+          return state.roles.includes('Admin');
         },
         isOwner(state) {
-          if(state.roles) {
-            return state.roles.includes('Owner');
-          }
-          else {
-            return false
-          }
+          return state.roles.includes('Owner');
         },
         isUser(state) {
-          if(state.roles) {
-            return state.roles.includes('User');
-          }
-          else {
-            return false
-          }
+          return state.roles.includes('User');
         },
         isAuthenticated(state) {
             return state.nickname && state.roles && state.roles.length > 0;
@@ -168,6 +155,9 @@ const store = createStore({
         },
         getCaptcha(state) {
             return state.captcha;
+        },
+        getCookieName(state) {
+            return state.coockieName;
         }
     },
     mutations: {
@@ -207,12 +197,12 @@ const store = createStore({
             state.chapter = chapter;
         },
         setChapters(state, chapters) {
-          state.chapters = chapters;
           sessionStorage.setItem(state.sessionStorageKeys.chaptersKey, JSON.stringify(chapters));
+          state.chapters = chapters;
         },
         setChapterNodes(state, chapterNodes) {
-          state.chapterNodes = chapterNodes;
           sessionStorage.setItem(state.sessionStorageKeys.chapterNodesKey, JSON.stringify(chapterNodes));
+          state.chapterNodes = chapterNodes;
         },
         setShowChapterList(state, value) {
             state.showChapterList = value;
@@ -285,13 +275,13 @@ const store = createStore({
           const storedChapters = sessionStorage.getItem(state.sessionStorageKeys.chaptersKey);
 
           if(!storedChapters) {
-            await axios.get(`${state.serverUrl}/chapters/getlist`)
+            axios.get(`${state.serverUrl}/chapters/getlist`)
               .then(async response => {
                  if(response.status === 200) {
-                 const chapters = response.data;
-                 commit('setChapters', chapters);
-                 await dispatch('downloadChapterNodes');
-                }}
+                  const chapters = response.data;
+                  commit('setChapters', chapters);
+                  await dispatch('downloadChapterNodes');
+                 }}
               )
               .catch(error => {
                 if(error.response) {
@@ -301,14 +291,15 @@ const store = createStore({
           }
           else {
             commit('setChapters', JSON.parse(storedChapters));
+            await dispatch('downloadChapterNodes');
           }
         },
         async downloadChapterNodes({commit, state}) {
           const storedChapterNodes = sessionStorage.getItem(state.sessionStorageKeys.chapterNodesKey);
 
           if(!storedChapterNodes) {
-            await axios.get(`${state.serverUrl}/chapters/getnodes`)
-              .then(async response => {
+            axios.get(`${state.serverUrl}/chapters/getnodes`)
+              .then(response => {
                 if(response.status === 200) {
                   commit('setChapterNodes', response.data);
                 }
@@ -346,10 +337,6 @@ const store = createStore({
             );
         },
         async deleteChapter({dispatch, state}, chapter) {
-          if(!window.confirm('Этот раздел и его темы будут удалены. Вы уверены?')) {
-              return;
-          }
-
           await axios.delete(`${state.serverUrl}/chapters/delete/` + chapter.chapterId, null)
             .then(async response => {
               if(response.status === 200) {
@@ -421,16 +408,57 @@ const store = createStore({
                 commit('setPending', false);
             }
         },
+        async deleteTheme({dispatch, state}, themeId) {
+            axios.delete(`${state.serverUrl}/themes/delete/${themeId}`, null, {
+                headers: {
+                    'Content': 'application/json',
+                    'Accept': '*/*'
+                }
+            })
+            .then(async response => {
+                if(response.status === 200) {
+                    toast.success('Тема успешно удалена');
+                    sessionStorage.removeItem(state.sessionStorageKeys.chaptersKey);
+                    sessionStorage.removeItem(state.sessionStorageKeys.chapterNodesKey);                    
+                    await dispatch('downloadChapters');
+                }
+            })
+            .catch(error => {
+                if(error.response) {
+                    toast.error(error.response.data.errorText)
+                }
+            });
+        },
+        async createTheme({dispatch, state}, newTheme) {
+            axios.post(`${state.serverUrl}/themes/create`, newTheme, {
+                headers: {
+                    'Content': 'application/json',
+                    'Accept': '*/*'
+                }
+            })
+            .then(async response => {
+                if(response.status === 200) {
+                    toast.success('Тема успешно добавлена');                    
+                    sessionStorage.removeItem(state.sessionStorageKeys.chaptersKey);
+                    sessionStorage.removeItem(state.sessionStorageKeys.chapterNodesKey);
+                    await dispatch('downloadChapters');
+                }
+            })
+            .catch(error => {
+                toast.error(error.response.data.errorText);
+            });
+        },
 
         // DOCUMENTS
-        async downloadDocuments({commit, state}) {
+        async downloadDocuments({dispatch, commit, state}) {
           const storedDocuments = sessionStorage.getItem(state.sessionStorageKeys.documentsKey);
 
           if(!storedDocuments) {
-            await axios.get(`${state.serverUrl}/documents/getlist`)
-              .then(response => {
+            axios.get(`${state.serverUrl}/documents/getlist`)
+              .then(async response => {
                 if(response.status === 200) {
                   commit('setDocuments', response.data);
+                  await dispatch('downloadDocumentNodes');
                 }
               })
               .catch(error => {
@@ -441,6 +469,7 @@ const store = createStore({
           }
           else {
             commit('setDocuments', JSON.parse(storedDocuments));
+            await dispatch('downloadDocumentNodes');
           }
         },
         async downloadDocumentNodes({commit, state}) {
@@ -598,6 +627,80 @@ const store = createStore({
             commit('setRoles', JSON.parse(storedCurrentUser).roles);
           }
         },
+        async logIn({dispatch, commit, state}, loginRequestForm) {
+          const nickname = helper.validateEmail(loginRequestForm.nicknameOrEmail) ? '' : loginRequestForm.nicknameOrEmail
+          const email = helper.validateEmail(loginRequestForm.nicknameOrEmail) ? loginRequestForm.nicknameOrEmail : null;
+
+          axios.post(`${state.serverUrl}/authentication/login?nickname=${nickname.trimEnd()}&remember=${loginRequestForm.remember}`, null, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authentication': JSON.stringify({
+                  email: email,
+                  password: helper.getUnicodeByteArray(loginRequestForm.password)
+              })
+            }
+          })
+          .then(async response => {
+            if(response.status === 200) {             
+            //   if(response.data.remember === true) {
+            //     const cookie = document.cookie.split('=');
+              
+            //     if(cookie && cookie.length === 2) {
+            //       localStorage.setItem(cookie[0], cookie[1]);
+            //     }
+            //   }
+          
+              commit('setRoles', response.data.roles);
+              commit('setNickname', response.data.nickname);
+              await dispatch('downloadCurrentUser');
+              toast.success(`Вы вошли, как ${response.data.nickname}`);
+              
+              router.push('/');
+            }
+          })
+          .catch(error => {
+              if(error.response) {
+                  toast.error(error.response.data.errorText)
+              }
+          })
+        },
+        logOut({state}) {
+          axios.post(`${store.getters.serverUrl}/authentication/logout/`, {
+            headers: {
+              'Content-Type': 'application/json'
+            }})
+            .then(response => {
+              if(response.status === 200) {
+                localStorage.removeItem(state.coockieName);
+                helper.clearSession();                
+                router.push('/');
+              }
+            })
+            .catch(error => {
+              if(error.response) {
+                toast.error(error.response.data.errorText)
+              }
+            });
+        },
+        async updateCurrentUser({state}, formData) {
+          await axios.post(`${store.getters.serverUrl}/useraccount/updatecurrentuser`, formData,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            .then(async response => {
+                if(response.status === 200) {
+                    sessionStorage.removeItem(state.sessionStorageKeys.currentUserKey);
+                    toast.success(response.data.okText);
+                }
+            })
+            .catch(error => {
+                if(error.response) {
+                    toast.error(error.response.data.errorText);
+                }
+            });
+        }
     }
 });
 

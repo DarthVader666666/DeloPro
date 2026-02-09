@@ -11,8 +11,7 @@ import { useCookies } from 'vue3-cookies';
 const store = useStore();
 const cookieManager = useCookies();
 const showSearchBar = computed(() => store.state.showSearchBar);
-
-const coockieName ='Delopro_Cookies';
+const coockieName = store.getters.getCookieName;
 
 onMounted(async () => {
     axios.defaults.withCredentials = true;
@@ -27,6 +26,7 @@ onMounted(async () => {
     const response = await axios.get(`${store.getters.serverUrl}/authentication/cookiecredentials`);
 
     if(response.data.isAuthenticated === true && response.data.nickname) {
+        await store.dispatch('downloadCurrentUser');
         store.commit('setNickname', response.data.nickname);
         store.commit('setRoles', response.data.roles);
     }

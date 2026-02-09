@@ -220,7 +220,7 @@ export const helper = {
       }
 
       store.commit('setNickname', null);
-      store.commit('setRoles', null);
+      store.commit('setRoles', []);
       store.commit('setNickname', null);
     }
 }

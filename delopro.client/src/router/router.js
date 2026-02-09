@@ -100,7 +100,6 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     await store.dispatch('downloadChapters');
     await store.dispatch('downloadDocuments');
-    await store.dispatch('downloadDocumentNodes');
     await store.dispatch('downloadCurrentUser');
 
     if (to.meta.roles && !to.meta.roles.some(r => currentUser.value ? currentUser.value.roles.includes(r) : false)) {
