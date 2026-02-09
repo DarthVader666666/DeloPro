@@ -28,9 +28,8 @@ import UserAccountAvatar from './UserAccountAvatar.vue';
 
             <div class="user-account-short-info">
                 <span style="font-weight: bold; font-size: large">{{ props.user.nickname }}</span>
-                <span>{{ props.user.firstName }}</span>
-                <span>{{ props.user.lastName }}</span>
-                <span>Роль: {{ props.user.roles.join(',') }}</span>
+                <span style="font-size: 1.2rem;">{{ `${props.user.firstName ?? ''} ${props.user.lastName ?? ''}` }}</span>
+                <span style="font-style: italic; color: gray">{{ props.user.roles.join(',') }}</span>
                 <span v-if="props.user.registerDate">Дата регистрации: {{ props.user.registerDate }}</span>
                 <div style="padding-top: 10px;">
                     <Button @click="async () => emit('switchToEditMode')" severity="contrast" raised>Редактировать</Button>

@@ -1,6 +1,5 @@
 <script setup>
 import axios from 'axios';
-import { useToast } from 'vue-toastification';
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import { helper } from '@/helper/helper.js';
@@ -15,7 +14,6 @@ const loginRequestForm = ref({
 });
 
 const store = useStore();
-const toast = useToast();
 const router = useRouter();
 
 const nickname = computed(() => store.getters.getNickname);
@@ -67,7 +65,7 @@ const handleScreenSizeChange = () => {
 };
 
 async function handleLogIn () {
-    axios.defaults.withCredentials = true;    
+    axios.defaults.withCredentials = true;
     await store.dispatch('logIn', loginRequestForm.value);
 
     loginRequestForm.value.nicknameOrEmail = null;
@@ -81,7 +79,7 @@ function handleLogout() {
     if(!window.confirm('Вы уверены, что хотите выйти?')) {
         return;
     }
-    
+
     store.dispatch('logOut');
 
     showUserAccountSettings.value = false;

@@ -12,6 +12,5 @@
         public string? Info { get; set; }
         public string? Email { get; set; }
         public string? Phone { get; set; }
-        public bool DeleteAvatar { get; set; } = false;
     }
 }

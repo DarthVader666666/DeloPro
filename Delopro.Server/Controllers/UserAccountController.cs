@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Delopro.Server.Controllers
 {
@@ -61,62 +62,27 @@ namespace Delopro.Server.Controllers
         [Route("[action]")]
         [Authorize]
         [TrackIpAddress]
-        public async Task<IActionResult> UpdateCurrentUser([FromForm] UserAccountUpdateRequestModel userAccountUpdateRequestModel)
+        public async Task<IActionResult> UpdateCurrentUser([FromBody] UserAccountUpdateModel? userAccountUpdateModel)
         {
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            UserAccountUpdateModel? userAccount;
-            User? user;
-
             try
             {
-                user = await _userManager.GetCurrentUserAsync(HttpContext);
-                userAccount = JsonSerializer.Deserialize<UserAccountUpdateModel?>(userAccountUpdateRequestModel.User!, options);
+                var user = await _userManager.GetCurrentUserAsync(HttpContext);
 
-                if (user is null || userAccount is null)
+                if (user is null || userAccountUpdateModel is null)
                 {
                     return StatusCode(500, new { errorText = "Ошибка сервера" });
                 }
 
-                var fileName = userAccountUpdateRequestModel!.Avatar?.FileName ?? String.Empty;
-                var filePath = Path.Combine(ConfigurationHelper.AvatarsPath!, fileName);
-
-                user.Nickname = userAccount.Nickname;
-                user.FirstName = _cryptoService.Encrypt(userAccount.FirstName);
-                user.LastName = _cryptoService.Encrypt(userAccount.LastName);
-                user.BirthDate = userAccount.BirthDate;
-                user.Country = userAccount.Country;
-                user.City = userAccount.City;
-                user.UserTitle = userAccount.UserTitle;
-                user.Info = userAccount.Info;
-                user.Email = _cryptoService.Encrypt(userAccount.Email);
-                user.Phone = _cryptoService.Encrypt(userAccount.Phone);
-
-                var oldAvatars = Directory.GetFiles(ConfigurationHelper.AvatarsPath!, $"user_{user.UserId}*");
-
-                if (userAccount.DeleteAvatar || userAccountUpdateRequestModel.Avatar is not null)
-                {
-                    foreach (var oldAvatar in oldAvatars)
-                    {
-                        System.IO.File.Delete(oldAvatar);
-                    }
-                }
-                
-                if (userAccount.DeleteAvatar)
-                {
-                    user.AvatarPath = null;
-                }
-                else
-                {
-                    if (userAccountUpdateRequestModel.Avatar is not null)
-                    {
-                        using var stream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
-                        await userAccountUpdateRequestModel.Avatar.CopyToAsync(stream);
-                    }
-
-                    user.AvatarPath = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"
-                            ? $"/src/assets/avatars/{fileName}"
-                            : filePath.Replace(ConfigurationHelper.WebRootPath!, string.Empty);
-                }
+                user.Nickname = userAccountUpdateModel.Nickname;
+                user.FirstName = _cryptoService.Encrypt(userAccountUpdateModel.FirstName);
+                user.LastName = _cryptoService.Encrypt(userAccountUpdateModel.LastName);
+                user.BirthDate = userAccountUpdateModel.BirthDate;
+                user.Country = userAccountUpdateModel.Country;
+                user.City = userAccountUpdateModel.City;
+                user.UserTitle = userAccountUpdateModel.UserTitle;
+                user.Info = userAccountUpdateModel.Info;
+                user.Email = _cryptoService.Encrypt(userAccountUpdateModel.Email);
+                user.Phone = _cryptoService.Encrypt(userAccountUpdateModel.Phone);
 
                 await _userRepository.UpdateAsync(user);
                 _memoryCache.Remove(CacheKeys.CurrentUserKey);
@@ -127,6 +93,49 @@ namespace Delopro.Server.Controllers
             }
 
             return StatusCode(200, new { okText = $"Данные пользователя {user.Nickname} успешно обговлены"});
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        [Authorize]
+        [TrackIpAddress]
+        public async Task<IActionResult> UpdateAvatar(IFormFile? avatar) 
+        {
+            var user = await _userManager.GetCurrentUserAsync(HttpContext);
+
+            if (user is null)
+            {
+                return StatusCode(500, new { errorText = "Ошибка сервера" });
+            }
+
+            var oldAvatars = Directory.GetFiles(ConfigurationHelper.AvatarsPath!, $"user_{user.UserId}*");
+
+            foreach (var oldAvatar in oldAvatars)
+            {
+                System.IO.File.Delete(oldAvatar);
+            }
+
+            if (avatar is not null)
+            {
+                var fileName = avatar?.FileName ?? String.Empty;
+                var filePath = Path.Combine(ConfigurationHelper.AvatarsPath!, fileName);
+
+                using var stream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
+                await avatar.CopyToAsync(stream);
+
+                user.AvatarPath = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"
+                    ? $"/src/assets/avatars/{fileName}"
+                    : filePath.Replace(ConfigurationHelper.WebRootPath!, string.Empty);
+            }
+            else 
+            {
+                user.AvatarPath = null;
+            }
+
+            await _userRepository.UpdateAsync(user);
+            _memoryCache.Remove(CacheKeys.CurrentUserKey);
+
+            return StatusCode(200, new { okText = $"Данные пользователя {user.Nickname} успешно обговлены" });
         }
     }
 }

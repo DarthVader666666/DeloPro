@@ -5,12 +5,10 @@ import Textarea from 'primevue/textarea';
 import { computed, reactive, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 import axios from 'axios';
-import { useToast } from 'vue-toastification';
 import UserAccountAvatar from './UserAccountAvatar.vue';
 import { helper } from '@/helper/helper';
 
 const store = useStore();
-const toast = useToast();
 
 const props = defineProps(
 {
@@ -197,9 +195,8 @@ async function handleEmailMatch(event) {
                 </div>
                 <div class="user-account-short-info">
                     <span style="font-weight: bold; font-size: large">{{ props.user.nickname }}</span>
-                    <span>{{ props.user.firstName }}</span>
-                    <span>{{ props.user.lastName }}</span>
-                    <span>Роль: {{ props.user.roles }}</span>
+                    <span style="font-size: 1.2rem;">{{ `${props.user.firstName ?? ''} ${props.user.lastName ?? ''}` }}</span>
+                    <span style="font-style: italic; color: gray">{{ props.user.roles.join(',') }}</span>
                     <span v-if="updatedUser.registerDate">Дата регистрации: {{ updatedUser.registerDate }}</span>
                     <div style="padding-top: 10px;">
                         <Button type="submit" raised severity="secondary" label="Сохранить" style="width: 100px; margin-bottom: 10px; margin-right: 10px;" :disabled="props.isSaveDisabled"></Button>
