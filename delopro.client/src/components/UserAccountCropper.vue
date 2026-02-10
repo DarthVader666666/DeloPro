@@ -4,6 +4,7 @@ import Button from 'primevue/button';
 import { Cropper, CircleStencil } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
 import { helper } from '@/helper/helper';
+import { useStore } from 'vuex';
 
 const cropper = ref(null);
 
@@ -20,7 +21,8 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits(['setAvatarFile', 'switchToEditMode', 'setIsSaveDisabled']);
+const store = useStore();
+const emit = defineEmits(['setAvatarBase64', 'switchToEditMode', 'setIsSaveDisabled']);
 
 async function handleCrop() {
 	const { canvas } = cropper.value.getResult();
@@ -29,15 +31,18 @@ async function handleCrop() {
         const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
         const file = new File([blob], `user_${props.user.userId}_${helper.getCurrentDate(true)}.png`, { type: "image/png" });
 
-        emit('setAvatarFile', file);
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        await store.dispatch('uploadAvatar', formData);
+        emit('setAvatarBase64', null);
         emit('switchToEditMode');
-        emit('setIsSaveDisabled', false);
 	}
 };
 
 function handleCancel() {
     emit('switchToEditMode');
-    emit('setAvatarFile', null);
+    emit('setAvatarBase64', null);
 };
 
 </script>

@@ -344,6 +344,7 @@ const store = createStore({
                 sessionStorage.removeItem(state.sessionStorageKeys.chaptersKey)
                 sessionStorage.removeItem(state.sessionStorageKeys.chapterNodesKey)
                 await dispatch('downloadChapters');
+                await dispatch('downloadChapterNodes');
                 router.push(`/`);
               }
             })
@@ -613,7 +614,7 @@ const store = createStore({
                 if(response.status === 200 && response.data) {
                   const user = response.data;
                   commit('setCurrentUser', user);
-                  commit('setRoles', user.roles)
+                  commit('setRoles', user.roles);
                 }
               })
               .catch(error => {
@@ -682,8 +683,28 @@ const store = createStore({
               }
             });
         },
-        async updateCurrentUser({state}, formData) {
-          await axios.post(`${store.getters.serverUrl}/useraccount/updatecurrentuser`, formData,
+        async updateCurrentUser({dispatch, state}, updatedUser) {
+          await axios.post(`${store.getters.serverUrl}/useraccount/updatecurrentuser`, updatedUser,
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(async response => {
+                if(response.status === 200) {
+                    sessionStorage.removeItem(state.sessionStorageKeys.currentUserKey);
+                    dispatch('downloadCurrentUser');
+                    toast.success(response.data.okText);
+                }
+            })
+            .catch(error => {
+                if(error.response) {
+                    toast.error(error.response.data.errorText);
+                }
+            });
+        },
+        async uploadAvatar({dispatch, state}, formData) {
+          await axios.post(`${store.getters.serverUrl}/useraccount/uploadavatar`, formData,
             {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -691,8 +712,24 @@ const store = createStore({
             })
             .then(async response => {
                 if(response.status === 200) {
-                    sessionStorage.removeItem(state.sessionStorageKeys.currentUserKey);
                     toast.success(response.data.okText);
+                    sessionStorage.removeItem(state.sessionStorageKeys.currentUserKey);
+                    await dispatch('downloadCurrentUser');
+                }
+            })
+            .catch(error => {
+                if(error.response) {
+                    toast.error(error.response.data.errorText);
+                }
+            });
+        },
+        async deleteAvatar({dispatch, state}) {
+          await axios.delete(`${state.serverUrl}/useraccount/deleteavatar`)
+            .then(async response => {
+                if(response.status === 200) {
+                    toast.success(response.data.okText);
+                    sessionStorage.removeItem(state.sessionStorageKeys.currentUserKey);
+                    dispatch('downloadCurrentUser');
                 }
             })
             .catch(error => {

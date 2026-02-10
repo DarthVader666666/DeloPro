@@ -47,7 +47,7 @@ builder.Services.AddAuthentication(options =>
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
     {
         options.Cookie.Name = "Delopro_Cookies";
-        //options.Cookie.MaxAge = TimeSpan.FromDays(1);
+        options.Cookie.MaxAge = TimeSpan.FromDays(30);
         //options.Cookie.SameSite = SameSiteMode.None;
         options.Events.OnRedirectToLogin = (context) =>
         {

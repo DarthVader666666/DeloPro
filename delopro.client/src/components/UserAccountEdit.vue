@@ -17,11 +17,6 @@ const props = defineProps(
         type: Object,
         default: null
     },
-    avatarFile:
-    {
-        type: File,
-        default: null
-    },
     avatarBase64:
     {
         type: String,
@@ -38,21 +33,20 @@ const updatedUser = reactive({
   nickname: props.user.nickname,
   firstName: props.user.firstName,
   lastName: props.user.lastName,
-  birthDate: getConvertedDate(props.user.birthDate),
+  birthDate: helper.getConvertedDate(props.user.birthDate),
   country: props.user.country,
   city: props.user.city,
   userTitle: props.user.userTitle,
   info: props.user.info,
   email: props.user.email,
   phone: props.user.phone,
-  deleteAvatar: false
 });
 
 const showNicknameError = ref(false);
 const showEmailError = ref(false);
 const needLogout = computed(() => updatedUser.nickname != props.user.nickname || updatedUser.email != props.user.email);
 
-const emit = defineEmits(['switchToInfoMode','switchToAvatarMode','setAvatarFile', 'setIsSaveDisabled']);
+const emit = defineEmits(['switchToInfoMode','switchToAvatarMode','setAvatarBase64', 'setIsSaveDisabled']);
 
 watch(updatedUser, () => {
     emit('setIsSaveDisabled', false);
@@ -66,54 +60,46 @@ watch(showEmailError, (newValue) => {
     emit('setIsSaveDisabled', newValue);
 });
 
-function getConvertedDate(date) {
-    if(date) {
-        const [day, month, year] = date.split('.');
-        return `${year}-${month}-${day}`
-    }
-    else {
-        return date;
-    }
-}
-
 async function onFileChange(e) {
   const file = e.target.files[0];
 
   if (file) {
-    emit('setAvatarFile', file);
+    emit('setAvatarBase64', file);
     emit('switchToAvatarMode');
   }
+
+  e.target.value = '';
 }
 
 async function handleUserAccountUpdate() {
     if(needLogout.value) {
-        window.confirm('Внимание! После обновления данных необходимо будет заново войти в систему');
+        if(!window.confirm('Внимание! После обновления данных необходимо будет заново войти в систему')) {
+            return;
+        }
     }
 
     if(!updatedUser.birthDate) {
         updatedUser.birthDate = null;
     }
 
-    const formData = new FormData();
-    formData.append('user', JSON.stringify(updatedUser));
-
-    if(props.avatarFile) {
-        formData.append('avatar', props.avatarFile);
-    }
-    else {
-        formData.append('avatar', null);
-    }
-
-    await store.dispatch('updateCurrentUser', formData);
-
-    updatedUser.deleteAvatar = false;
+    store.dispatch('updateCurrentUser', updatedUser);
 
     if(!needLogout.value) {
-        await store.dispatch('downloadCurrentUser');
         emit('switchToInfoMode');
     }
     else {
         store.dispatch('logOut');
+    }
+}
+
+function handleDeleteAvatar() {
+    if(!props.user.avatarPath) {
+        return;
+    }
+
+    if (window.confirm("Вы уверены, что хотите удалить аватар?")) {
+        store.dispatch('deleteAvatar');
+        emit('setAvatarBase64', null);
     }
 }
 
@@ -132,13 +118,6 @@ async function handleCancel() {
 
     await helper.timeoutAsync(20);
     emit('switchToInfoMode');
-}
-
-function handleDeleteAvatar() {
-    if (window.confirm("Вы уверены, что хотите удалить аватар?")) {
-        emit('setAvatarFile', null);
-        updatedUser.deleteAvatar = true;
-    }
 }
 
 async function doesUserExist (nickname, email) {
@@ -170,6 +149,9 @@ async function handleEmailMatch(event) {
     if(helper.validateEmail(email)) {
         showEmailError.value = await doesUserExist(null, email);
     }
+    else {
+        showEmailError.value = false;
+    }
 }
 
 </script>
@@ -181,7 +163,7 @@ async function handleEmailMatch(event) {
                 <div style="position: relative;">
                   <input type="file" id="fileInput" @change="onFileChange" accept="image/*" hidden />
 
-                  <UserAccountAvatar :user="props.user" :avatarBase64="props.avatarBase64"></UserAccountAvatar>
+                  <UserAccountAvatar :avatarPath="props.user.avatarPath" :avatarBase64="props.avatarBase64"></UserAccountAvatar>
 
                   <label for="fileInput" id="avatar-label" title="Загрузить фото">
                         <div class="avatar-button" style="bottom: 30%; left: 55%;">
@@ -191,7 +173,6 @@ async function handleEmailMatch(event) {
                   <div class="avatar-button" style="bottom: 30%; left: 10%;" title="Удалить фото" @click="handleDeleteAvatar">
                         <i class="pi pi-times" style="font-size: 1.7rem; padding-top: 5px;"></i>
                   </div>
-
                 </div>
                 <div class="user-account-short-info">
                     <span style="font-weight: bold; font-size: large">{{ props.user.nickname }}</span>
@@ -202,7 +183,7 @@ async function handleEmailMatch(event) {
                         <Button type="submit" raised severity="secondary" label="Сохранить" style="width: 100px; margin-bottom: 10px; margin-right: 10px;" :disabled="props.isSaveDisabled"></Button>
                         <Button raised severity="contrast" label="Отменить" style="width: 100px;" @click="handleCancel"/>
                     </div>
-                </div>
+                </div>                
             </div>
             <div class="user-account-input">
                 <span>Никнэйм: <span v-if="showNicknameError" style="color: red; font-weight: lighter;">Никнэйм занят</span></span>

@@ -2,6 +2,7 @@
 import Button from 'primevue/button';
 import UserAccountProperty from './UserAccountProperty.vue';
 import UserAccountAvatar from './UserAccountAvatar.vue';
+import { useRouter } from 'vue-router';
 
     const props = defineProps(
     {
@@ -17,14 +18,14 @@ import UserAccountAvatar from './UserAccountAvatar.vue';
         },
     });
 
+    const router = useRouter();
     const emit = defineEmits(['switchToEditMode']);
 </script>
 
 <template>
     <div class="user-account-properties">
         <div class="user-account-header">
-
-            <UserAccountAvatar :avatarBase64="props.avatarBase64"></UserAccountAvatar>
+            <UserAccountAvatar :avatarPath="props.user.avatarPath" :avatarBase64="props.avatarBase64"></UserAccountAvatar>
 
             <div class="user-account-short-info">
                 <span style="font-weight: bold; font-size: large">{{ props.user.nickname }}</span>
@@ -34,8 +35,13 @@ import UserAccountAvatar from './UserAccountAvatar.vue';
                 <div style="padding-top: 10px;">
                     <Button @click="async () => emit('switchToEditMode')" severity="contrast" raised>Редактировать</Button>
                 </div>
-            </div>
+            </div>            
         </div>
+        <Button severity="contrast" text rounded 
+            style="position: absolute; top: 0; right: 0; height: 45px;"
+            @click="() => router.back()">
+            <i class="pi pi-times" style="font-size: 1.3rem; padding-top: 3px;"></i>
+        </Button>
         <UserAccountProperty propertyName="Никнэйм" :propertyValue="props.user.nickname" />
         <UserAccountProperty propertyName="Email" :propertyValue="props.user.email" />
         <UserAccountProperty propertyName="Телефон" :propertyValue="props.user.phone" />

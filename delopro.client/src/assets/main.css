@@ -124,6 +124,7 @@ body {
 
 /* UserAccount */
 .user-account-properties {
+    position: relative;
     background-color: white;
     padding: 25px;
     margin: 5px;
@@ -170,6 +171,8 @@ body {
     width:150px; 
     height:150px; 
     border-radius:50%;
+    font-size: 5rem; color: rgb(71, 85, 105, 1); 
+    background-color: rgb(241, 245, 249, 1);
     align-content: center;
     text-align: center;
 }

@@ -88,9 +88,15 @@ async function updateUser() {
 <div class="user">
     <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 30px;">
         <span style="color: red">{{ updatedUser.deletionDate && 'Пользователь будет удален ' + helper.getDateString(updatedUser.deletionDate) }}</span>
-        <Button @click.prevent="handleCancel" style="width: 25px; height: 25px; margin-top: 10px;" severity="secondary" raised rounded icon="pi pi-times"/>
+        <Button @click.prevent="handleCancel" style="width: 25px; height: 25px; margin-top: 10px;" text severity="contrast" rounded>
+            <i class="pi pi-times" style="font-size: 1.4rem;"></i>
+        </Button>
     </div>
     <div style="display: flex; gap: 10px; justify-content: space-between;">
+        <div>
+            <img v-if="user.avatarPath" :src="user.avatarPath" style="border-radius: 50%; height: 150px; width: 150px;">
+            <i v-else class="pi pi-user user-account-avatar" style="height: 120px; width: 120px; font-size: 3.5rem;"></i>
+        </div>
         <div class="user-fields">
             <div v-if="user.nickname">
                 <span style="font-weight: bold;">Никнэйм:</span>
@@ -104,17 +110,17 @@ async function updateUser() {
                 <span style="font-weight: bold;">Телефон:</span>
                 <span>{{ user.phone }}</span>
             </div>
-            <div v-if="user.firstName">
+            <div v-if="user.firstName || user.lastName">
                 <span style="font-weight: bold;">Имя:</span>
-                <span>{{ user.firstName + user.lastName ? ' ' + user.lastName : '' }}</span>
+                <span>{{ user.firstName + ' ' + user.lastName }}</span>
             </div>
             <div v-if="user.birthDate">
                 <span style="font-weight: bold;">Дата рождения:</span>
-                <span>{{ user.birthDate }}</span>
+                <span>{{ helper.getDateString(user.birthDate, true) }}</span>
             </div>
             <div v-if="user.registerDate">
                 <span style="font-weight: bold;">Дата регистрации:</span>
-                <span>{{ helper.getDateString(user.registerDate) }}</span>
+                <span>{{ helper.getDateString(user.registerDate, true) }}</span>
             </div>
             <div v-if="user.status">
                 <span>Статус:</span>

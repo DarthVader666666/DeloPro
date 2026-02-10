@@ -98,7 +98,7 @@ namespace Delopro.Server.Controllers
         [HttpGet]
         [Route("[action]")]
         public async Task<IActionResult> UserExists([FromQuery] string? nickname, [FromQuery] string? email) 
-        {
+      {
             bool userExists;
 
             if (nickname == null)

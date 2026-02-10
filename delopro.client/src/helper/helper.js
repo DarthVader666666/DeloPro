@@ -6,7 +6,8 @@ export const helper = {
         return Object.values(utf8Encode.encode(text));
     },
     validateEmail(email) {
-      email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
+      const result = email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+      return result;
     },
     timeoutAsync(ms) {
       new Promise(resolve => setTimeout(resolve, ms))
@@ -40,10 +41,19 @@ export const helper = {
         const date = new Date(dateValue);
 
         if(short) {
-            return date.toLocaleDateString('ru-RU', {day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'});
+            return date.toLocaleDateString('ru-RU', {day: 'numeric', month: 'numeric', year: 'numeric'});
         }
         else {
             return date.toLocaleDateString('ru-RU', {day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'});
+        }
+    },
+    getConvertedDate(date) {
+        if(date) {
+            const [day, month, year] = date.split('.');
+            return `${year}-${month}-${day}`
+        }
+        else {
+            return date;
         }
     },
     getQueryString(array, key) {

@@ -13,7 +13,7 @@
         public string? City { get; set; } = null;
         public string? UserTitle { get; set; }
         public string? Info { get; set; } = null;
-        public byte[]? Avatar { get; set; } = null;
+        public string? AvatarPath { get; set; } = null;
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public int? Status { get; set; }

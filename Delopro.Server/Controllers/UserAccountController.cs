@@ -64,10 +64,10 @@ namespace Delopro.Server.Controllers
         [TrackIpAddress]
         public async Task<IActionResult> UpdateCurrentUser([FromBody] UserAccountUpdateModel? userAccountUpdateModel)
         {
+            var user = await _userManager.GetCurrentUserAsync(HttpContext);
+
             try
             {
-                var user = await _userManager.GetCurrentUserAsync(HttpContext);
-
                 if (user is null || userAccountUpdateModel is null)
                 {
                     return StatusCode(500, new { errorText = "Ошибка сервера" });
@@ -99,7 +99,41 @@ namespace Delopro.Server.Controllers
         [Route("[action]")]
         [Authorize]
         [TrackIpAddress]
-        public async Task<IActionResult> UpdateAvatar(IFormFile? avatar) 
+        public async Task<IActionResult> UploadAvatar([FromForm] IFormFile? avatar) 
+        {
+            if (avatar is null)
+            {
+                return BadRequest();
+            }
+
+            var user = await _userManager.GetCurrentUserAsync(HttpContext);
+
+            if (user is null)
+            {
+                return StatusCode(500, new { errorText = "Ошибка сервера" });
+            }
+
+            DeleteOldAvatars(user.UserId);
+
+            var fileName = avatar?.FileName ?? String.Empty;
+            var filePath = Path.Combine(ConfigurationHelper.AvatarsPath!, fileName);
+
+            using var stream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
+            await avatar.CopyToAsync(stream);
+
+            user.AvatarPath = fileName;                
+
+            await _userRepository.UpdateAsync(user);
+            _memoryCache.Remove(CacheKeys.CurrentUserKey);
+
+            return StatusCode(200, new { okText = $"Данные пользователя {user.Nickname} успешно обговлены" });
+        }
+
+        [HttpDelete]
+        [Route("[action]")]
+        [Authorize]
+        [TrackIpAddress]
+        public async Task<IActionResult> DeleteAvatar()
         {
             var user = await _userManager.GetCurrentUserAsync(HttpContext);
 
@@ -108,34 +142,24 @@ namespace Delopro.Server.Controllers
                 return StatusCode(500, new { errorText = "Ошибка сервера" });
             }
 
-            var oldAvatars = Directory.GetFiles(ConfigurationHelper.AvatarsPath!, $"user_{user.UserId}*");
+            DeleteOldAvatars(user.UserId);
 
-            foreach (var oldAvatar in oldAvatars)
-            {
-                System.IO.File.Delete(oldAvatar);
-            }
-
-            if (avatar is not null)
-            {
-                var fileName = avatar?.FileName ?? String.Empty;
-                var filePath = Path.Combine(ConfigurationHelper.AvatarsPath!, fileName);
-
-                using var stream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
-                await avatar.CopyToAsync(stream);
-
-                user.AvatarPath = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"
-                    ? $"/src/assets/avatars/{fileName}"
-                    : filePath.Replace(ConfigurationHelper.WebRootPath!, string.Empty);
-            }
-            else 
-            {
-                user.AvatarPath = null;
-            }
+            user.AvatarPath = null;
 
             await _userRepository.UpdateAsync(user);
             _memoryCache.Remove(CacheKeys.CurrentUserKey);
 
             return StatusCode(200, new { okText = $"Данные пользователя {user.Nickname} успешно обговлены" });
+        }
+
+        private static void DeleteOldAvatars(int userId) 
+        {
+            var oldAvatars = Directory.GetFiles(ConfigurationHelper.AvatarsPath!, $"user_{userId}*");
+
+            foreach (var oldAvatar in oldAvatars)
+            {
+                System.IO.File.Delete(oldAvatar);
+            }
         }
     }
 }

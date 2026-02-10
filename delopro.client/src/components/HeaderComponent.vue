@@ -185,18 +185,20 @@ function handleBurgerClick() {
                     </span>
                     <Button @click="showUserAccountSettings = false" severity="contrast" rounded text icon="pi pi-times" style="position: absolute; right: 5px; top: 5px; height: 25px; width: 25px"></Button>
                 </div>
-                <Button
-                    @click="() => { showUserAccountSettings = false; router.push(`/user-account`);}"
-                    text label="Личный кабинет"
-                    style="padding: 12px;">
-                </Button>
-                <Button
-                    @click="handleLogout"
-                    text label="Выйти"
-                    icon="pi pi-sign-out"
-                    id="logout-button"
-                    style="padding: 12px;">
-                </Button>
+                <div style="padding-top: 20px;">
+                    <Button
+                        @click="() => { showUserAccountSettings = false; router.push(`/user-account`);}"
+                        text label="Личный кабинет"
+                        style="padding: 12px;">
+                    </Button>
+                    <Button
+                        @click="handleLogout"
+                        text label="Выйти"
+                        icon="pi pi-sign-out"
+                        id="logout-button"
+                        style="padding: 12px;">
+                    </Button>
+                </div>                
             </div>
         </div>
     </div>

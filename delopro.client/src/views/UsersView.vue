@@ -45,7 +45,8 @@ function closeUserModal() {
         <Column field="nickname" header="Никнэйм" sortable>
             <template #body="{ data }">
                 <div style="display: flex; align-items: center; gap: 20px;">
-                    <img :src="`data:image;base64,${data.avatar}`" style="border-radius: 50%; height: 50px; width: 50px;" >
+                    <img v-if="data.avatarPath" :src="data.avatarPath" style="border-radius: 50%; height: 50px; width: 50px;">
+                    <i v-else class="pi pi-user user-account-avatar" style="height: 50px; width: 50px; font-size: 1.5rem;"></i>
                     <span>{{ data.nickname }}</span>
                 </div>
             </template>
