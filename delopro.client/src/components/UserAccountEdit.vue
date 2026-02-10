@@ -107,7 +107,7 @@ async function handleCancel() {
     updatedUser.nickname = props.user.nickname,
     updatedUser.firstName = props.user.firstName,
     updatedUser.lastName = props.user?.lastName ?? null,
-    updatedUser.birthDate = getConvertedDate(props.user.birthDate),
+    updatedUser.birthDate = helper.getConvertedDate(props.user.birthDate),
     updatedUser.country = props.user.country,
     updatedUser.city = props.user.city,
     updatedUser.userTitle = props.user.userTitle,
