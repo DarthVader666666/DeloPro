@@ -25,6 +25,7 @@ const user = computed(() => {
 });
 
 const selectedRoles = ref([]);
+const disableSave = ref(true);
 const emit = defineEmits(['user-shown']);
 
 function defineUpdatedUserFileds(user = null) {
@@ -37,6 +38,7 @@ function defineUpdatedUserFileds(user = null) {
 }
 
 function handleUpdateStatus(status) {
+    disableSave.value = false;
     updatedUser.value.status = helper.userStatuses.indexOf(status);
 
     if(status === 'Удален') {
@@ -49,6 +51,7 @@ function handleUpdateStatus(status) {
 }
 
 async function handleUpdateRoles(roles) {
+    disableSave.value = false;
     updatedUser.value.roles = roles.map(x => helper.roles.indexOf(x));
 }
 
@@ -92,11 +95,11 @@ async function updateUser() {
             <i class="pi pi-times" style="font-size: 1.4rem;"></i>
         </Button>
     </div>
-    <div style="display: flex; gap: 10px; justify-content: space-between;">
+    <div style="display: flex; flex-direction: row; justify-content: space-around;">
         <div>
             <img v-if="user.avatarPath" :src="user.avatarPath" style="border-radius: 50%; height: 150px; width: 150px;">
             <i v-else class="pi pi-user user-account-avatar" style="height: 120px; width: 120px; font-size: 3.5rem;"></i>
-        </div>
+        </div>        
         <div class="user-fields">
             <div v-if="user.nickname">
                 <span style="font-weight: bold;">Никнэйм:</span>
@@ -127,22 +130,22 @@ async function updateUser() {
                 <span>{{ user.status }}</span>
             </div>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 5px;">
-            <span style="font-weight: bold;">Статус:</span>
-            <Select @update:model-value="handleUpdateStatus" :options="helper.userStatuses" class="selector">
-                <template #value>
-                    <Tag :value="helper.userStatuses[updatedUser.status]" :severity="helper.getUserTagSeverity(updatedUser.status)"></Tag>
-                </template>
-                <template #option="slotProps">
-                    <Tag :value="slotProps.option" :severity="helper.getUserTagSeverity(helper.userStatuses.indexOf(slotProps.option))"></Tag>
-                </template>
-            </Select>
-            <span style="font-weight: bold;">Роли:</span>
-            <MultiSelect @update:model-value="handleUpdateRoles" v-model:model-value="selectedRoles" :options="helper.roles" class="selector" />
-        </div>
+    </div>    
+    <div style="display: flex; flex-direction: column; gap: 5px; align-items: center;">
+        <span style="font-weight: bold;">Статус:</span>
+        <Select @update:model-value="handleUpdateStatus" :options="helper.userStatuses" class="selector">
+            <template #value>
+                <Tag :value="helper.userStatuses[updatedUser.status]" :severity="helper.getUserTagSeverity(updatedUser.status)"></Tag>
+            </template>
+            <template #option="slotProps">
+                <Tag :value="slotProps.option" :severity="helper.getUserTagSeverity(helper.userStatuses.indexOf(slotProps.option))"></Tag>
+            </template>
+        </Select>
+        <span style="font-weight: bold;">Роли:</span>
+        <MultiSelect @update:model-value="handleUpdateRoles" v-model:model-value="selectedRoles" :options="helper.roles" class="selector" />
     </div>
     <div class="buttons">
-        <Button type="button" @click="updateUser" raised severity="secondary" >
+        <Button type="button" @click="updateUser" raised severity="secondary" :disabled="disableSave" >
             <i class="pi pi-save"></i>
             <span>Сохранить</span>
         </Button>
