@@ -72,22 +72,22 @@ const store = createStore({
             return state.user;
         },
         getRoles(state) {
-            return state.roles;
+            return state.currentUser?.roles ?? [];
         },
         getNickname(state) {
-            return state.nickname;
+            return state.currentUser?.nickname ?? null;
         },
         isAdmin(state) {
-          return state.roles.includes('Admin');
+          return state.currentUser?.roles?.includes('Admin');
         },
         isOwner(state) {
-          return state.roles.includes('Owner');
+          return state.currentUser?.roles?.includes('Owner');
         },
         isUser(state) {
-          return state.roles.includes('User');
+          return state.currentUser?.roles?.includes('User');
         },
         isAuthenticated(state) {
-            return state.nickname && state.roles && state.roles.length > 0;
+            return state.currentUser != null;
         },
 
         // THEMES
