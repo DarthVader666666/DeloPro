@@ -83,17 +83,16 @@ const chapters = computed(() => store.getters.getChapters);
     -webkit-transform: scale(1.1);
     -moz-transform: scale(1.1);
     -o-transform: scale(1.1);
-    transform: scale(1.1);
-
-    -webkit-transition: all 0.2s ease-in-out;
-    -moz-transition: all 0.2s ease-in-out;
-    -o-transition: all 0.2s ease-in-out;
-    transition: all 0.2s ease-in-out;
+    transform: scale(1.1);    
 
     cursor: pointer;
 }
 
 .chapter img {
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
     filter: drop-shadow(var(--PNG-IMAGE-SHADOW));
 }
 

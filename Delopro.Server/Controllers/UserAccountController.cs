@@ -39,6 +39,7 @@ namespace Delopro.Server.Controllers
 
         [HttpGet]
         [Route("[action]")]
+        [Authorize]
         public async Task<IActionResult> GetCurrentUser()
         {
             if (!_memoryCache.TryGetValue(CacheKeys.CurrentUserKey, out UserAccountResponseModel? userAccountResponseModel))

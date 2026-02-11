@@ -7,8 +7,10 @@ import { useStore } from 'vuex';
 import { computed, onMounted } from 'vue';
 import { useCookies } from 'vue3-cookies';
 import { helper } from './helper/helper';
+import { useRouter } from 'vue-router';
 
 const store = useStore();
+const router = useRouter();
 const cookieManager = useCookies();
 const showSearchBar = computed(() => store.state.showSearchBar);
 const coockieName = store.getters.getCookieName;
@@ -16,11 +18,12 @@ const coockieName = store.getters.getCookieName;
 onMounted(async () => {
     const cookie = cookieManager.cookies.get(coockieName);
 
-    if(cookie) {   
+    if(cookie) {
         await store.dispatch('downloadCurrentUser');
     }
     else {
         helper.clearSession();
+        router.push('/');
     }
 
     await store.dispatch('downloadImageNames');
