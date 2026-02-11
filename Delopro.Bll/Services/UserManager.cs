@@ -55,22 +55,36 @@ namespace Delopro.Bll.Services
             return _cryptoService.Decrypt(user.Password) == encryptedPassword;
         }
 
-        public async Task<(string? Nickname, string[]? Roles)?> LogIn(User user, HttpContext httpContext)
+        public async Task<bool> LogIn(User user, HttpContext httpContext, bool remember = false)
         {
             var claimsIdentity = await GetIdentityAsync(user);
 
             if (claimsIdentity == null)
             {
-                return null;
+                return false;
             }
 
             var claimsPrinciple = new ClaimsPrincipal(claimsIdentity);
 
-            await httpContext.SignInAsync(authorizationScheme, claimsPrinciple);
+            var authProps = new AuthenticationProperties
+            {
+                IsPersistent = remember
+            };
 
-            var roles = claimsIdentity.Claims.Where(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Select(x => x.Value).ToArray();
+            if (remember)
+            { 
+                authProps.ExpiresUtc = DateTime.Now.AddDays(30);
+            }
 
-            return (user.Nickname, roles);
+            try
+            {
+                await httpContext.SignInAsync(authorizationScheme, claimsPrinciple, authProps);
+                return true;
+            }
+            catch
+            { 
+                return false;
+            }
         }
 
         public async Task LogOut(HttpContext httpContext)

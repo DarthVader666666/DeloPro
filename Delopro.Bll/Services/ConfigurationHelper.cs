@@ -5,6 +5,8 @@ namespace Delopro.Bll
     public static class ConfigurationHelper
     {
         public static IConfiguration? Configuration;
+
+        public static string? EnvironmentName;
         public static string? WebRootPath;
         public static string? DocsPath;
         public static string? DocsFolderName;
@@ -14,17 +16,19 @@ namespace Delopro.Bll
 
         public static void Initialize(IConfiguration configuration, string webRootPath, string environmentName)
         {
+            EnvironmentName = environmentName;
             Configuration = configuration;
             DocsFolderName = configuration["DocsFolderName"];
             WebRootPath = webRootPath;
+
             DocsPath = Path.Combine(webRootPath, DocsFolderName ?? string.Empty);
             DocsFolderId = Configuration["GoogleDrive:FolderId"];
-            ChapterImagesPath = environmentName.Equals("Development", StringComparison.OrdinalIgnoreCase)
-                ? Path.GetFullPath("../delopro.client/src/assets/chapters/")
-                : Path.Combine(WebRootPath, "chapters");
-            AvatarsPath = environmentName.Equals("Development", StringComparison.OrdinalIgnoreCase)
-                ? Path.GetFullPath("../delopro.client/src/assets/avatars/")
-                : Path.Combine(WebRootPath, "avatars");
+
+            var imagesRootPath = IsDevelopment ? Path.GetFullPath(configuration["DevRootPath"] ?? string.Empty) : WebRootPath;
+            ChapterImagesPath = Path.Combine(imagesRootPath, "chapters");
+            AvatarsPath = Path.Combine(imagesRootPath, "avatars");
         }
+
+        public static bool IsDevelopment => EnvironmentName == "Development";
     }
 }

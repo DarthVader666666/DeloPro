@@ -223,14 +223,11 @@ export const helper = {
         })
     },
     clearSession() {
+      store.commit('setCurrentUser', null);
       const keys = store.state.sessionStorageKeys;
 
       for(const key in keys) {
         sessionStorage.removeItem(keys[key]);
       }
-
-      store.commit('setNickname', null);
-      store.commit('setRoles', []);
-      store.commit('setNickname', null);
     }
 }

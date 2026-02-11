@@ -33,7 +33,7 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Route("[action]")]
         [TrackIpAddress]
-        public async Task<IActionResult> LogIn([FromQuery]string? nickname = null, [FromQuery] bool? remember = false)
+        public async Task<IActionResult> LogIn([FromQuery]string? nickname = null, [FromQuery] bool remember = false)
         {
             var userLogInRequestModel = JsonConvert.DeserializeObject<UserLogInRequestModel>(HttpContext.Request.Headers["Authentication"].ToString());
             var password = Encoding.UTF8.GetString(userLogInRequestModel?.Password ?? []);
@@ -55,43 +55,13 @@ namespace Delopro.Server.Controllers
                 return BadRequest(new { errorText = "Неверный пароль" });
             }
 
-            var creds = await _userManager.LogIn(user, HttpContext);
-
-            if (creds == null || !creds.Value.Roles.Any())
+            if (!await _userManager.LogIn(user, HttpContext, remember))
             {
                 return BadRequest(new { errorText = "Couldn't get user identity." });
             }
 
-            return Ok(new UserLogInResponseModel()
-            {
-                Nickname = creds.Value.Nickname,
-                Roles = creds.Value.Roles,
-                Remember = remember
-            });
+            return Ok(new { nickname = user.Nickname });
         }
-
-        [HttpGet]
-        [Route("[action]")]
-        [TrackIpAddress]
-        public IActionResult CookieCredentials()
-        {
-            var user = HttpContext.User;
-
-            if (user.Identity == null || !user.Identity.IsAuthenticated)
-            {
-                return Ok(new { okText = "Пользователь не аутентифицирован" });
-            }
-
-            var claims = user.Claims;
-
-            return Ok(new UserLogInResponseModel()
-            {
-                Nickname = claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultNameClaimType)?.Value,
-                Roles = claims.Where(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Select(x => x.Value).ToArray(),
-                IsAuthenticated = user.Identity.IsAuthenticated
-            });
-        }
-
 
         [HttpPost]
         [Route("[action]")]

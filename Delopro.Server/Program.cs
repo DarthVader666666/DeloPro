@@ -47,8 +47,10 @@ builder.Services.AddAuthentication(options =>
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
     {
         options.Cookie.Name = "Delopro_Cookies";
-        options.Cookie.MaxAge = TimeSpan.FromDays(30);
+        //options.Cookie.MaxAge = TimeSpan.FromDays(30);
         //options.Cookie.SameSite = SameSiteMode.None;
+        options.Cookie.HttpOnly = true;
+        options.SlidingExpiration = true;
         options.Events.OnRedirectToLogin = (context) =>
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;

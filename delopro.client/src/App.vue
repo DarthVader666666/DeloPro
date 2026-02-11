@@ -3,10 +3,10 @@ import HeaderComponent from './components/HeaderComponent.vue';
 import FooterComponent from './components/FooterComponent.vue';
 import SearchBar from './components/SearchBar.vue';
 import MainComponent from './components/MainComponent.vue';
-import axios from 'axios';
 import { useStore } from 'vuex';
 import { computed, onMounted } from 'vue';
 import { useCookies } from 'vue3-cookies';
+import { helper } from './helper/helper';
 
 const store = useStore();
 const cookieManager = useCookies();
@@ -14,21 +14,13 @@ const showSearchBar = computed(() => store.state.showSearchBar);
 const coockieName = store.getters.getCookieName;
 
 onMounted(async () => {
-    axios.defaults.withCredentials = true;
+    const cookie = cookieManager.cookies.get(coockieName);
 
-    const activeCookies = cookieManager.cookies.get(coockieName);
-    const localCookies = localStorage.getItem(coockieName);
-
-    if (!activeCookies && localCookies) {
-        cookieManager.cookies.set(coockieName, localCookies);
-    }    
-
-    const response = await axios.get(`${store.getters.serverUrl}/authentication/cookiecredentials`);
-
-    if(response.data.isAuthenticated === true && response.data.nickname) {
+    if(cookie) {   
         await store.dispatch('downloadCurrentUser');
-        store.commit('setNickname', response.data.nickname);
-        store.commit('setRoles', response.data.roles);
+    }
+    else {
+        helper.clearSession();
     }
 
     await store.dispatch('downloadImageNames');

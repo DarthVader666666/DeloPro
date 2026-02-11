@@ -614,7 +614,6 @@ const store = createStore({
                 if(response.status === 200 && response.data) {
                   const user = response.data;
                   commit('setCurrentUser', user);
-                  commit('setRoles', user.roles);
                 }
               })
               .catch(error => {
@@ -625,10 +624,9 @@ const store = createStore({
           }
           else {
             commit('setCurrentUser', JSON.parse(storedCurrentUser));
-            commit('setRoles', JSON.parse(storedCurrentUser).roles);
           }
         },
-        async logIn({dispatch, commit, state}, loginRequestForm) {
+        async logIn({dispatch, state}, loginRequestForm) {
           const nickname = helper.validateEmail(loginRequestForm.nicknameOrEmail) ? '' : loginRequestForm.nicknameOrEmail
           const email = helper.validateEmail(loginRequestForm.nicknameOrEmail) ? loginRequestForm.nicknameOrEmail : null;
 
@@ -643,19 +641,8 @@ const store = createStore({
           })
           .then(async response => {
             if(response.status === 200) {             
-            //   if(response.data.remember === true) {
-            //     const cookie = document.cookie.split('=');
-              
-            //     if(cookie && cookie.length === 2) {
-            //       localStorage.setItem(cookie[0], cookie[1]);
-            //     }
-            //   }
-          
-              commit('setRoles', response.data.roles);
-              commit('setNickname', response.data.nickname);
               await dispatch('downloadCurrentUser');
-              toast.success(`Вы вошли, как ${response.data.nickname}`);
-              
+              toast.success(`Вы вошли, как ${response.data.nickname}`);              
               router.push('/');
             }
           })
@@ -665,14 +652,13 @@ const store = createStore({
               }
           })
         },
-        logOut({state}) {
+        logOut() {
           axios.post(`${store.getters.serverUrl}/authentication/logout/`, {
             headers: {
               'Content-Type': 'application/json'
             }})
             .then(response => {
               if(response.status === 200) {
-                localStorage.removeItem(state.coockieName);
                 helper.clearSession();                
                 router.push('/');
               }

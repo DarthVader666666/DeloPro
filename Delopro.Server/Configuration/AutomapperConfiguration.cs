@@ -8,6 +8,7 @@ using Delopro.Server.Enums;
 using System.ComponentModel;
 using Delopro.Data.Enums;
 using Delopro.Bll.Services;
+using Delopro.Bll;
 
 namespace Delopro.Server.Configurations
 {
@@ -121,13 +122,8 @@ namespace Delopro.Server.Configurations
                 return null;
             }
 
-            return Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? $"/src/assets/avatars/{avatarPath}" : $"/avatars/{avatarPath}";
+            return ConfigurationHelper.IsDevelopment ? $"/src/assets/avatars/{avatarPath}" : $"/avatars/{avatarPath}";
         }
-
-        //private static byte[] ConvertHex(string hex)
-        //{
-        //    return Convert.FromHexString(hex)[78..];
-        //}
 
         private static string? EncodeUTF8(byte[]? bytes)
         {
