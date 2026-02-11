@@ -31,6 +31,11 @@ namespace Delopro.Bll.Services
             _emailSender = emailSender;
         }
 
+        public static bool IsAuthenticated(HttpContext httpContext)
+        {
+            return httpContext.User?.Identity?.IsAuthenticated ?? false;
+        }
+
         public async Task<User?> GetCurrentUserAsync(HttpContext httpContext)
         {
             var nickname = httpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;

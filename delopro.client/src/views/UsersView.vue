@@ -1,6 +1,6 @@
 <script setup>
 import { helper } from '@/helper/helper';
-import { computed, onBeforeMount, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 import { FilterMatchMode } from '@primevue/core/api';
 import DataTable from 'primevue/datatable';
@@ -20,9 +20,8 @@ const filters = ref({
 
 const showUser = ref(false);
 
-onBeforeMount(() => {
+onMounted(() => {
     showUser.value = false;
-    store.commit('setUsers', []);
     store.commit('setUser', null);
 })
 

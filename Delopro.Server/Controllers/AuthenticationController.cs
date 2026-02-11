@@ -80,6 +80,13 @@ namespace Delopro.Server.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<bool> CheckAuthentication()
+        {
+            return UserManager.IsAuthenticated(HttpContext);
+        }
+
         [HttpPost]
         [Route("[action]")]
         [TrackIpAddress]

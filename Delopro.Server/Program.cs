@@ -38,25 +38,25 @@ builder.Services.AddSession();
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultChallengeScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
-    options.DefaultForbidScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
-    //options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    //options.DefaultForbidScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    //options.DefaultChallengeScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
+    //options.DefaultForbidScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultForbidScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
     {
         options.Cookie.Name = "Delopro_Cookies";
         //options.Cookie.MaxAge = TimeSpan.FromDays(30);
-        //options.Cookie.SameSite = SameSiteMode.None;
+        options.Cookie.SameSite = SameSiteMode.None;
         options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         options.SlidingExpiration = true;
         options.Events.OnRedirectToLogin = (context) =>
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
             return Task.CompletedTask;
         };
-        options.Cookie.HttpOnly = false;
     });
 
 builder.Services.AddAuthorization();

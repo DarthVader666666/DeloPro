@@ -40,6 +40,7 @@ const store = createStore({
           documentsKey: 'documents',
           documentNodesKey: 'documentNodes',
           currentUserKey: 'currentUser',
+          usersKey: 'users'
         },
         coockieName: 'Delopro_Cookies'
     },
@@ -172,8 +173,9 @@ const store = createStore({
           state.currentUser = currentUser;
           sessionStorage.setItem(state.sessionStorageKeys.currentUserKey, JSON.stringify(currentUser));
         },
-        setUsers(state, value) {
-            state.users = value;
+        setUsers(state, users) {
+            sessionStorage.setItem(state.sessionStorageKeys.usersKey, JSON.stringify(users));
+            state.users = users;
         },
         setUser(state, value) {
             state.user = value;
@@ -580,20 +582,28 @@ const store = createStore({
 
         // USERS
         async downloadUsers({commit, state}) {
-          await axios.get(`${state.serverUrl}/administration/getusers`)
-            .then(response => {
-              if(response.status === 200) {
-                commit('setUsers', response.data);
-              }
-            })
-            .catch(error => {
-              if(error.response) {
-                  toast.error(error.response.data.errorText);
-              }
-            });
+          const storedUsers = sessionStorage.getItem(state.sessionStorageKeys.usersKey);
+
+          if(!storedUsers) {
+            await axios.get(`${state.serverUrl}/administration/getusers`)
+              .then(response => {
+                if(response.status === 200) {
+                  commit('setUsers', response.data);
+                }
+              })
+              .catch(error => {
+                if(error.response) {
+                    toast.error(error.response.data.errorText);
+                }
+              });
+          }
+          else {
+            commit('setUsers', JSON.parse(storedUsers));
+          }
         },
         async downloadUser({commit, state}, userId) {
-          await axios.get(`${state.serverUrl}/administration/getuser/${userId}`)
+            const url = state.serverUrl + '/administration/GetUser/' + userId;
+          await axios.get(url)
             .then(response => {
               if(response.status === 200) {
                 commit('setUser', response.data);
@@ -601,7 +611,7 @@ const store = createStore({
             })
             .catch(error => {
               if(error.response) {
-                toast.error(error.response.data.errorText);
+                toast.error(error.response.data?.errorText ?? `${error.message}: ${url}`);
               }
             });
         },
@@ -609,16 +619,16 @@ const store = createStore({
           const storedCurrentUser = sessionStorage.getItem(state.sessionStorageKeys.currentUserKey);
 
           if(!storedCurrentUser) {
-            await axios.get(`${state.serverUrl}/useraccount/getcurrentuser`)
+            const url = '/useraccount/getcurrentuser';
+            await axios.get(state.serverUrl + url)
               .then(response => {
                 if(response.status === 200 && response.data) {
-                  const user = response.data;
-                  commit('setCurrentUser', user);
+                  commit('setCurrentUser', response.data);
                 }
               })
               .catch(error => {
                 if(error.response) {
-                  toast.error(error.response.data.errorText);
+                  toast.error(error.response.data?.errorText ?? `${error.message}: ${url}`);
                 }
               });
           }

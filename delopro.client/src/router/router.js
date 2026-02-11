@@ -14,6 +14,7 @@ import RecoverPasswordView from "@/views/RecoverPasswordView.vue";
 import UsersView from "@/views/UsersView.vue";
 import { computed, ref } from "vue";
 import UserAccountView from "@/views/UserAccountView.vue";
+import { helper } from "@/helper/helper";
 
 const doScrollUp = ref(true);
 const currentUser = computed(() => store.getters.getCurrentUser);
@@ -98,14 +99,11 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-    await store.dispatch('downloadChapters');
-    await store.dispatch('downloadDocuments');
-
-    if(store.getters.isAuthenticated) {
+    if(await helper.isAuthenticated() && !currentUser.value) {
         await store.dispatch('downloadCurrentUser');
     }
 
-    if (to.meta.roles && !to.meta.roles.some(r => currentUser.value ? currentUser.value.roles.includes(r) : false)) {
+    if (to.meta.roles && !to.meta.roles.some(r => currentUser?.value?.roles?.includes(r) ?? false)) {
       return next('/');
     }
 
