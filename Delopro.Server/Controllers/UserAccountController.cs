@@ -43,19 +43,15 @@ namespace Delopro.Server.Controllers
         [TrackIpAddress]
         public async Task<IActionResult> GetCurrentUser()
         {
-            if (!_memoryCache.TryGetValue(CacheKeys.CurrentUserKey, out UserAccountResponseModel? userAccountResponseModel))
+            var user = await _userManager.GetCurrentUserAsync(HttpContext);
+
+            if (user == null)
             {
-                var user = await _userManager.GetCurrentUserAsync(HttpContext);
-
-                if (user == null)
-                {
-                    _memoryCache.Remove(CacheKeys.CurrentUserKey);
-                    return Ok();
-                }
-
-                userAccountResponseModel = _mapper.Map<UserAccountResponseModel>(user);
-                _memoryCache.Set(CacheKeys.CurrentUserKey, userAccountResponseModel, TimeSpan.FromMinutes(5));
+                _memoryCache.Remove(CacheKeys.CurrentUserKey);
+                return Ok();
             }
+
+            var userAccountResponseModel = _mapper.Map<UserAccountResponseModel>(user);
 
             return Ok(userAccountResponseModel);
         }

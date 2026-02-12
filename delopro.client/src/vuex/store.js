@@ -174,8 +174,8 @@ const store = createStore({
           sessionStorage.setItem(state.sessionStorageKeys.currentUserKey, JSON.stringify(currentUser));
         },
         setUsers(state, users) {
-            sessionStorage.setItem(state.sessionStorageKeys.usersKey, JSON.stringify(users));
             state.users = users;
+            sessionStorage.setItem(state.sessionStorageKeys.usersKey, JSON.stringify(users));
         },
         setUser(state, value) {
             state.user = value;
@@ -689,7 +689,9 @@ const store = createStore({
             .then(async response => {
                 if(response.status === 200) {
                     sessionStorage.removeItem(state.sessionStorageKeys.currentUserKey);
-                    dispatch('downloadCurrentUser');
+                    sessionStorage.removeItem(state.sessionStorageKeys.usersKey);
+                    await dispatch('downloadCurrentUser');
+                    await dispatch('downloadUsers');
                     toast.success(response.data.okText);
                 }
             })
@@ -710,7 +712,9 @@ const store = createStore({
                 if(response.status === 200) {
                     toast.success(response.data.okText);
                     sessionStorage.removeItem(state.sessionStorageKeys.currentUserKey);
+                    sessionStorage.removeItem(state.sessionStorageKeys.usersKey);
                     await dispatch('downloadCurrentUser');
+                    await dispatch('downloadUsers');
                 }
             })
             .catch(error => {
@@ -725,7 +729,9 @@ const store = createStore({
                 if(response.status === 200) {
                     toast.success(response.data.okText);
                     sessionStorage.removeItem(state.sessionStorageKeys.currentUserKey);
-                    dispatch('downloadCurrentUser');
+                    sessionStorage.removeItem(state.sessionStorageKeys.usersKey);
+                    await dispatch('downloadCurrentUser');
+                    await dispatch('downloadUsers');
                 }
             })
             .catch(error => {

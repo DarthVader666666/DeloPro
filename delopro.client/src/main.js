@@ -9,6 +9,18 @@ import Toast, { POSITION } from 'vue-toastification';
 import { createApp } from 'vue';
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura'
+import axios from 'axios';
+import { helper } from './helper/helper';
+
+axios.defaults.withCredentials = true;
+if(!store.getters.getCurrentUser && await helper.isAuthenticated()) {
+    await store.dispatch('downloadCurrentUser');
+}
+
+await store.dispatch('downloadChapters');
+await store.dispatch('downloadDocuments');
+await store.dispatch('downloadImageNames');
+
 
 createApp(App)
 .use(PrimeVue, {

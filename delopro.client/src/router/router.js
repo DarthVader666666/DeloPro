@@ -99,12 +99,10 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-    if(await helper.isAuthenticated() && !currentUser.value) {
-        await store.dispatch('downloadCurrentUser');
-    }
-
-    if (to.meta.roles && !to.meta.roles.some(r => currentUser?.value?.roles?.includes(r) ?? false)) {
-      return next('/');
+    if (to.meta.roles) {
+        if(!to.meta.roles.some(r => currentUser?.value?.roles?.includes(r) ?? false)) {
+            return next('/');
+        }
     }
 
     next();
