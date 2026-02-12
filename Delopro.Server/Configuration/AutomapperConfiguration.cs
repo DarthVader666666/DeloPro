@@ -78,7 +78,8 @@ namespace Delopro.Server.Configurations
                         .ForMember(dest => dest.Status, opts => opts.MapFrom(src => src.IsDeleted ? UserStatus.Deleted :
                             (src.IsConfirmed ? UserStatus.Confirmed : UserStatus.NotConfirmed))
                         )
-                        .ForMember(dest => dest.AvatarPath, opts => opts.MapFrom(src => GetFullAvatarPath(src.AvatarPath)));
+                        .ForMember(dest => dest.AvatarPath, opts => opts.MapFrom(src => GetFullAvatarPath(src.AvatarPath)))
+                        .ForMember(dest => dest.FullName, opts => opts.MapFrom(src => GetFullName(src, cryptoService)));
 
                     autoMapperConfig.CreateMap<User, UserLongResponseModel>()
                         .ForMember(dest => dest.FirstName, opts => opts.MapFrom(src => cryptoService.Decrypt(src.FirstName)))
@@ -113,6 +114,17 @@ namespace Delopro.Server.Configurations
 
                 return config.CreateMapper();
             });
+        }
+
+        private static string? GetFullName(User? user, CryptoService cryptoService)
+        {
+            return (user?.FirstName, user?.LastName) switch
+            {
+                (var x, var y) when !x.IsNullOrEmpty() && !y.IsNullOrEmpty() => $"{cryptoService.Decrypt(x)} {cryptoService.Decrypt(y)}",
+                (var x, var y) when !x.IsNullOrEmpty() && y.IsNullOrEmpty() => cryptoService.Decrypt(x),
+                (var x, var y) when x.IsNullOrEmpty() && !y.IsNullOrEmpty() => cryptoService.Decrypt(y),
+                _ => null
+            };
         }
 
         private static string? GetFullAvatarPath(string? avatarPath)

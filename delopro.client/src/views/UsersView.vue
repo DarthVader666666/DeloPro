@@ -14,6 +14,7 @@ const users = computed(() => store.getters.getUsers);
 
 const filters = ref({
     nickname: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    fullName: { value: null, matchMode: FilterMatchMode.CONTAINS },
     email: { value: null, matchMode: FilterMatchMode.CONTAINS },
     registerDate: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
@@ -40,13 +41,23 @@ function closeUserModal() {
 <template>
 <div class="users-container">
     <DataTable :value="users" paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]" v-model:filters="filters" filterDisplay="row" 
-        :globalFilterFields="['nickname', 'email', 'registerDate', 'roles', 'status']" stripedRows showGridlines selectionMode="single" @rowSelect="onRowSelect">
+        :globalFilterFields="['nickname', 'email', 'fullName', 'registerDate', 'roles', 'status']" stripedRows showGridlines selectionMode="single" @rowSelect="onRowSelect">
         <Column field="nickname" header="Никнэйм" sortable>
             <template #body="{ data }">
                 <div style="display: flex; align-items: center; gap: 20px;">
                     <img v-if="data.avatarPath" :src="data.avatarPath" style="border-radius: 50%; height: 50px; width: 50px;">
                     <i v-else class="pi pi-user user-account-avatar" style="height: 50px; width: 50px; font-size: 1.5rem;"></i>
                     <span>{{ data.nickname }}</span>
+                </div>
+            </template>
+            <template #filter="{ filterModel, filterCallback }">
+                <InputText v-model="filterModel.value" type="text" @input="filterCallback()" style="width:100%" placeholder="Поиск" />
+            </template>
+        </Column>
+        <Column field="fullName" header="Имя" sortable>
+            <template #body="{ data }">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <span>{{ data.fullName }}</span>
                 </div>
             </template>
             <template #filter="{ filterModel, filterCallback }">
