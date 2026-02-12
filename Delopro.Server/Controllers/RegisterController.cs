@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Delopro.Server.Controllers
 {
@@ -34,7 +34,7 @@ namespace Delopro.Server.Controllers
         [TrackIpAddress]
         public async Task<IActionResult> Index()
         {
-            var userRegister = JsonConvert.DeserializeObject<RegisterRequestModel>(HttpContext.Request.Headers["Registration"].ToString());
+            var userRegister = JsonSerializer.Deserialize<RegisterRequestModel>(HttpContext.Request.Headers["Registration"].ToString());
 
             if (userRegister?.Password == null)
             {

@@ -11,8 +11,7 @@ using HtmlAgilityPack;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Delopro.Server.Controllers
 {
@@ -38,7 +37,7 @@ namespace Delopro.Server.Controllers
             try
             {
                 var reader = new StreamReader(HttpContext.Request.Body);
-                searchLine = JsonConvert.DeserializeObject<SearchLineModel>(await reader.ReadToEndAsync())?.SearchLine;
+                searchLine = JsonSerializer.Deserialize<SearchLineModel>(await reader.ReadToEndAsync())?.SearchLine;
 
                 if (searchLine == null || searchLine.Length < 3)
                 {

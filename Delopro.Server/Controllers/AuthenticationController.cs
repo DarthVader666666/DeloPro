@@ -7,10 +7,8 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
-using Newtonsoft.Json;
-
-using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 
 namespace Delopro.Server.Controllers
 {
@@ -35,7 +33,7 @@ namespace Delopro.Server.Controllers
         [TrackIpAddress]
         public async Task<IActionResult> LogIn([FromQuery]string? nickname = null, [FromQuery] bool remember = false)
         {
-            var userLogInRequestModel = JsonConvert.DeserializeObject<UserLogInRequestModel>(HttpContext.Request.Headers["Authentication"].ToString());
+            var userLogInRequestModel = JsonSerializer.Deserialize<UserLogInRequestModel>(HttpContext.Request.Headers["Authentication"].ToString());
             var password = Encoding.UTF8.GetString(userLogInRequestModel?.Password ?? []);
 
             var user = await _userManager.GetUserByAsync(nickname: nickname, email: userLogInRequestModel?.Email);
