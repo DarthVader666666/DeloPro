@@ -100,7 +100,13 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     if (to.meta.roles) {
-        if(!to.meta.roles.some(r => currentUser?.value?.roles?.includes(r) ?? false)) {
+        if(!store.getters.getCurrentUser) {
+            if(await helper.isAuthenticated()) {
+                await store.dispatch('downloadCurrentUser');
+            }
+        }
+
+        if(!to.meta.roles.some(r => currentUser?.value?.roles?.includes(r) ?? false)) {            
             return next('/');
         }
     }
