@@ -31,12 +31,9 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Route("[action]")]
         [TrackIpAddress]
-        public async Task<IActionResult> LogIn([FromQuery]string? nickname = null, [FromQuery] bool remember = false)
+        public async Task<IActionResult> LogIn([FromBody] UserLogInRequestModel? userLogInRequestModel)
         {
-            var userLogInRequestModel = JsonSerializer.Deserialize<UserLogInRequestModel>(HttpContext.Request.Headers["Authentication"].ToString());
-            var password = Encoding.UTF8.GetString(userLogInRequestModel?.Password ?? []);
-
-            var user = await _userManager.GetUserByAsync(nickname: nickname, email: userLogInRequestModel?.Email);
+            var user = await _userManager.GetUserByAsync(nickname: userLogInRequestModel?.Nickname, email: userLogInRequestModel?.Email);
 
             if (user == null)
             {
@@ -48,12 +45,12 @@ namespace Delopro.Server.Controllers
                 return NotFound(new { errorText = "Пользователь не подтвержден" });
             }
 
-            if (!_userManager.IsMatchPassword(user, password))
+            if (!_userManager.IsMatchPassword(user, userLogInRequestModel?.Password))
             {
                 return BadRequest(new { errorText = "Неверный пароль" });
             }
 
-            if (!await _userManager.LogIn(user, HttpContext, remember))
+            if (!await _userManager.LogIn(user, HttpContext, userLogInRequestModel?.Remember ?? false))
             {
                 return BadRequest(new { errorText = "Couldn't get user identity." });
             }

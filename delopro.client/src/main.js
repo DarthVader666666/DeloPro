@@ -13,14 +13,16 @@ import axios from 'axios';
 import { helper } from './helper/helper';
 
 axios.defaults.withCredentials = true;
-if(!store.getters.getCurrentUser && await helper.isAuthenticated()) {
-    await store.dispatch('downloadCurrentUser');
+
+async function bootstrap() {
+    if(!store.getters.getCurrentUser && await helper.isAuthenticated()) {
+        await store.dispatch('downloadCurrentUser');
+    }
+
+    await store.dispatch('downloadChapters');
+    await store.dispatch('downloadDocuments');
+    await store.dispatch('downloadImageNames');
 }
-
-await store.dispatch('downloadChapters');
-await store.dispatch('downloadDocuments');
-await store.dispatch('downloadImageNames');
-
 
 createApp(App)
 .use(PrimeVue, {
@@ -36,3 +38,5 @@ createApp(App)
 .use(Toast, { timeout: 2000, position: POSITION.TOP_CENTER })
 .use(store)
 .mount('#app');
+
+bootstrap();

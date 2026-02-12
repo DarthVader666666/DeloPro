@@ -65,7 +65,6 @@ const handleScreenSizeChange = () => {
 };
 
 async function handleLogIn () {
-    axios.defaults.withCredentials = true;
     await store.dispatch('logIn', loginRequestForm.value);
 
     loginRequestForm.value.nicknameOrEmail = null;

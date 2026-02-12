@@ -2,7 +2,9 @@
 {
     public class UserLogInRequestModel
     {
+        public string? Nickname { get; set; }
         public string? Email { get; set; }
-        public byte[]? Password { get; set; }
+        public string? Password { get; set; }
+        public bool Remember {  get; set; }
     }
 }

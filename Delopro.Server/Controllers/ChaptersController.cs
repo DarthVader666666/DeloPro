@@ -12,6 +12,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Caching.Memory;
 using Delopro.Server.Configuration;
+using Delopro.Server.Attributes;
 
 namespace Delopro.Server.Controllers
 {
@@ -93,6 +94,7 @@ namespace Delopro.Server.Controllers
 
         [HttpGet]
         [Route("[action]")]
+        [TrackIpAddress]
         public async Task<IActionResult> GetList() 
         {
             if (!_memoryCache.TryGetValue(CacheKeys.ChaptersKey, out IEnumerable<ChapterResponseModel>? response))

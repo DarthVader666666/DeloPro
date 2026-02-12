@@ -637,20 +637,18 @@ const store = createStore({
           }
         },
         async logIn({dispatch, state}, loginRequestForm) {
-          const nickname = helper.validateEmail(loginRequestForm.nicknameOrEmail) ? '' : loginRequestForm.nicknameOrEmail
+          const nickname = (helper.validateEmail(loginRequestForm.nicknameOrEmail) ? '' : loginRequestForm.nicknameOrEmail).trimEnd();
           const email = helper.validateEmail(loginRequestForm.nicknameOrEmail) ? loginRequestForm.nicknameOrEmail : null;
 
-          axios.post(`${state.serverUrl}/authentication/login?nickname=${nickname.trimEnd()}&remember=${loginRequestForm.remember}`, null, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authentication': JSON.stringify({
-                  email: email,
-                  password: helper.getUnicodeByteArray(loginRequestForm.password)
-              })
-            }
+          axios.post(`${state.serverUrl}/authentication/login`,
+          {
+            nickname: nickname,
+            email: email,
+            password: loginRequestForm.password,
+            remember: loginRequestForm.remember
           })
           .then(async response => {
-            if(response.status === 200) {             
+            if(response.status === 200) {
               await dispatch('downloadCurrentUser');
               toast.success(`Вы вошли, как ${response.data.nickname}`);              
               router.push('/');
