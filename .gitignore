@@ -365,3 +365,6 @@ FodyWeavers.xsd
 # Certifivate files
 *.key
 *.pem
+
+# Images
+*.png
