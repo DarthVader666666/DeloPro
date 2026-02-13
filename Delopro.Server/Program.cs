@@ -13,6 +13,7 @@ using Google.Apis.Services;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 
 using System.Text.Json.Serialization;
@@ -20,17 +21,14 @@ using System.Text.Json.Serialization;
 using static Google.Apis.Drive.v3.DriveService;
 
 var builder = WebApplication.CreateBuilder(args);
-const string logPath = "log.txt";
 
-if (!File.Exists(logPath))
-{
-    File.Create(logPath).Close();
-}
+const string dataProtectionKeys = "Data Protection Keys";
 
-var stream = File.AppendText(logPath);
-stream.WriteLine(DateTime.Now.ToString());
-stream.Dispose();
-stream.Close();
+Directory.CreateDirectory(dataProtectionKeys);
+
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(dataProtectionKeys))
+    .SetApplicationName("Delopro");
 
 var usePostgres = false;
 
