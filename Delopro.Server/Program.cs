@@ -7,7 +7,6 @@ using Delopro.Data.Interfaces;
 using Delopro.Data.Repositories;
 using Delopro.Server.Configurations;
 
-using Google.Apis.Auth.AspNetCore3;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
@@ -21,6 +20,18 @@ using System.Text.Json.Serialization;
 using static Google.Apis.Drive.v3.DriveService;
 
 var builder = WebApplication.CreateBuilder(args);
+const string logPath = "log.txt";
+
+if (!File.Exists(logPath))
+{
+    File.Create(logPath).Close();
+}
+
+var stream = File.AppendText(logPath);
+stream.WriteLine(DateTime.Now.ToString());
+stream.Dispose();
+stream.Close();
+
 var usePostgres = false;
 
 ConfigurationHelper.Initialize(builder.Configuration, builder.Environment.WebRootPath, builder.Environment.EnvironmentName);

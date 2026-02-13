@@ -127,15 +127,8 @@ namespace Delopro.Server.Configurations
             };
         }
 
-        private static string? GetFullAvatarPath(string? avatarPath)
-        {
-            if(avatarPath == null)
-            {
-                return null;
-            }
-
-            return ConfigurationHelper.IsDevelopment ? $"/src/assets/avatars/{avatarPath}" : $"/avatars/{avatarPath}";
-        }
+        private static string? GetFullAvatarPath(string? avatarPath) =>
+            avatarPath is null ? null : (ConfigurationHelper.IsDevelopment ? $"/src/assets/avatars/{avatarPath}" : $"/avatars/{avatarPath}");
 
         private static string? EncodeUTF8(byte[]? bytes)
         {
