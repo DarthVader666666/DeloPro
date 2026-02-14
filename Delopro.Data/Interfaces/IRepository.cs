@@ -8,7 +8,7 @@
         Task<TEntity?> CreateAsync(TEntity? item);
         Task<TEntity?> UpdateAsync(TEntity? item);
         Task<TEntity?> DeleteAsync(int? id_1, int? id_2 = null);
-        Task DeleteRangeAsync(IEnumerable<TEntity> items);
+        Task DeleteRangeAsync(IEnumerable<TEntity?> items);
         Task<bool> ExistsAsync(TEntity? item);
         virtual Task<IEnumerable<TEntity?>> GetListIncludeAsync(int? id = null)
         { 

@@ -34,7 +34,14 @@ namespace Delopro.Server.Controllers
         [TrackIpAddress]
         public async Task<IActionResult> Index()
         {
-            var userRegister = JsonSerializer.Deserialize<RegisterRequestModel>(HttpContext.Request.Headers["Registration"].ToString());
+            var headers = HttpContext.Request?.Headers;
+
+            if (headers is null)
+            {
+                return BadRequest(new { errorText = "Неверные данные в запросе" });
+            }
+
+            var userRegister = JsonSerializer.Deserialize<RegisterRequest>(headers["Registration"].ToString());
 
             if (userRegister?.Password == null)
             {
@@ -55,7 +62,7 @@ namespace Delopro.Server.Controllers
             {
                 var user = _automapper.Map<User>(userRegister);
 
-                var result = await _userManager.RegisterAsync(user, HttpContext.Request.GetDisplayUrl());
+                var result = await _userManager.RegisterAsync(user, HttpContext?.Request?.GetDisplayUrl());
 
                 if (result)
                 {
@@ -68,7 +75,7 @@ namespace Delopro.Server.Controllers
             }
             catch (Exception ex)
             { 
-                return StatusCode(500, new { errorText = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = ex.Message });
             }
 
         }
@@ -80,14 +87,14 @@ namespace Delopro.Server.Controllers
         {
             var confirmedUser = await _userManager.ConfirmUserAsync(
                 [
-                    Encoding.UTF8.GetString((key1 ?? []).Select(x => (byte)x).ToArray()), 
-                    Encoding.UTF8.GetString((key2 ?? []).Select(x => (byte)x).ToArray())
+                    Encoding.UTF8.GetString([.. (key1 ?? []).Select(x => (byte)x)]), 
+                    Encoding.UTF8.GetString([.. (key2 ?? []).Select(x => (byte)x)])
                 ]
             );
 
             if (confirmedUser == null)
             {
-                return StatusCode(500, new { errorText = "Ошибка подтверждения" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка подтверждения" });
             }
 
             await _userManager.LogIn(confirmedUser, HttpContext);

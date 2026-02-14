@@ -1,6 +1,6 @@
 ﻿namespace Delopro.Server.Models
 {
-    public class UserUpdateModel
+    public class UserUpdateRequest
     {
         public int UserId { get; set; }
         public DateTime? DeletionDate { get; set; }

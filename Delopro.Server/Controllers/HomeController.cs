@@ -1,5 +1,4 @@
 ﻿using Delopro.Bll;
-using Delopro.Server.Attributes;
 
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +17,11 @@ namespace Delopro.Server.Controllers
             _configuration = configuration;
         }
 
+        [HttpGet]
         [Route("/error/{statusCode}")]
         public IActionResult Error(int statusCode)
         {
-            if (statusCode == 404)
+            if (statusCode == StatusCodes.Status404NotFound)
             {
                 return Redirect(_configuration["ClientUrl"] ?? "/");
             }
@@ -35,6 +35,7 @@ namespace Delopro.Server.Controllers
         {
             var imageNames = Directory.GetFiles(ConfigurationHelper.ChapterImagesPath!)
                 .Where(x => x.Contains("chapter-")).Select(x => x.Split('\\').Last().Replace("chapter-", ""));
+
             return Ok(imageNames);
         }
     }

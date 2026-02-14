@@ -1,6 +1,6 @@
 ﻿namespace Delopro.Server.Models
 {
-    public class ThemeUpdateModel
+    public class ThemeCreateRequest
     {
         public int? ThemeId { get; set; }
         public int? UserId { get; set; }

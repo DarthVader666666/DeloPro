@@ -1,6 +1,6 @@
 ﻿namespace Delopro.Server.Models
 {
-    public class UserLongResponseModel
+    public class UserLongResponse
     {
         public int UserId { get; set; }
         public string? Nickname { get; set; }

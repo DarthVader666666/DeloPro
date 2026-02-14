@@ -12,7 +12,7 @@ namespace Delopro.Data.Repositories
             _dbContext = dbContext;
         }
 
-        public Task<Role?> CreateAsync(Role item)
+        public Task<Role?> CreateAsync(Role? item)
         {
             throw new NotImplementedException();
         }
@@ -22,7 +22,7 @@ namespace Delopro.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public Task DeleteRangeAsync(IEnumerable<Role> items)
+        public Task DeleteRangeAsync(IEnumerable<Role?> items)
         {
             throw new NotImplementedException();
         }
@@ -48,7 +48,7 @@ namespace Delopro.Data.Repositories
                 .SelectMany(userRole => _dbContext.Roles.Where(role => userRole.RoleId == role.RoleId)));
         }
 
-        public Task<Role?> UpdateAsync(Role item)
+        public Task<Role?> UpdateAsync(Role? item)
         {
             throw new NotImplementedException();
         }

@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-using AutoMapper;
+﻿using AutoMapper;
 
 using Delopro.Bll;
 using Delopro.Bll.Services;
@@ -14,7 +12,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Delopro.Server.Controllers
 {
@@ -51,46 +48,46 @@ namespace Delopro.Server.Controllers
                 return Ok();
             }
 
-            var userAccountResponseModel = _mapper.Map<UserAccountResponseModel>(user);
+            var userAccountResponse = _mapper.Map<UserAccountResponse>(user);
 
-            return Ok(userAccountResponseModel);
+            return Ok(userAccountResponse);
         }
 
         [HttpPost]
         [Route("[action]")]
         [Authorize]
         [TrackIpAddress]
-        public async Task<IActionResult> UpdateCurrentUser([FromBody] UserAccountUpdateModel? userAccountUpdateModel)
+        public async Task<IActionResult> UpdateCurrentUser([FromBody] UserAccountUpdateRequest? userAccountUpdateRequest)
         {
             var user = await _userManager.GetCurrentUserAsync(HttpContext);
 
             try
             {
-                if (user is null || userAccountUpdateModel is null)
+                if (user is null || userAccountUpdateRequest is null)
                 {
                     return StatusCode(500, new { errorText = "Ошибка сервера" });
                 }
 
-                user.Nickname = userAccountUpdateModel.Nickname;
-                user.FirstName = _cryptoService.Encrypt(userAccountUpdateModel.FirstName);
-                user.LastName = _cryptoService.Encrypt(userAccountUpdateModel.LastName);
-                user.BirthDate = userAccountUpdateModel.BirthDate;
-                user.Country = userAccountUpdateModel.Country;
-                user.City = userAccountUpdateModel.City;
-                user.UserTitle = userAccountUpdateModel.UserTitle;
-                user.Info = userAccountUpdateModel.Info;
-                user.Email = _cryptoService.Encrypt(userAccountUpdateModel.Email);
-                user.Phone = _cryptoService.Encrypt(userAccountUpdateModel.Phone);
+                user.Nickname = userAccountUpdateRequest.Nickname;
+                user.FirstName = _cryptoService.Encrypt(userAccountUpdateRequest.FirstName);
+                user.LastName = _cryptoService.Encrypt(userAccountUpdateRequest.LastName);
+                user.BirthDate = userAccountUpdateRequest.BirthDate;
+                user.Country = userAccountUpdateRequest.Country;
+                user.City = userAccountUpdateRequest.City;
+                user.UserTitle = userAccountUpdateRequest.UserTitle;
+                user.Info = userAccountUpdateRequest.Info;
+                user.Email = _cryptoService.Encrypt(userAccountUpdateRequest.Email);
+                user.Phone = _cryptoService.Encrypt(userAccountUpdateRequest.Phone);
 
                 await _userRepository.UpdateAsync(user);
                 _memoryCache.Remove(CacheKeys.CurrentUserKey);
             }
-            catch(Exception ex)
+            catch
             {
-                return StatusCode(500, new { errorText = "Ошибка сервера" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
             }
 
-            return StatusCode(200, new { okText = $"Данные пользователя {user.Nickname} успешно обговлены"});
+            return Ok(new { okText = $"Данные пользователя {user.Nickname} успешно обновлены"});
         }
 
         [HttpPost]
@@ -108,23 +105,23 @@ namespace Delopro.Server.Controllers
 
             if (user is null)
             {
-                return StatusCode(500, new { errorText = "Ошибка сервера" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
             }
 
             DeleteOldAvatars(user.UserId);
 
-            var fileName = avatar?.FileName ?? String.Empty;
+            var fileName = avatar?.FileName ?? string.Empty;
             var filePath = Path.Combine(ConfigurationHelper.AvatarsPath!, fileName);
 
             using var stream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
-            await avatar.CopyToAsync(stream);
+            await avatar!.CopyToAsync(stream);
 
             user.AvatarPath = fileName;                
 
             await _userRepository.UpdateAsync(user);
             _memoryCache.Remove(CacheKeys.CurrentUserKey);
 
-            return StatusCode(200, new { okText = $"Данные пользователя {user.Nickname} успешно обговлены" });
+            return Ok(new { okText = $"Данные пользователя {user.Nickname} успешно обговлены" });
         }
 
         [HttpDelete]
@@ -137,7 +134,7 @@ namespace Delopro.Server.Controllers
 
             if (user is null)
             {
-                return StatusCode(500, new { errorText = "Ошибка сервера" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
             }
 
             DeleteOldAvatars(user.UserId);
@@ -147,7 +144,7 @@ namespace Delopro.Server.Controllers
             await _userRepository.UpdateAsync(user);
             _memoryCache.Remove(CacheKeys.CurrentUserKey);
 
-            return StatusCode(200, new { okText = $"Данные пользователя {user.Nickname} успешно обговлены" });
+            return Ok(new { okText = $"Данные пользователя {user.Nickname} успешно обговлены" });
         }
 
         private static void DeleteOldAvatars(int userId) 

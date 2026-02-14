@@ -1,6 +1,6 @@
 ﻿namespace Delopro.Server.Models
 {
-    public class UserShortResponseModel
+    public class UserShortResponse
     {
         public int UserId { get; set; }
         public string? AvatarPath { get; set; }

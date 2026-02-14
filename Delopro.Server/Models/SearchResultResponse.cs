@@ -1,6 +1,6 @@
 ﻿namespace Delopro.Server.Models
 {
-    public class SearchResultModel
+    public class SearchResultResponse
     {
         public int? ChapterId { get; set; }
         public int? ThemeId { get; set; }

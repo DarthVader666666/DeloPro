@@ -40,20 +40,20 @@ namespace Delopro.Server.Controllers
         [Route("[action]")]
         public IActionResult GetList()
         {
-            if (!_memoryCache.TryGetValue(CacheKeys.DocumentNodesKey, out IEnumerable<DocumentResponseModel>? documentResponseModels))
+            if (!_memoryCache.TryGetValue(CacheKeys.DocumentNodesKey, out IEnumerable<DocumentResponse>? documentResponse))
             {
                 try
                 {
-                    documentResponseModels = new DirectoryInfo(docsPath ?? throw new NullReferenceException("Не задан путь к фалу")).GetFiles()
+                    documentResponse = new DirectoryInfo(docsPath ?? string.Empty).GetFiles()
                         .Select(x =>
-                            new DocumentResponseModel
+                            new DocumentResponse
                             {
                                 Name = x.Name,
                                 Path = docsPath
                             }
                         );
 
-                    _memoryCache.Set(CacheKeys.DocumentsKey, documentResponseModels, TimeSpan.FromMinutes(5));
+                    _memoryCache.Set(CacheKeys.DocumentsKey, documentResponse, TimeSpan.FromMinutes(5));
                 }
                 catch (Exception ex)
                 {
@@ -61,18 +61,18 @@ namespace Delopro.Server.Controllers
                 }
             }
 
-            return Ok(documentResponseModels);
+            return Ok(documentResponse);
         }
 
         void FillNodes(string? path, DocumentNode? parentNode = null)
         {
             parentNode ??= new DocumentNode();
 
-            var rootDirectoryInfo = new DirectoryInfo(path);
+            var rootDirectoryInfo = new DirectoryInfo(path ?? string.Empty);
             var directoryInfoArray = rootDirectoryInfo.GetDirectories();
-            var shortPath = path.Replace(webRootPath + Path.DirectorySeparatorChar, "");
+            var shortPath = path?.Replace(webRootPath + Path.DirectorySeparatorChar, string.Empty);
 
-            parentNode.Key = $"{shortPath.Replace(Path.DirectorySeparatorChar, '-') + (shortPath == documentsDirectoryName ? "" : '-' + path)}";
+            parentNode.Key = $"{shortPath?.Replace(Path.DirectorySeparatorChar, '-') + (shortPath == documentsDirectoryName ? "" : '-' + path)}";
             parentNode.Icon = shortPath == documentsDirectoryName ? "pi pi-ellipsis-h" : "pi pi-folder";
             parentNode.Data = new TreeNode
             {
@@ -136,7 +136,7 @@ namespace Delopro.Server.Controllers
 
             if (documentPathModel == null || documentPathModel.Path == null || documentPathModel.Type == null)
             {
-                return StatusCode( 500, new { errorText = "Ошибка при удалении файла" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка при удалении файла" });
             }
 
             var path = Path.Combine(webRootPath ?? string.Empty, documentPathModel.Path);
@@ -178,7 +178,7 @@ namespace Delopro.Server.Controllers
             }
             catch(Exception ex)
             {
-                return StatusCode( StatusCodes.Status500InternalServerError, new { errorText = $"Ошибка при удалении\n\r{ex.Message}" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = $"Ошибка при удалении\n\r{ex.Message}" });
             }
 
             return Ok(new { okText = documentPathModel.Type.Equals(nameof(DocumentType.File), StringComparison.OrdinalIgnoreCase) 
@@ -199,8 +199,8 @@ namespace Delopro.Server.Controllers
             {
                 if (!Directory.Exists(path))
                 {
-                    Directory.CreateDirectory(path ?? throw new NullReferenceException());
-                    _ = Task.Run(() => _driveService.CreateFolder(folderPath));
+                    Directory.CreateDirectory(path ?? string.Empty);
+                    _ = Task.Run(() => _driveService.CreateFolder(folderPath ?? string.Empty));
 
                     _memoryCache.Remove(CacheKeys.DocumentsKey);
                     _memoryCache.Remove(CacheKeys.DocumentNodesKey);
@@ -210,13 +210,13 @@ namespace Delopro.Server.Controllers
                     return BadRequest(new { errorText = "Папка уже существует" });
                 }
             }
-            catch (GoogleApiException ex)
+            catch (GoogleApiException)
             {
                 return StatusCode(StatusCodes.Status304NotModified, new { warningText = "Папка не была создана в облаке" });
             }
             catch
             {
-                return StatusCode( StatusCodes.Status500InternalServerError, new { errorText = "Ошибка при создании папки" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка при создании папки" });
             }
 
             return Ok(new { okText = $"Папка \"{folderPath}\" успешно создана" });
@@ -225,9 +225,9 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize(Roles = "Owner, Admin")]
-        public async Task<IActionResult> Upload([FromForm] UploadFileModel? uploadFileModel)
+        public async Task<IActionResult> Upload([FromForm] UploadDocumentForm? uploadDocumentForm)
         {
-            if (uploadFileModel == null || uploadFileModel.Files == null || !uploadFileModel.Files.Any())
+            if (uploadDocumentForm == null || uploadDocumentForm.Files == null || !uploadDocumentForm.Files.Any())
             {
                 return BadRequest(new { errorText = "Нет выбранных файлов" });
             }
@@ -237,19 +237,19 @@ namespace Delopro.Server.Controllers
 
             try
             {
-                foreach (IFormFile file in uploadFileModel.Files)
+                foreach (IFormFile file in uploadDocumentForm.Files)
                 {
                     fileNames.Add(file.FileName);
 
-                    var filePath = Path.Combine(webRootPath ?? throw new NullReferenceException("Не задан путь к файлу"),
-                        uploadFileModel.FolderName ?? string.Empty, file.FileName);
+                    var filePath = Path.Combine(webRootPath ?? string.Empty,
+                        uploadDocumentForm.FolderName ?? string.Empty, file.FileName);
 
                     if (!System.IO.File.Exists(filePath))
                     {
                         filePaths.Add(filePath);
 
                         using Stream fileStream = new FileStream(filePath, FileMode.Create);
-                        file.CopyTo(fileStream);
+                        await file.CopyToAsync(fileStream);
                     }
                 }
 
@@ -287,28 +287,28 @@ namespace Delopro.Server.Controllers
         [HttpPut]
         [Route("[action]")]
         [Authorize(Roles = "Owner, Admin")]
-        public IActionResult Update([FromBody] UpdateDocumentModel? updateDocumentModel)
+        public IActionResult Update([FromBody] UpdateDocumentRequest? updateDocumentRequest)
         {
-            if (updateDocumentModel == null || updateDocumentModel.NewName == null || updateDocumentModel.Path == null || updateDocumentModel.Type == null)
+            if (updateDocumentRequest == null || updateDocumentRequest.NewName == null || updateDocumentRequest.Path == null || updateDocumentRequest.Type == null)
             {
                 return BadRequest(new { errorText = "Запрос не полный" });
             }
 
             try
             {
-                var path = Path.Combine(webRootPath ?? string.Empty, Path.Combine(updateDocumentModel.Path.Split(Path.DirectorySeparatorChar)[..^1]));
-                var sourcePath = Path.Combine(webRootPath ?? string.Empty, updateDocumentModel.Path);
-                var destPath = Path.Combine(path, updateDocumentModel.NewName);
+                var path = Path.Combine(webRootPath ?? string.Empty, Path.Combine(updateDocumentRequest.Path.Split(Path.DirectorySeparatorChar)[..^1]));
+                var sourcePath = Path.Combine(webRootPath ?? string.Empty, updateDocumentRequest.Path);
+                var destPath = Path.Combine(path, updateDocumentRequest.NewName);
 
-                if (updateDocumentModel.Type.Equals(nameof(DocumentType.Folder), StringComparison.OrdinalIgnoreCase))
+                if (updateDocumentRequest.Type.Equals(nameof(DocumentType.Folder), StringComparison.OrdinalIgnoreCase))
                 {
                     Directory.Move(sourcePath, destPath);
-                    Task.Run(() => _driveService.Rename(sourcePath, updateDocumentModel.NewName, isFolder: true));
+                    Task.Run(() => _driveService.Rename(sourcePath, updateDocumentRequest.NewName, isFolder: true));
                 }
-                else if (updateDocumentModel.Type.Equals(nameof(DocumentType.File), StringComparison.OrdinalIgnoreCase))
+                else if (updateDocumentRequest.Type.Equals(nameof(DocumentType.File), StringComparison.OrdinalIgnoreCase))
                 {
                     System.IO.File.Move(sourcePath, destPath);
-                    Task.Run(() => _driveService.Rename(sourcePath, updateDocumentModel.NewName));
+                    Task.Run(() => _driveService.Rename(sourcePath, updateDocumentRequest.NewName));
                 }
                 else
                 {

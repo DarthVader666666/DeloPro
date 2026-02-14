@@ -35,9 +35,14 @@ namespace Delopro.Data.Repositories
             return removedUserRole;
         }
 
-        public async Task DeleteRangeAsync(IEnumerable<UserRole> items)
+        public async Task DeleteRangeAsync(IEnumerable<UserRole?> items)
         {
-            _dbContext.UserRoles.RemoveRange(items);
+            if (items is null)
+            {
+                return;
+            }
+
+            _dbContext.UserRoles.RemoveRange(items!);
             await _dbContext.SaveChangesAsync();
         }
 

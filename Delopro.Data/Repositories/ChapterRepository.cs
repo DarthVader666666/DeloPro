@@ -42,7 +42,7 @@ namespace Delopro.Data.Repositories
             return deletedChapter;
         }
 
-        public Task DeleteRangeAsync(IEnumerable<Chapter> items)
+        public Task DeleteRangeAsync(IEnumerable<Chapter?> items)
         {
             throw new NotImplementedException();
         }

@@ -47,8 +47,6 @@ builder.Services.AddSession();
 
 builder.Services.AddAuthentication(options =>
 {
-    //options.DefaultChallengeScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
-    //options.DefaultForbidScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultForbidScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -56,7 +54,6 @@ builder.Services.AddAuthentication(options =>
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
     {
         options.Cookie.Name = "Delopro_Cookies";
-        //options.Cookie.MaxAge = TimeSpan.FromDays(30);
         options.Cookie.SameSite = SameSiteMode.None;
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
@@ -174,7 +171,7 @@ if (ConfigurationHelper.ChapterImagesPath is not null && !Directory.Exists(Confi
     Directory.CreateDirectory(ConfigurationHelper.ChapterImagesPath);
 }
 
-var app = builder.Build();
+var app = builder!.Build();
 
 app.UseStatusCodePagesWithReExecute("/home/api/error/{0}");
 

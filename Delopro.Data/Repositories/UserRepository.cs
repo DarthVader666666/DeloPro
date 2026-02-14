@@ -35,7 +35,7 @@ namespace Delopro.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public Task DeleteRangeAsync(IEnumerable<User> items)
+        public Task DeleteRangeAsync(IEnumerable<User?> items)
         {
             throw new NotImplementedException();
         }

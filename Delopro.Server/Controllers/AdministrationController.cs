@@ -36,9 +36,9 @@ namespace Delopro.Server.Controllers
         public async Task<IActionResult> GetUsers()
         { 
             var users = await _userRepository.GetListAsync();
-            var userShortResponseModels = _mapper.Map<IEnumerable<UserShortResponseModel>>(users);
+            var userShortResponse = _mapper.Map<IEnumerable<UserShortResponse>>(users);
 
-            return Ok(userShortResponseModels);
+            return Ok(userShortResponse);
         }
 
         [HttpGet]
@@ -52,22 +52,22 @@ namespace Delopro.Server.Controllers
                 return StatusCode(500, new { errorText = "Ошибка базы данных" });
             }
 
-            var userLongResponseModel = _mapper.Map<UserLongResponseModel>(user);
-            var roleTypes = (await _roleRepository.GetListAsync(user.UserId))
-                .Select(x => Enum.TryParse(typeof(UserRoleType), x?.RoleName, out object? role)
+            var userLongResponse = _mapper.Map<UserLongResponse>(user);
+            var roles = (await _roleRepository.GetListAsync(user.UserId))
+                .Select(r => Enum.TryParse(typeof(UserRoleType), r?.RoleName, out object? role)
                 ? (int)role - 1 : -1).ToArray();
 
-            userLongResponseModel.Roles = roleTypes;
+            userLongResponse.Roles = roles;
 
-            return Ok(userLongResponseModel);
+            return Ok(userLongResponse);
         }
 
         [HttpPut]
         [Route("[action]")]
-        public async Task<IActionResult> UpdateUser([FromBody] UserUpdateModel userUpdateModel)
+        public async Task<IActionResult> UpdateUser([FromBody] UserUpdateRequest userUpdateRequest)
         {
-            var userRolesToDelete = await _userRoleRepository.GetListAsync(userUpdateModel?.UserId);
-            var userRolesToCreate = userUpdateModel?.Roles?.Select(x => (UserRole?)new UserRole { UserId = userUpdateModel.UserId, RoleId = x + 1 }) ?? [];
+            var userRolesToDelete = await _userRoleRepository.GetListAsync(userUpdateRequest?.UserId);
+            var userRolesToCreate = userUpdateRequest?.Roles?.Select(x => (UserRole?)new UserRole { UserId = userUpdateRequest.UserId, RoleId = x + 1 }) ?? [];
 
             await _userRoleRepository.DeleteRangeAsync(userRolesToDelete);
 
@@ -76,16 +76,16 @@ namespace Delopro.Server.Controllers
                 await _userRoleRepository.CreateAsync(userRole);
             }
 
-            var user = await _userRepository.GetAsync(userUpdateModel?.UserId);
+            var user = await _userRepository.GetAsync(userUpdateRequest?.UserId);
 
             if (user == null)
             {
-                return StatusCode(500, new { errorText = "Ошибка базы данных" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка базы данных" });
             }
 
-            user.DeletionDate = userUpdateModel?.DeletionDate;
-            user.IsConfirmed = userUpdateModel?.Status == (int)UserStatus.Confirmed;
-            user.IsDeleted = userUpdateModel?.Status == (int)UserStatus.Deleted;
+            user.DeletionDate = userUpdateRequest?.DeletionDate;
+            user.IsConfirmed = userUpdateRequest?.Status == (int)UserStatus.Confirmed;
+            user.IsDeleted = userUpdateRequest?.Status == (int)UserStatus.Deleted;
 
             await _userRepository.UpdateAsync(user);
 

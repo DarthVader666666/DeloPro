@@ -1,6 +1,6 @@
 ﻿namespace Delopro.Server.Models
 {
-    public class MessageResponseModel
+    public class MessageResponse
     {
         public int MessageId { get; set; }
         public string? Name { get; set; }

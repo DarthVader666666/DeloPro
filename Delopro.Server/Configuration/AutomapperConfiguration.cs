@@ -22,17 +22,17 @@ namespace Delopro.Server.Configurations
 
                 var config = new MapperConfiguration(autoMapperConfig =>
                 {
-                    autoMapperConfig.CreateMap<RegisterRequestModel, User>()
+                    autoMapperConfig.CreateMap<RegisterRequest, User>()
                         .ForMember(dest => dest.Nickname, opts => opts.MapFrom(src => EncodeUTF8(src.Nickname)))
                         .ForMember(dest => dest.FirstName, opts => opts.MapFrom(src => EncodeUTF8(src.FirstName)))
                         .ForMember(dest => dest.Password, opts => opts.MapFrom(src => EncodeUTF8(src.Password)))
                         .ForMember(dest => dest.IsConfirmed, opts => opts.Ignore());
 
-                    autoMapperConfig.CreateMap<Chapter, ChapterResponseModel>()
+                    autoMapperConfig.CreateMap<Chapter, ChapterResponse>()
                         .ForMember(dest => dest.Themes, opts => opts.MapFrom(src =>
                             src.Themes == null
-                            ? Array.Empty<ThemeResponseModel>()
-                            : src.Themes.Select(x => new ThemeResponseModel
+                            ? Array.Empty<ThemeResponse>()
+                            : src.Themes.Select(x => new ThemeResponse
                             {
                                 ThemeId = x.ThemeId,
                                 UserId = x.UserId,
@@ -57,18 +57,18 @@ namespace Delopro.Server.Configurations
                                 Data = $"/chapters/{x.ChapterId}/{x.ThemeId}"
                             }).ToArray()));
 
-                    autoMapperConfig.CreateMap<ChapterUpdateModel, Chapter>().ForMember(dest => dest.Themes, opts => opts.Ignore());
+                    autoMapperConfig.CreateMap<ChapterUpdateRequest, Chapter>().ForMember(dest => dest.Themes, opts => opts.Ignore());
 
-                    autoMapperConfig.CreateMap<ThemeUpdateModel, Theme>()
+                    autoMapperConfig.CreateMap<ThemeUpdateRequest, Theme>()
                         .ForMember(dest => dest.Content, opts => opts.MapFrom(src => src.Content != null ? src.Content.Replace("&nbsp;", " ") : null));
-                    autoMapperConfig.CreateMap<ThemeCreateModel, Theme>()
+                    autoMapperConfig.CreateMap<ThemeCreateRequest, Theme>()
                         .ForMember(dest => dest.Content, opts => opts.MapFrom(src => src.Content != null ? src.Content.Replace("&nbsp;", " ") : null));
 
                     autoMapperConfig.CreateMap<MessageForm, Message>();
-                    autoMapperConfig.CreateMap<Message, MessageResponseModel>()
+                    autoMapperConfig.CreateMap<Message, MessageResponse>()
                         .ForMember(dest => dest.Contacts, opts => opts.MapFrom(src => GetContacts(src.Email, src.Phone)));
 
-                    autoMapperConfig.CreateMap<User, UserShortResponseModel>()
+                    autoMapperConfig.CreateMap<User, UserShortResponse>()
                         .ForMember(dest => dest.Email, opts => opts.MapFrom(src => cryptoService.Decrypt(src.Email)))
                         .ForMember(dest => dest.Roles, opts => opts.MapFrom(src =>
                             src.UserRoles != null
@@ -81,7 +81,7 @@ namespace Delopro.Server.Configurations
                         .ForMember(dest => dest.AvatarPath, opts => opts.MapFrom(src => GetFullAvatarPath(src.AvatarPath)))
                         .ForMember(dest => dest.FullName, opts => opts.MapFrom(src => GetFullName(src, cryptoService)));
 
-                    autoMapperConfig.CreateMap<User, UserLongResponseModel>()
+                    autoMapperConfig.CreateMap<User, UserLongResponse>()
                         .ForMember(dest => dest.FirstName, opts => opts.MapFrom(src => cryptoService.Decrypt(src.FirstName)))
                         .ForMember(dest => dest.LastName, opts => opts.MapFrom(src => cryptoService.Decrypt(src.LastName)))
                         .ForMember(dest => dest.Email, opts => opts.MapFrom(src => cryptoService.Decrypt(src.Email)))
@@ -91,7 +91,7 @@ namespace Delopro.Server.Configurations
                             (src.IsConfirmed ? UserStatus.Confirmed : UserStatus.NotConfirmed))
                         );
 
-                    autoMapperConfig.CreateMap<User, UserAccountResponseModel>()
+                    autoMapperConfig.CreateMap<User, UserAccountResponse>()
                         .ForMember(dest => dest.FirstName, opts => opts.MapFrom(src => cryptoService.Decrypt(src.FirstName)))
                         .ForMember(dest => dest.LastName, opts => opts.MapFrom(src => cryptoService.Decrypt(src.LastName)))
                         .ForMember(dest => dest.Email, opts => opts.MapFrom(src => cryptoService.Decrypt(src.Email)))
@@ -105,7 +105,7 @@ namespace Delopro.Server.Configurations
                                 : Enumerable.Empty<string?>())
                         );
 
-                    autoMapperConfig.CreateMap<UserAccountUpdateModel, User>()
+                    autoMapperConfig.CreateMap<UserAccountUpdateRequest, User>()
                         .ForMember(dest => dest.FirstName, opts => opts.MapFrom(src => cryptoService.Encrypt(src.FirstName)))
                         .ForMember(dest => dest.LastName, opts => opts.MapFrom(src => cryptoService.Encrypt(src.LastName)))
                         .ForMember(dest => dest.Email, opts => opts.MapFrom(src => cryptoService.Encrypt(src.Email)))

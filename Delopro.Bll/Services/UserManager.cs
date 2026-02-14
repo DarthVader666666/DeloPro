@@ -92,7 +92,7 @@ namespace Delopro.Bll.Services
             }
         }
 
-        public async Task LogOut(HttpContext httpContext)
+        public static async Task LogOut(HttpContext httpContext)
         {
             try
             {
@@ -178,7 +178,7 @@ namespace Delopro.Bll.Services
             return await _userRepository.FindByAsync(nicknameOrEmail) != null;
         }
 
-        public string GeneratePassword()
+        public static string GeneratePassword()
         {
             var password = new Password()
                 .IncludeLowercase()

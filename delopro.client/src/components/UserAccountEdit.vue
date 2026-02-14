@@ -88,7 +88,8 @@ async function handleUserAccountUpdate() {
         emit('switchToInfoMode');
     }
     else {
-        store.dispatch('logOut');
+        await store.dispatch('logOut');
+        await store.dispatch('logIn');
     }
 }
 
@@ -183,7 +184,7 @@ async function handleEmailMatch(event) {
                         <Button type="submit" raised severity="secondary" label="Сохранить" style="width: 100px; margin-bottom: 10px; margin-right: 10px;" :disabled="props.isSaveDisabled"></Button>
                         <Button raised severity="contrast" label="Отменить" style="width: 100px;" @click="handleCancel"/>
                     </div>
-                </div>                
+                </div>
             </div>
             <div class="user-account-input">
                 <span>Никнэйм: <span v-if="showNicknameError" style="color: red; font-weight: lighter;">Никнэйм занят</span></span>

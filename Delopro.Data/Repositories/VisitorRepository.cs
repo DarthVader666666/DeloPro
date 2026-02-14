@@ -31,7 +31,7 @@ namespace Delopro.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public Task DeleteRangeAsync(IEnumerable<Visitor> items)
+        public Task DeleteRangeAsync(IEnumerable<Visitor?> items)
         {
             throw new NotImplementedException();
         }
@@ -43,14 +43,7 @@ namespace Delopro.Data.Repositories
 
         public async Task<Visitor?> FindByAsync(object? parameter)
         {
-            if (parameter is not null and string)
-            {
-                return _dbContext.Visitors.FirstOrDefault(x => x.IpAddress == (string)parameter);
-            }
-            else
-            {
-                return null;
-            }
+            return _dbContext.Visitors.FirstOrDefault(x => x.IpAddress == (string?)parameter);
         }
 
         public Task<Visitor?> GetAsync(int? id)

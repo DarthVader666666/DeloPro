@@ -1,6 +1,6 @@
 ﻿namespace Delopro.Server.Models
 {
-    public class UserLogInRequestModel
+    public class UserLogInRequest
     {
         public string? Nickname { get; set; }
         public string? Email { get; set; }

@@ -1,8 +1,6 @@
-﻿using Delopro.Data.Entities;
-
-namespace Delopro.Server.Models
+﻿namespace Delopro.Server.Models
 {
-    public class ChapterUpdateModel
+    public class ChapterUpdateRequest
     {
         public int? ChapterId { get; set; }
         public int? UserId { get; set; }
@@ -10,6 +8,6 @@ namespace Delopro.Server.Models
         public string? ImagePath { get; set; }
         public DateTime? DateCreated { get; set; }
         public DateTime? DateDeleted { get; set; }
-        public ThemeUpdateModel[]? Themes { get; set; }
+        public ThemeUpdateRequest[]? Themes { get; set; }
     }
 }

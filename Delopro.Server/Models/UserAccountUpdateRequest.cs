@@ -1,6 +1,6 @@
 ﻿namespace Delopro.Server.Models
 {
-    public class UserAccountUpdateModel
+    public class UserAccountUpdateRequest
     {
         public string? Nickname { get; set; }
         public string? FirstName { get; set; }

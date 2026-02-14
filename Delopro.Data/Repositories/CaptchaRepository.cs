@@ -22,7 +22,7 @@ namespace Delopro.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public Task DeleteRangeAsync(IEnumerable<Captcha> items)
+        public Task DeleteRangeAsync(IEnumerable<Captcha?> items)
         {
             throw new NotImplementedException();
         }

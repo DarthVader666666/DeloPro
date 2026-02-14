@@ -17,10 +17,10 @@ namespace Delopro.Bll.Services
             _cryptoService = cryptoService;
         }
 
-        public bool SendEmail(string to, string subject, string body)
+        public bool SendEmail(string? to, string? subject, string? body)
         {
             var fromAddress = new MailAddress(_configuration["SmtpEmailSender:UserName"] ?? "", "DeloPro");
-            var toAddress = new MailAddress(to);
+            var toAddress = new MailAddress(to ?? string.Empty);
 
             var smtp = new SmtpClient
             {

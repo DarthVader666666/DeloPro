@@ -15,7 +15,7 @@ namespace Delopro.Bll.Services
             _configuration = configuration;
         }
 
-        public bool SendEmail(string to, string subject, string body)
+        public bool SendEmail(string? to, string? subject, string? body)
         {
             var sender = _configuration["AzureEmailSender"];
             var connectionString = _configuration["AzureCommunicationService"];

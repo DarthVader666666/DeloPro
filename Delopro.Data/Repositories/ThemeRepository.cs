@@ -40,7 +40,7 @@ namespace Delopro.Data.Repositories
             return deletedTheme;
         }
 
-        public Task DeleteRangeAsync(IEnumerable<Theme> items)
+        public Task DeleteRangeAsync(IEnumerable<Theme?> items)
         {
             throw new NotImplementedException();
         }

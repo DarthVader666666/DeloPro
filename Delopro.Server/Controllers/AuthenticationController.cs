@@ -7,9 +7,6 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
-using System.Text;
-using System.Text.Json;
-
 namespace Delopro.Server.Controllers
 {
     [EnableCors("AllowClient")]    
@@ -31,9 +28,9 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Route("[action]")]
         [TrackIpAddress]
-        public async Task<IActionResult> LogIn([FromBody] UserLogInRequestModel? userLogInRequestModel)
+        public async Task<IActionResult> LogIn([FromBody] UserLogInRequest? userLogInRequest)
         {
-            var user = await _userManager.GetUserByAsync(nickname: userLogInRequestModel?.Nickname, email: userLogInRequestModel?.Email);
+            var user = await _userManager.GetUserByAsync(nickname: userLogInRequest?.Nickname, email: userLogInRequest?.Email);
 
             if (user == null)
             {
@@ -45,12 +42,12 @@ namespace Delopro.Server.Controllers
                 return NotFound(new { errorText = "Пользователь не подтвержден" });
             }
 
-            if (!_userManager.IsMatchPassword(user, userLogInRequestModel?.Password))
+            if (!_userManager.IsMatchPassword(user, userLogInRequest?.Password))
             {
                 return BadRequest(new { errorText = "Неверный пароль" });
             }
 
-            if (!await _userManager.LogIn(user, HttpContext, userLogInRequestModel?.Remember ?? false))
+            if (!await _userManager.LogIn(user, HttpContext, userLogInRequest?.Remember ?? false))
             {
                 return BadRequest(new { errorText = "Couldn't get user identity." });
             }
@@ -65,13 +62,13 @@ namespace Delopro.Server.Controllers
         {
             try
             {
-                await _userManager.LogOut(HttpContext);
+                await UserManager.LogOut(HttpContext);
                 _memoryCache.Remove(CacheKeys.CurrentUserKey);
                 return Ok();
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { errorText = $"Logout failed. {ex.Message}" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = $"Logout failed. {ex.Message}" });
             }
         }
 
@@ -87,19 +84,26 @@ namespace Delopro.Server.Controllers
         [TrackIpAddress]
         public async Task<IActionResult> RecoverPassword()
         {
-            var email = HttpContext.Request.Headers["Email"].ToString();
+            var headers = HttpContext.Request.Headers;
+
+            if (headers is null)
+            { 
+                return BadRequest();
+            }
+
+            var email = headers["Email"].ToString();
             var userExists = await _userManager.DoesUserExistAsync(email, doEncrypt: true);
 
             if (!userExists)
             {
-                return BadRequest(new { errorText = $"Пользователь с email \"{email}\" не найден" });
+                return NotFound(new { errorText = $"Пользователь с email \"{email}\" не найден" });
             }
 
-            var password = _userManager.GeneratePassword();
+            var password = UserManager.GeneratePassword();
 
             if (!_emailSender.SendEmail(email, "Восстановление пароля", $"Ваш новый пароль:\n\r{password}"))
             {
-                return StatusCode(500, new { errorText = "Ошибка отправки сообщения" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка отправки сообщения" });
             }
 
             try
@@ -109,7 +113,7 @@ namespace Delopro.Server.Controllers
             }
             catch
             {
-                return StatusCode(500, new { errorText = "Ошибка при изменении пароля" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка при изменении пароля" });
             }            
 
             return Ok("Сообщение успешно отправлено");

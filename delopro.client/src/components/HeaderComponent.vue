@@ -1,5 +1,4 @@
 <script setup>
-import axios from 'axios';
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import { helper } from '@/helper/helper.js';
@@ -197,7 +196,7 @@ function handleBurgerClick() {
                         id="logout-button"
                         style="padding: 12px;">
                     </Button>
-                </div>                
+                </div>
             </div>
         </div>
     </div>

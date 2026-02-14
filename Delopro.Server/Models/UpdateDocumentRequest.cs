@@ -1,6 +1,6 @@
 ﻿namespace Delopro.Server.Models
 {
-    public class UpdateDocumentModel
+    public class UpdateDocumentRequest
     {
         public string? NewName { get; set; }
         public string? OldName { get; set; }

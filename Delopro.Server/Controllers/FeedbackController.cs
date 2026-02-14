@@ -71,7 +71,7 @@ namespace Delopro.Server.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { errorText = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = ex.Message });
             }
 
             if (createdMessage != null)
@@ -80,7 +80,7 @@ namespace Delopro.Server.Controllers
             }
             else
             {
-                return StatusCode(500, new { errorText = "Ошибка отправки сообщения" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка отправки сообщения" });
             }
         }
 
@@ -107,12 +107,12 @@ namespace Delopro.Server.Controllers
 
             try
             {
-                var messageResponseModels = _mapper.Map<IEnumerable<MessageResponseModel>>(messages);
-                return Ok(messageResponseModels);
+                var messageResponse = _mapper.Map<IEnumerable<MessageResponse>>(messages);
+                return Ok(messageResponse);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { errorText = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = ex.Message });
             }
         }
 
@@ -135,12 +135,12 @@ namespace Delopro.Server.Controllers
 
             try
             {
-                var messageResponseModel = _mapper.Map<MessageResponseModel>(message);
-                return Ok(messageResponseModel);
+                var messageResponse = _mapper.Map<MessageResponse>(message);
+                return Ok(messageResponse);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { errorText = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = ex.Message });
             }
         }
 
@@ -172,7 +172,7 @@ namespace Delopro.Server.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { errorText = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = ex.Message });
             }
         }
 
@@ -189,7 +189,7 @@ namespace Delopro.Server.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { errorText = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = ex.Message });
             }
         }
     }

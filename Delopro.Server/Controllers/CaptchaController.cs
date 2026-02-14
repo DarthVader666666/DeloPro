@@ -18,6 +18,7 @@ namespace Delopro.Server.Controllers
             _captchaRepository = captchaRepository;
         }
 
+        [HttpGet]
         [Route("[action]")]
         public async Task<IActionResult> Get()
         {
@@ -29,7 +30,7 @@ namespace Delopro.Server.Controllers
             }
             else
             {
-                return StatusCode(500, new { errorText = "Ошибка сервера" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
             }
         }
     }

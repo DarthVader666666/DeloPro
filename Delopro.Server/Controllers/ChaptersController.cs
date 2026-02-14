@@ -37,9 +37,9 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Authorize(Roles = "Owner, Admin")]
         [Route("[action]")]
-        public async Task<IActionResult> Create([FromForm] ChapterCreateModel chapterCreateModel)
+        public async Task<IActionResult> Create([FromForm] ChapterCreateRequest chapterCreateRequest)
         {
-            if (chapterCreateModel == null || chapterCreateModel.ChapterTitle.IsNullOrEmpty() || chapterCreateModel.DateCreated == null)
+            if (chapterCreateRequest == null || chapterCreateRequest.ChapterTitle.IsNullOrEmpty() || chapterCreateRequest.DateCreated == null)
             {
                 return BadRequest(new { errorText = "Неверные данные для создания раздела" } );
             }
@@ -48,14 +48,14 @@ namespace Delopro.Server.Controllers
 
             if (user == null)
             {
-                return StatusCode(500, new { errorText = "Ошибка сервера" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
             }
 
             var chapter = new Chapter
             {
-                ChapterTitle = chapterCreateModel.ChapterTitle,
-                ImagePath = chapterCreateModel.ImagePath,
-                DateCreated = chapterCreateModel.DateCreated ?? DateTime.Now,
+                ChapterTitle = chapterCreateRequest.ChapterTitle,
+                ImagePath = chapterCreateRequest.ImagePath,
+                DateCreated = chapterCreateRequest.DateCreated ?? DateTime.Now,
                 UserId = user.UserId
             };
 
@@ -63,7 +63,7 @@ namespace Delopro.Server.Controllers
 
             if (createdChapter == null)
             {
-                return StatusCode(500, new { errorText = "Ошибка сервера" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
             }
 
             _memoryCache.Remove(CacheKeys.ChaptersKey);
@@ -86,7 +86,7 @@ namespace Delopro.Server.Controllers
             }
             catch (SqlException)
             {
-                return StatusCode(500, new { errorText = "Ошибка базы данных" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка базы данных" });
             }
 
             return Ok();
@@ -97,7 +97,7 @@ namespace Delopro.Server.Controllers
         [TrackIpAddress]
         public async Task<IActionResult> GetList() 
         {
-            if (!_memoryCache.TryGetValue(CacheKeys.ChaptersKey, out IEnumerable<ChapterResponseModel>? response))
+            if (!_memoryCache.TryGetValue(CacheKeys.ChaptersKey, out IEnumerable<ChapterResponse>? chapterResponse))
             {
                 try
                 {
@@ -105,39 +105,39 @@ namespace Delopro.Server.Controllers
 
                     if (chapters == null)
                     {
-                        return StatusCode(500, new { errorText = "Ошибка сервера" });
+                        return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
                     }
 
-                    response = _mapper.Map<IEnumerable<ChapterResponseModel>>(chapters);
-                    _memoryCache.Set(CacheKeys.ChaptersKey, response, TimeSpan.FromMinutes(5));
+                    chapterResponse = _mapper.Map<IEnumerable<ChapterResponse>>(chapters);
+                    _memoryCache.Set(CacheKeys.ChaptersKey, chapterResponse, TimeSpan.FromMinutes(5));
                 }
                 catch (Exception ex)
                 {
-                    return StatusCode(500, new { errorText = ex.Message });
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = ex.Message });
                 }                
             }
 
-            return Ok(response);
+            return Ok(chapterResponse);
         }
 
         [HttpGet]
         [Route("[action]")]
         public async Task<IActionResult> GetNodes()
         {
-            if (!_memoryCache.TryGetValue(CacheKeys.ChapterNodesKey, out IEnumerable<ChapterNode>? response))
+            if (!_memoryCache.TryGetValue(CacheKeys.ChapterNodesKey, out IEnumerable<ChapterNode>? chapterNodes))
             {
                 var chapters = await _chapterRepository.GetListAsync();
 
                 if (chapters == null)
                 {
-                    return StatusCode(500, new { errorText = "Ошибка сервера" });
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
                 }
 
-                response = _mapper.Map<IEnumerable<ChapterNode>>(chapters);
-                _memoryCache.Set(CacheKeys.ChapterNodesKey, response, TimeSpan.FromMinutes(5));
+                chapterNodes = _mapper.Map<IEnumerable<ChapterNode>>(chapters);
+                _memoryCache.Set(CacheKeys.ChapterNodesKey, chapterNodes, TimeSpan.FromMinutes(5));
             }
 
-            return Ok(response);
+            return Ok(chapterNodes);
         }
 
         [HttpGet]
@@ -148,10 +148,10 @@ namespace Delopro.Server.Controllers
 
             if (chapter == null)
             {
-                return StatusCode(500, new { errorText = "Ошибка сервера" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
             }
 
-            var chapterResponseModel = _mapper.Map<ChapterResponseModel>(chapter);
+            var chapterResponseModel = _mapper.Map<ChapterResponse>(chapter);
 
             return Ok(chapterResponseModel);
         }
@@ -159,9 +159,9 @@ namespace Delopro.Server.Controllers
         [HttpPut]
         [Route("[action]")]
         [Authorize(Roles = "Owner, Admin")]
-        public async Task<IActionResult> Update([FromBody] ChapterUpdateModel chapterUpdateModel)
+        public async Task<IActionResult> Update([FromBody] ChapterUpdateRequest chapterUpdateRequest)
         {   
-            var chapter = _mapper.Map<Chapter>(chapterUpdateModel);
+            var chapter = _mapper.Map<Chapter>(chapterUpdateRequest);
 
             try
             {
@@ -171,7 +171,7 @@ namespace Delopro.Server.Controllers
             }
             catch (SqlException)
             {
-                return StatusCode(500, new { errorText = "Ошибка базы данных" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка базы данных" });
             }
 
             return Ok();

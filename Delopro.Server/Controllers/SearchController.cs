@@ -11,7 +11,6 @@ using HtmlAgilityPack;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using System.Text.Json;
 
 namespace Delopro.Server.Controllers
 {
@@ -30,23 +29,18 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Route("[action]")]
         [TrackIpAddress]
-        public async Task<IActionResult> GetSearchResult()
+        public async Task<IActionResult> GetSearchResult([FromBody] SearchLineRequest searchLine)
         {
-            string? searchLine = null;
-
             try
             {
-                var reader = new StreamReader(HttpContext.Request.Body);
-                searchLine = JsonSerializer.Deserialize<SearchLineModel>(await reader.ReadToEndAsync())?.SearchLine;
-
-                if (searchLine == null || searchLine.Length < 3)
+                if (searchLine == null || searchLine?.SearchLine is null || searchLine?.SearchLine?.Length < 3)
                 {
-                    return Ok(Enumerable.Empty<SearchResultModel>());
+                    return Ok(Enumerable.Empty<SearchResultResponse>());
                 }
             }
             catch
             {
-                return StatusCode(500, new { errorText = "Не удалось прочесть запрос" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Не удалось прочесть запрос" });
             }
 
             if (searchLine == null)
@@ -62,21 +56,20 @@ namespace Delopro.Server.Controllers
                 return plainText;
             }
 
-            var searchResultModels = (await _themeRepository.GetListIncludeAsync())
-                .Where(theme => theme!.Content != null && getPlainText(theme.Content).Contains(searchLine, StringComparison.OrdinalIgnoreCase))
-                .SelectMany(theme => theme == null || theme.Content.IsNullOrEmpty() ? [] : GetSearchResultModels(theme, searchLine));
-
-            var searchResultModelsWithIndexes = searchResultModels.GroupBy(s => new { s.ThemeId, s.SearchFragment })
-                .SelectMany(group => group.Select((s, index) => 
+            var searchResultResponse = (await _themeRepository.GetListIncludeAsync())
+                .Where(theme => theme!.Content != null && getPlainText(theme.Content).Contains(searchLine.SearchLine, StringComparison.OrdinalIgnoreCase))
+                .SelectMany(theme => theme == null || theme.Content.IsNullOrEmpty() ? [] : GetSearchResult(theme, searchLine.SearchLine))
+                .GroupBy(s => new { s.ThemeId, s.SearchFragment })
+                .SelectMany(group => group.Select((s, index) =>
                 {
                     s.Index = index;
                     return s;
                 }));
 
-            return Ok(searchResultModelsWithIndexes);
+            return Ok(searchResultResponse);
         }
 
-        private static IEnumerable<SearchResultModel> GetSearchResultModels(Theme theme, string searchLine)
+        private static IEnumerable<SearchResultResponse> GetSearchResult(Theme theme, string searchLine)
         {
             const int offset = 100;
 
@@ -124,7 +117,7 @@ namespace Delopro.Server.Controllers
                     searchFragmentText = searchFragmentText.Replace(searchLineContent, $"<span style=\"background:yellow;color:black\">{searchLineContent.TrimStart('/')}</span>");
                     var searchFragment = content.Replace(childNode.InnerText, searchFragmentText);
 
-                    var searchResultModel = new SearchResultModel
+                    var searchResultModel = new SearchResultResponse
                     {
                         ChapterId = theme.ChapterId,
                         ThemeId = theme.ThemeId,

@@ -60,11 +60,11 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize(Roles = "Admin, Owner")]
-        public async Task<IActionResult> Create(ThemeCreateModel themeCreateModel)
+        public async Task<IActionResult> Create(ThemeCreateRequest themeCreateRequest)
         {
             try
             {
-                var theme = _mapper.Map<Theme>(themeCreateModel);
+                var theme = _mapper.Map<Theme>(themeCreateRequest);
                 var userId = (await _userManager.GetCurrentUserAsync(HttpContext))?.UserId;
                 theme.UserId = userId;
 
@@ -75,7 +75,7 @@ namespace Delopro.Server.Controllers
             }
             catch (SqlException)
             {
-                return StatusCode(500, new { errorText = "Ошибка Базы данных" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка Базы данных" });
             }
 
             return Ok();
@@ -100,7 +100,7 @@ namespace Delopro.Server.Controllers
             }
             catch (SqlException)
             {
-                return StatusCode(500, new { errorText = "Ошибка базы данных" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка базы данных" });
             }
 
             return Ok();
@@ -109,9 +109,9 @@ namespace Delopro.Server.Controllers
         [HttpPut]
         [Route("[action]")]
         [Authorize(Roles = "Owner, Admin")]
-        public async Task<IActionResult> Update([FromBody] ThemeUpdateModel themeUpdateModel)
+        public async Task<IActionResult> Update([FromBody] ThemeUpdateRequest themeUpdateRequest)
         {
-            var theme = _mapper.Map<Theme>(themeUpdateModel);
+            var theme = _mapper.Map<Theme>(themeUpdateRequest);
 
             try
             {
@@ -119,7 +119,7 @@ namespace Delopro.Server.Controllers
             }
             catch (SqlException)
             {
-                return StatusCode(500, new { errorText = "Ошибка базы данных" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка базы данных" });
             }
 
             _memoryCache.Remove($"{BaseThemeKey}{theme.ThemeId}");

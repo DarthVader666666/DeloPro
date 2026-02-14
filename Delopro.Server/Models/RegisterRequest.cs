@@ -1,6 +1,6 @@
 ﻿namespace Delopro.Server.Models
 {
-    public class RegisterRequestModel
+    public class RegisterRequest
     {
         public byte[]? Nickname { get; set; }
         public string? Email { get; set; }

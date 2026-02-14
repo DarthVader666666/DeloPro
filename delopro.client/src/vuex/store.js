@@ -175,7 +175,7 @@ const store = createStore({
         },
         setUsers(state, users) {
             state.users = users;
-            sessionStorage.setItem(state.sessionStorageKeys.usersKey, JSON.stringify(users));
+            //sessionStorage.setItem(state.sessionStorageKeys.usersKey, JSON.stringify(users));
         },
         setUser(state, value) {
             state.user = value;
@@ -422,7 +422,7 @@ const store = createStore({
                 if(response.status === 200) {
                     toast.success('Тема успешно удалена');
                     sessionStorage.removeItem(state.sessionStorageKeys.chaptersKey);
-                    sessionStorage.removeItem(state.sessionStorageKeys.chapterNodesKey);                    
+                    sessionStorage.removeItem(state.sessionStorageKeys.chapterNodesKey);
                     await dispatch('downloadChapters');
                 }
             })
@@ -441,7 +441,7 @@ const store = createStore({
             })
             .then(async response => {
                 if(response.status === 200) {
-                    toast.success('Тема успешно добавлена');                    
+                    toast.success('Тема успешно добавлена');
                     sessionStorage.removeItem(state.sessionStorageKeys.chaptersKey);
                     sessionStorage.removeItem(state.sessionStorageKeys.chapterNodesKey);
                     await dispatch('downloadChapters');
@@ -582,9 +582,9 @@ const store = createStore({
 
         // USERS
         async downloadUsers({commit, state}) {
-          const storedUsers = sessionStorage.getItem(state.sessionStorageKeys.usersKey);
+          //const storedUsers = sessionStorage.getItem(state.sessionStorageKeys.usersKey);
 
-          if(!storedUsers) {
+          //if(!storedUsers) {
             await axios.get(`${state.serverUrl}/administration/getusers`)
               .then(response => {
                 if(response.status === 200) {
@@ -596,14 +596,13 @@ const store = createStore({
                     toast.error(error.response.data.errorText);
                 }
               });
-          }
-          else {
-            commit('setUsers', JSON.parse(storedUsers));
-          }
+          // }
+          // else {
+          //   commit('setUsers', JSON.parse(storedUsers));
+          // }
         },
         async downloadUser({commit, state}, userId) {
-            const url = state.serverUrl + '/administration/GetUser/' + userId;
-          await axios.get(url)
+          await axios.get(`${state.serverUrl}/administration/GetUser/${userId}`)
             .then(response => {
               if(response.status === 200) {
                 commit('setUser', response.data);
@@ -611,7 +610,7 @@ const store = createStore({
             })
             .catch(error => {
               if(error.response) {
-                toast.error(error.response.data?.errorText ?? `${error.message}: ${url}`);
+                toast.error(error.response.data?.errorText);
               }
             });
         },
@@ -650,7 +649,7 @@ const store = createStore({
           .then(async response => {
             if(response.status === 200) {
               await dispatch('downloadCurrentUser');
-              toast.success(`Вы вошли, как ${response.data.nickname}`);              
+              toast.success(`Вы вошли, как ${response.data.nickname}`);
               router.push('/');
             }
           })
@@ -667,7 +666,7 @@ const store = createStore({
             }})
             .then(response => {
               if(response.status === 200) {
-                helper.clearSession();                
+                helper.clearSession();
                 router.push('/');
               }
             })

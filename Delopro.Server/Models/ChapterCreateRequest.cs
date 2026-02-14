@@ -1,6 +1,6 @@
 ﻿namespace Delopro.Server.Models
 {
-    public class ChapterCreateModel
+    public class ChapterCreateRequest
     {
         public string? ChapterTitle { get; set; }
         public string? ImagePath { get; set; }

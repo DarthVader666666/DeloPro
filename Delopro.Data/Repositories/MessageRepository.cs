@@ -22,7 +22,7 @@ namespace Delopro.Data.Repositories
             }
 
             var message = await _dbContext.Messages.AddAsync(item);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             return message.Entity;
         }
@@ -32,7 +32,7 @@ namespace Delopro.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public Task DeleteRangeAsync(IEnumerable<Message> items)
+        public Task DeleteRangeAsync(IEnumerable<Message?> items)
         {
             throw new NotImplementedException();
         }
@@ -71,7 +71,7 @@ namespace Delopro.Data.Repositories
 
         public Task<IEnumerable<Message?>> GetListAsync(int? id = null)
         {
-            IEnumerable<Message?> messages = [];
+            IEnumerable<Message?> messages;
 
             try
             {

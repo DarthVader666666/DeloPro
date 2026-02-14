@@ -1,6 +1,6 @@
 ﻿namespace Delopro.Server.Models
 {
-    public class UserAccountResponseModel
+    public class UserAccountResponse
     {
         public int UserId { get; set; }
         public string? Nickname { get; set; }
