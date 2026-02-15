@@ -36,7 +36,7 @@ namespace Delopro.Server.Controllers
         [HttpGet]
         [Route("[action]/{themeId:int}")]
         [TrackIpAddress]
-        public async Task<IActionResult> Get(int themeId)
+        public async Task<IActionResult> GetTheme(int themeId)
         {
             if (!_memoryCache.TryGetValue($"{BaseThemeKey}{themeId}", out Theme? theme))
             {
@@ -50,7 +50,7 @@ namespace Delopro.Server.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<IActionResult> GetList([FromQuery] int? chapterId = null)
+        public async Task<IActionResult> GetThemes([FromQuery] int? chapterId = null)
         {
             var themes = await _themeRepository.GetListAsync(chapterId);
 
@@ -60,7 +60,7 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize(Roles = "Admin, Owner")]
-        public async Task<IActionResult> Create(ThemeCreateRequest themeCreateRequest)
+        public async Task<IActionResult> CreateTheme(ThemeCreateRequest themeCreateRequest)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace Delopro.Server.Controllers
         [HttpDelete]
         [Route("[action]/{themeId:int}")]
         [Authorize(Roles = "Admin, Owner")]
-        public async Task<IActionResult> Delete([FromRoute] int? themeId) 
+        public async Task<IActionResult> DeleteTheme([FromRoute] int? themeId) 
         {
             if (themeId == null)
             {
@@ -109,7 +109,7 @@ namespace Delopro.Server.Controllers
         [HttpPut]
         [Route("[action]")]
         [Authorize(Roles = "Owner, Admin")]
-        public async Task<IActionResult> Update([FromBody] ThemeUpdateRequest themeUpdateRequest)
+        public async Task<IActionResult> UpdateTheme([FromBody] ThemeUpdateRequest themeUpdateRequest)
         {
             var theme = _mapper.Map<Theme>(themeUpdateRequest);
 
@@ -123,6 +123,8 @@ namespace Delopro.Server.Controllers
             }
 
             _memoryCache.Remove($"{BaseThemeKey}{theme.ThemeId}");
+            _memoryCache.Remove(CacheKeys.ChaptersKey);
+            _memoryCache.Remove(CacheKeys.ChapterNodesKey);
 
             return Ok();
         }

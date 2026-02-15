@@ -69,7 +69,7 @@ onMounted(() => {
                     {{ props.theme.themeTitle }}
                 </RouterLink>
                 <Button v-if="!props.useShortMode && (isAdmin || isOwner)" rounded text icon="pi pi-pencil" severity="contrast"
-                    title="Редактировать" @click="router.push(`/themes/${theme.themeId}/edit`)"/>
+                    title="Редактировать" @click="router.push(`/edit-theme/${theme.themeId}`)"/>
             </div>
             <span v-if="!useShortMode" class="date">{{ helper.getDateString(props.theme.dateCreated) }}</span>
 

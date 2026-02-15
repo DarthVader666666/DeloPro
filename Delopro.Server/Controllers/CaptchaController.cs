@@ -20,7 +20,7 @@ namespace Delopro.Server.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetCaptcha()
         {
             var captcha = await _captchaRepository.GetAsync(null);
 

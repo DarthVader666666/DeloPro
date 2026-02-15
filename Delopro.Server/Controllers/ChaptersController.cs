@@ -37,7 +37,7 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Authorize(Roles = "Owner, Admin")]
         [Route("[action]")]
-        public async Task<IActionResult> Create([FromForm] ChapterCreateRequest chapterCreateRequest)
+        public async Task<IActionResult> CreateChapter([FromForm] ChapterCreateRequest chapterCreateRequest)
         {
             if (chapterCreateRequest == null || chapterCreateRequest.ChapterTitle.IsNullOrEmpty() || chapterCreateRequest.DateCreated == null)
             {
@@ -76,7 +76,7 @@ namespace Delopro.Server.Controllers
         [HttpDelete]
         [Route("[action]/{chapterId:int}")]
         [Authorize(Roles = "Admin, Owner")]
-        public async Task<IActionResult> Delete(int chapterId)
+        public async Task<IActionResult> DeleteChapter(int chapterId)
         {
             try
             {
@@ -95,7 +95,7 @@ namespace Delopro.Server.Controllers
         [HttpGet]
         [Route("[action]")]
         [TrackIpAddress]
-        public async Task<IActionResult> GetList() 
+        public async Task<IActionResult> GetChapters() 
         {
             if (!_memoryCache.TryGetValue(CacheKeys.ChaptersKey, out IEnumerable<ChapterResponse>? chapterResponse))
             {
@@ -122,7 +122,7 @@ namespace Delopro.Server.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<IActionResult> GetNodes()
+        public async Task<IActionResult> GetChapterNodes()
         {
             if (!_memoryCache.TryGetValue(CacheKeys.ChapterNodesKey, out IEnumerable<ChapterNode>? chapterNodes))
             {
@@ -142,7 +142,7 @@ namespace Delopro.Server.Controllers
 
         [HttpGet]
         [Route("[action]/{chapterId:int}")]
-        public async Task<IActionResult> Get(int chapterId)
+        public async Task<IActionResult> GetChapter(int chapterId)
         {
             var chapter = await _chapterRepository.GetAsync(chapterId);
 
@@ -159,7 +159,7 @@ namespace Delopro.Server.Controllers
         [HttpPut]
         [Route("[action]")]
         [Authorize(Roles = "Owner, Admin")]
-        public async Task<IActionResult> Update([FromBody] ChapterUpdateRequest chapterUpdateRequest)
+        public async Task<IActionResult> UpdateChapter([FromBody] ChapterUpdateRequest chapterUpdateRequest)
         {   
             var chapter = _mapper.Map<Chapter>(chapterUpdateRequest);
 

@@ -16,9 +16,9 @@ const isOwner = computed(() => store.getters.isOwner);
 const chapter = computed(() => store.getters.getChapter);
 const theme = computed(() => store.getters.getTheme);
 const themeIds = computed(() => store.getters.getThemes.map(x => x.themeId));
-const searchResult = computed(() => { 
+const searchResult = computed(() => {
     if(route.query?.searchFragment) {
-        return { searchFragment: helper.decodeHtml(route.query.searchFragment), index: route.query.index}; 
+        return { searchFragment: helper.decodeHtml(route.query.searchFragment), index: route.query.index};
     }
     else {
         return null;
@@ -50,12 +50,12 @@ function nextTheme() {
             <h3>
                 <Button text rounded severity="contrast" icon="pi pi-home" title="На главную" @click.prevent="() => router.push('/')"/>
                 {{chapter.chapterTitle}}
-                <Button v-if="isAdmin || isOwner" text rounded severity="contrast" icon="pi pi-pen-to-square" title="Редактировать" 
-                    @click="router.push(`/chapters/${chapter.chapterId}/edit`)"/>
+                <Button v-if="isAdmin || isOwner" text rounded severity="contrast" icon="pi pi-pen-to-square" title="Редактировать"
+                    @click="router.push(`/edit-chapter/${chapter.chapterId}`)"/>
             </h3>
             <span>{{ helper.getDateString(chapter.dateCreated) }}</span>
         </div>
-        <hr style="margin:5px"/>    
+        <hr style="margin:5px"/>
     </div>
     <ThemeComponent v-if="theme" :theme="theme" :searchResult="searchResult"></ThemeComponent>
     <div class="theme-buttons">

@@ -33,7 +33,7 @@ const router = createRouter({
             component: RegisterView
         },
         {
-            path: '/chapters/create',
+            path: '/create-chapter',
             name: 'create-chapter',
             component: ChapterCreateView
         },
@@ -43,7 +43,7 @@ const router = createRouter({
             component: ChapterDetailsView
         },
         {
-            path: '/chapters/:chapterId/edit',
+            path: '/edit-chapter/:chapterId',
             name: 'edit-chapter',
             component: ChapterEditView
         },
@@ -53,7 +53,7 @@ const router = createRouter({
             component: HomeView
         },
         {
-            path: '/themes/:themeId/edit',
+            path: '/edit-theme/:themeId',
             name: 'edit-theme',
             component: ThemeEditView
         },
@@ -90,8 +90,8 @@ const router = createRouter({
             component: UsersView
         },
         {
-            path: '/user-account',
-            name: 'user-account',
+            path: '/account',
+            name: 'account',
             meta: { requiresAuth: true, roles: ['Owner', 'Admin', 'User'] },
             component: AccountView
         }
@@ -203,7 +203,7 @@ router.afterEach(async (to) => {
         store.commit('setTitle', 'Пользователи');
     }
 
-    if(to.name === 'user-account') {
+    if(to.name === 'account') {
         store.commit('setTitle', 'Личный кабинет');
     }
 

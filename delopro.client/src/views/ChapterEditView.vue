@@ -1,7 +1,6 @@
 <script setup>
 import ThemeList from '@/components/ThemeList.vue';
 import ChapterCreateUpdateForm from '@/components/ChapterCreateUpdateForm.vue';
-import axios from 'axios';
 import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 import { helper } from '@/helper/helper';
@@ -16,7 +15,7 @@ const router = useRouter();
 
 const isAdmin = computed(() => store.getters.isAdmin);
 const isOwner = computed(() => store.getters.isOwner);
-const chapter = computed(() => store.state.chapter);
+const chapter = computed(() => store.getters.getChapter);
 
 const newTheme = ref({
     themeTitle: null,
@@ -29,7 +28,7 @@ async function removeTheme(themeId) {
     if(!window.confirm('Вы уверены, что хотите удалить тему?')) {
         return;
     }
-    
+
     await store.dispatch('deleteTheme', themeId);
     await store.dispatch('downloadChapter',  chapter.value.chapterId);
 
@@ -47,7 +46,7 @@ function changeFormStatus() {
 
 async function addNewTheme() {
     newTheme.value.chapterId = chapter.value.chapterId;
-    newTheme.value.dateCreated = helper.getCurrentDate();    
+    newTheme.value.dateCreated = helper.getCurrentDate();
 
     await store.dispatch('createTheme', newTheme.value);
     await store.dispatch('downloadChapter',  chapter.value.chapterId);

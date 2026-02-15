@@ -147,7 +147,7 @@ namespace Delopro.Server.Controllers
         [HttpPut]
         [Route("[action]/{messageId:int}")]
         [Authorize(Roles = "Owner")]
-        public async Task<IActionResult> Update([FromRoute] int messageId)
+        public async Task<IActionResult> UpdateMessage([FromRoute] int messageId)
         {
             var message = await _messageRepository.GetAsync(messageId);
 

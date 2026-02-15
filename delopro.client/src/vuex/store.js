@@ -41,8 +41,7 @@ const store = createStore({
           documentNodesKey: 'documentNodes',
           currentUserKey: 'currentUser',
           usersKey: 'users'
-        },
-        coockieName: 'Delopro_Cookies'
+        }
     },
     getters: {
       // CHAPTERS
@@ -61,16 +60,24 @@ const store = createStore({
         getImageNames(state) {
             return state.imageNames;
         },
-
-        // USERS
-        getCurrentUser(state) {
-          return state.currentUser;
+        getTheme(state) {
+            return state.theme;
         },
+        getThemes(state) {
+            return state.themes;
+        },
+
+        // ADMINISTRATION
         getUsers(state) {
             return state.users;
         },
         getUser(state) {
             return state.user;
+        },
+
+        // ACCOUNT
+        getCurrentUser(state) {
+          return state.currentUser;
         },
         getRoles(state) {
             return state.currentUser?.roles ?? [];
@@ -89,14 +96,6 @@ const store = createStore({
         },
         isAuthenticated(state) {
             return state.currentUser != null;
-        },
-
-        // THEMES
-        getTheme(state) {
-            return state.theme;
-        },
-        getThemes(state) {
-            return state.themes;
         },
 
         // DOCUMENTS
@@ -138,7 +137,7 @@ const store = createStore({
             return state.searchResult;
         },
 
-        // ENVIRONMENT
+        // SHARED
         serverUrl(state) {
             return state.serverUrl;
         },
@@ -156,13 +155,10 @@ const store = createStore({
         },
         getCaptcha(state) {
             return state.captcha;
-        },
-        getCookieName(state) {
-            return state.coockieName;
         }
     },
     mutations: {
-      // USERS
+        // ACCOUNT
         setRoles(state, roles) {
             state.roles = roles;
         },
@@ -173,9 +169,11 @@ const store = createStore({
           state.currentUser = currentUser;
           sessionStorage.setItem(state.sessionStorageKeys.currentUserKey, JSON.stringify(currentUser));
         },
+
+        // ADMINISTRATION
         setUsers(state, users) {
             state.users = users;
-            //sessionStorage.setItem(state.sessionStorageKeys.usersKey, JSON.stringify(users));
+            sessionStorage.setItem(state.sessionStorageKeys.usersKey, JSON.stringify(users));
         },
         setUser(state, value) {
             state.user = value;
@@ -209,8 +207,6 @@ const store = createStore({
         setShowChapterList(state, value) {
             state.showChapterList = value;
         },
-
-        // THEMES
         setTheme(state, theme) {
             state.theme = theme;
         },
@@ -242,7 +238,7 @@ const store = createStore({
             state.message = state.messages.find(x => x.messageId === messageId);
         },
 
-        // ENVIRONMENT
+        // SHARED
         setShowRightColumn(state, value) {
             state.showRightColumn = value;
         },
@@ -257,10 +253,9 @@ const store = createStore({
         }
     },
     actions: {
-
       // CHAPTERS
         async downloadChapter({commit, state}, chapterId ) {
-          await axios.get(`${state.serverUrl}/chapters/get/${chapterId}`)
+          await axios.get(`${state.serverUrl}/chapters/getchapter/${chapterId}`)
             .then(async response => {
               if(response.status === 200) {
                 const chapter = response.data;
@@ -278,7 +273,7 @@ const store = createStore({
           const storedChapters = sessionStorage.getItem(state.sessionStorageKeys.chaptersKey);
 
           if(!storedChapters) {
-            axios.get(`${state.serverUrl}/chapters/getlist`)
+            axios.get(`${state.serverUrl}/chapters/getchapters`)
               .then(async response => {
                  if(response.status === 200) {
                   const chapters = response.data;
@@ -301,7 +296,7 @@ const store = createStore({
           const storedChapterNodes = sessionStorage.getItem(state.sessionStorageKeys.chapterNodesKey);
 
           if(!storedChapterNodes) {
-            axios.get(`${state.serverUrl}/chapters/getnodes`)
+            axios.get(`${state.serverUrl}/chapters/getchapternodes`)
               .then(response => {
                 if(response.status === 200) {
                   commit('setChapterNodes', response.data);
@@ -318,7 +313,7 @@ const store = createStore({
           }
         },
         async createChapter({dispatch, state}, formData) {
-          await axios.post(`${store.getters.serverUrl}/chapters/create`, formData, {
+          await axios.post(`${store.getters.serverUrl}/chapters/createchapter`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'Accept': ''
@@ -340,7 +335,7 @@ const store = createStore({
             );
         },
         async deleteChapter({dispatch, state}, chapter) {
-          await axios.delete(`${state.serverUrl}/chapters/delete/` + chapter.chapterId, null)
+          await axios.delete(`${state.serverUrl}/chapters/deletechapter/` + chapter.chapterId, null)
             .then(async response => {
               if(response.status === 200) {
                 toast.success('Раздел успешно удален');
@@ -358,7 +353,7 @@ const store = createStore({
             });
         },
         async updateChapter({dispatch, state}, chapter) {
-          await axios.put(`${state.serverUrl}/chapters/update`,  chapter, {
+          await axios.put(`${state.serverUrl}/chapters/updatechapter`,  chapter, {
               headers: {
                   'Content': 'application/json',
                   'Accept': '*/*'
@@ -380,10 +375,8 @@ const store = createStore({
               }
             });
         },
-
-        // THEMES
         async downloadTheme({commit, state}, themeId ) {
-            let url = `${state.serverUrl}/themes/get/`;
+            let url = `${state.serverUrl}/themes/gettheme/`;
 
             if (themeId) {
                 url += `${themeId}`;
@@ -413,7 +406,7 @@ const store = createStore({
             }
         },
         async deleteTheme({dispatch, state}, themeId) {
-            axios.delete(`${state.serverUrl}/themes/delete/${themeId}`, null, {
+            axios.delete(`${state.serverUrl}/themes/deletetheme/${themeId}`, null, {
                 headers: {
                     'Content': 'application/json',
                     'Accept': '*/*'
@@ -434,7 +427,7 @@ const store = createStore({
             });
         },
         async createTheme({dispatch, state}, newTheme) {
-            axios.post(`${state.serverUrl}/themes/create`, newTheme, {
+            axios.post(`${state.serverUrl}/themes/createtheme`, newTheme, {
                 headers: {
                     'Content': 'application/json',
                     'Accept': '*/*'
@@ -452,13 +445,39 @@ const store = createStore({
                 toast.error(error.response.data.errorText);
             });
         },
+        async updateTheme({state}, themeUpdateForm) {
+          await axios.put(`${state.serverUrl}/themes/updatetheme`,  themeUpdateForm.theme,
+          {
+              headers: {
+                  'Content': 'application/json',
+                  'Accept': '*/*'
+              }
+          })
+          .then(response => {
+              if(response.status === 200) {
+                  toast.success('Тема успешно обновлена');
+                  sessionStorage.removeItem(state.sessionStorageKeys.chaptersKey);
+                  sessionStorage.removeItem(state.sessionStorageKeys.chapterNodesKey);
+                  store.dispatch('downloadChapters');
+                  store.dispatch('downloadChapter',  themeUpdateForm.chapterId);
+                  store.dispatch('downloadTheme',  themeUpdateForm.theme.themeId);
+
+                  router.push(`/chapters/${themeUpdateForm.chapterId}/${themeUpdateForm.theme.themeId}`);
+              }
+          })
+          .catch(error => {
+              if(error.response) {
+                  toast.error(error.response.data.errorText)
+              }
+          });
+        },
 
         // DOCUMENTS
         async downloadDocuments({dispatch, commit, state}) {
           const storedDocuments = sessionStorage.getItem(state.sessionStorageKeys.documentsKey);
 
           if(!storedDocuments) {
-            axios.get(`${state.serverUrl}/documents/getlist`)
+            axios.get(`${state.serverUrl}/documents/getdocuments`)
               .then(async response => {
                 if(response.status === 200) {
                   commit('setDocuments', response.data);
@@ -480,7 +499,7 @@ const store = createStore({
           const storedDocumentNodes = sessionStorage.getItem(state.sessionStorageKeys.documentNodesKey);
 
           if(!storedDocumentNodes) {
-            await axios.get(`${state.serverUrl}/documents/getnodes`)
+            await axios.get(`${state.serverUrl}/documents/getdocumentnodes`)
               .then(response => {
                 if(response.status === 200) {
                   commit('setDocumentNodes', response.data);
@@ -553,7 +572,7 @@ const store = createStore({
 
         // CAPTCHA
         async downloadCaptcha({commit, state}) {
-          await axios.get(`${state.serverUrl}/captcha/get`)
+          await axios.get(`${state.serverUrl}/captcha/getcaptcha`)
             .then(response => {
               if(response.status === 200) {
                 commit('setCaptcha', response.data);
@@ -643,7 +662,6 @@ const store = createStore({
               }
             })
         },
-
         async downloadCurrentUser({commit, state}) {
           const storedCurrentUser = sessionStorage.getItem(state.sessionStorageKeys.currentUserKey);
 
@@ -707,7 +725,7 @@ const store = createStore({
             });
         },
         async updateCurrentUser({dispatch, state}, updatedUser) {
-          await axios.post(`${store.getters.serverUrl}/account/updatecurrentuser`, updatedUser,
+          await axios.post(`${state.serverUrl}/account/updatecurrentuser`, updatedUser,
             {
                 headers: {
                     'Content-Type': 'application/json'

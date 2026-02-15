@@ -1,8 +1,6 @@
 <script setup>
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import axios from 'axios';
-import { useToast } from 'vue-toastification';
 import { useRouter } from 'vue-router';
 import { Form } from '@primevue/forms';
 import Editor from 'primevue/editor';
@@ -10,7 +8,6 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 
 const store = useStore();
-const toast = useToast();
 const router = useRouter();
 
 const chapter = computed(() => store.getters.getChapter);
@@ -21,30 +18,12 @@ function handleThemeChange() {
 };
 
 async function updateTheme() {
-    const url = store.state.serverUrl;
+    const themeUpdateForm = {
+      theme: theme.value,
+      chapterId: chapter.value.chapterId
+    };
 
-    await axios.put(`${url}/themes/update`,  theme.value,
-    {
-        headers: {
-            'Content': 'application/json',
-            'Accept': '*/*'
-        }
-    })
-    .then(response => {
-        if(response.status === 200) {
-            toast.success('Тема успешно обновлена');
-            store.dispatch('downloadChapters');
-            store.dispatch('downloadChapter',  chapter.value.chapterId);
-            store.dispatch('downloadTheme',  theme.value.themeId);
-
-            router.push(`/chapters/${chapter.value.chapterId}/${theme.value.themeId}`);
-        }
-    })
-    .catch(error => {
-        if(error.response) {
-            toast.error(error.response.data.errorText)
-        }
-    });
+    await store.dispatch('updateTheme', themeUpdateForm);
 }
 
 function handleCancel() {

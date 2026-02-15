@@ -98,8 +98,8 @@ async function updateUser() {
     <div style="display: flex; flex-direction: row; justify-content: space-around;">
         <div>
             <img v-if="user.avatarPath" :src="user.avatarPath" style="border-radius: 50%; height: 150px; width: 150px;">
-            <i v-else class="pi pi-user user-account-avatar" style="height: 120px; width: 120px; font-size: 3.5rem;"></i>
-        </div>        
+            <i v-else class="pi pi-user account-avatar" style="height: 120px; width: 120px; font-size: 3.5rem;"></i>
+        </div>
         <div class="user-fields">
             <div v-if="user.nickname">
                 <span style="font-weight: bold;">Никнэйм:</span>
@@ -130,7 +130,7 @@ async function updateUser() {
                 <span>{{ user.status }}</span>
             </div>
         </div>
-    </div>    
+    </div>
     <div style="display: flex; flex-direction: column; gap: 5px; align-items: center;">
         <span style="font-weight: bold;">Статус:</span>
         <Select @update:model-value="handleUpdateStatus" :options="helper.userStatuses" class="selector">

@@ -33,7 +33,7 @@ const updatedUser = reactive({
   nickname: props.user.nickname,
   firstName: props.user.firstName,
   lastName: props.user.lastName,
-  birthDate: helper.getConvertedDate(props.user.birthDate),
+  birthDate: props.user.birthDate.slice(0, 10),
   country: props.user.country,
   city: props.user.city,
   userTitle: props.user.userTitle,
@@ -72,7 +72,7 @@ async function onFileChange(e) {
   e.target.value = '';
 }
 
-async function handleUserAccountUpdate() {
+async function handleAccountUpdate() {
     if(needLogout.value) {
         if(!window.confirm('Внимание! После обновления данных необходимо будет заново войти в систему')) {
             return;
@@ -109,7 +109,7 @@ async function handleCancel() {
     updatedUser.nickname = props.user.nickname,
     updatedUser.firstName = props.user.firstName,
     updatedUser.lastName = props.user?.lastName ?? null,
-    updatedUser.birthDate = helper.getConvertedDate(props.user.birthDate),
+    updatedUser.birthDate = props.user.birthDate.slice(0, 10),
     updatedUser.country = props.user.country,
     updatedUser.city = props.user.city,
     updatedUser.userTitle = props.user.userTitle,
@@ -159,9 +159,9 @@ async function handleEmailMatch(event) {
 </script>
 
 <template>
-    <form @submit.prevent="handleUserAccountUpdate">
-        <div class="user-account-properties">
-            <div class="user-account-header">
+    <form @submit.prevent="handleAccountUpdate">
+        <div class="account-properties">
+            <div class="account-header">
                 <div style="position: relative;">
                   <input type="file" id="fileInput" @change="onFileChange" accept="image/*" hidden />
 
@@ -176,7 +176,7 @@ async function handleEmailMatch(event) {
                         <i class="pi pi-times" style="font-size: 1.7rem; padding-top: 5px;"></i>
                   </div>
                 </div>
-                <div class="user-account-short-info">
+                <div class="account-short-info">
                     <span style="font-weight: bold; font-size: large">{{ props.user.nickname }}</span>
                     <span style="font-size: 1.2rem;">{{ `${props.user.firstName ?? ''} ${props.user.lastName ?? ''}` }}</span>
                     <span style="font-style: italic; color: gray">{{ props.user.roles.join(',') }}</span>
@@ -187,43 +187,43 @@ async function handleEmailMatch(event) {
                     </div>
                 </div>
             </div>
-            <div class="user-account-input">
+            <div class="account-input">
                 <span>Никнэйм: <span v-if="showNicknameError" style="color: red; font-weight: lighter;">Никнэйм занят</span></span>
                 <InputText type="text" placeholder="Никнэйм" v-model="updatedUser.nickname" @input.prevent="handleNicknameMatch" maxlength="30" required></InputText>
             </div>
-            <div class="user-account-input">
+            <div class="account-input">
                 <span>Email: <span v-if="showEmailError" style="color: red; font-weight: lighter;">Email занят</span></span>
                 <InputText type="email" placeholder="Email" v-model="updatedUser.email" @input.prevent="handleEmailMatch" maxlength="50" required></InputText>
             </div>
-            <div class="user-account-input">
+            <div class="account-input">
                 <span>Телефон:</span>
                 <InputText type="phone" placeholder="Телефон" v-model="updatedUser.phone"></InputText>
             </div>
-            <div class="user-account-input">
+            <div class="account-input">
                 <span>Имя:</span>
                 <InputText type="text" placeholder="Имя" v-model="updatedUser.firstName"></InputText>
             </div>
-            <div class="user-account-input">
+            <div class="account-input">
                 <span>Фамилия:</span>
                 <InputText type="text" placeholder="Фамилия" v-model="updatedUser.lastName"></InputText>
             </div>
-            <div class="user-account-input">
+            <div class="account-input">
                 <span>Дата рождения:</span>
                 <InputText type="date" v-model="updatedUser.birthDate"></InputText>
             </div>
-            <div class="user-account-input">
+            <div class="account-input">
                 <span>Страна:</span>
                 <InputText type="text" placeholder="Страна" v-model="updatedUser.country"></InputText>
             </div>
-            <div class="user-account-input">
+            <div class="account-input">
                 <span>Город:</span>
                 <InputText type="text" placeholder="Город" v-model="updatedUser.city"></InputText>
             </div>
-            <div class="user-account-input">
+            <div class="account-input">
                 <span>Должность:</span>
                 <InputText type="text" placeholder="Должность" v-model="updatedUser.userTitle"></InputText>
             </div>
-            <div class="user-account-input">
+            <div class="account-input">
                 <span>О себе:</span>
                 <Textarea v-model="updatedUser.info" placeholder="Напишите о себе"></Textarea>
             </div>

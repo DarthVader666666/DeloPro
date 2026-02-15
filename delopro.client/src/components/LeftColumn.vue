@@ -26,13 +26,13 @@ const expandedKeys = ref({});
 
 function toggleNode (node) {
   if (node.children && node.children.length > 0) {
-    
+
     if (expandedKeys.value[node.key]) {
       delete expandedKeys.value[node.key];
     } else {
       expandedKeys.value[node.key] = true;
     }
-    
+
     expandedKeys.value = { ...expandedKeys.value };
   }
 };
@@ -43,7 +43,7 @@ function toggleNode (node) {
         <div class="items">
             <div class="items-header">
                 <strong>Разделы:</strong>
-                <Button v-if="isAdmin || isOwner" raised severity="secondary" @click="router.push('/chapters/create')">
+                <Button v-if="isAdmin || isOwner" raised severity="secondary" @click="router.push('/create-chapter')">
                     <i class="pi pi-plus"></i> <span>Создать</span>
                 </Button>
             </div>

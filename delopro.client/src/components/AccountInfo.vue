@@ -24,11 +24,11 @@ import { helper } from '@/helper/helper';
 </script>
 
 <template>
-    <div class="user-account-properties">
-        <div class="user-account-header">
+    <div class="account-properties">
+        <div class="account-header">
             <AccountAvatar :avatarPath="props.user.avatarPath" :avatarBase64="props.avatarBase64"></AccountAvatar>
 
-            <div class="user-account-short-info">
+            <div class="account-short-info">
                 <span style="font-weight: bold; font-size: large">{{ props.user.nickname }}</span>
                 <span style="font-size: 1.2rem;">{{ `${props.user.firstName ?? ''} ${props.user.lastName ?? ''}` }}</span>
                 <span style="font-style: italic; color: gray">{{ props.user.roles.join(',') }}</span>
@@ -48,7 +48,7 @@ import { helper } from '@/helper/helper';
         <AccountProperty propertyName="Телефон" :propertyValue="props.user.phone" />
         <AccountProperty propertyName="Имя" :propertyValue="props.user.firstName" />
         <AccountProperty propertyName="Фамилия" :propertyValue="props.user.lastName" />
-        <AccountProperty propertyName="Дата рождения" :propertyValue="props.user.birthDate" />
+        <AccountProperty propertyName="Дата рождения" :propertyValue="helper.getDateString(props.user.birthDate, true)" />
         <AccountProperty propertyName="Страна" :propertyValue="props.user.country" />
         <AccountProperty propertyName="Город" :propertyValue="props.user.city" />
         <AccountProperty propertyName="Должность" :propertyValue="props.user.userTitle" />

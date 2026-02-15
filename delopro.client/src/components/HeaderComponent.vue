@@ -149,7 +149,7 @@ function handleBurgerClick() {
                 <div v-if="isAdmin"></div>
                 <div v-if="isOwner || isAdmin">
                     <Button
-                        @click="() => { showMenu = false; router.push('/chapters/create'); }"
+                        @click="() => { showMenu = false; router.push('/create-chapter'); }"
                         severity="contrast" text label="Создать раздел"
                         id="create-chapter-button"
                     />
@@ -185,7 +185,7 @@ function handleBurgerClick() {
                 </div>
                 <div style="padding-top: 20px;">
                     <Button
-                        @click="() => { showUserAccountSettings = false; router.push(`/user-account`);}"
+                        @click="() => { showUserAccountSettings = false; router.push(`/account`);}"
                         text label="Личный кабинет"
                         style="padding: 12px;">
                     </Button>

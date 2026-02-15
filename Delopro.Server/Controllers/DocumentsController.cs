@@ -38,7 +38,7 @@ namespace Delopro.Server.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public IActionResult GetList()
+        public IActionResult GetDocuments()
         {
             if (!_memoryCache.TryGetValue(CacheKeys.DocumentNodesKey, out IEnumerable<DocumentResponse>? documentResponse))
             {
@@ -107,7 +107,7 @@ namespace Delopro.Server.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public IActionResult GetNodes()
+        public IActionResult GetDocumentNodes()
         {
             if (!_memoryCache.TryGetValue(CacheKeys.DocumentNodesKey, out DocumentNode? node))
             {
@@ -129,7 +129,7 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize(Roles = "Owner, Admin")]
-        public async Task<IActionResult> Delete()
+        public async Task<IActionResult> DeleteDocument()
         {
             var reader = new StreamReader(HttpContext.Request.Body);
             var documentPathModel = JsonSerializer.Deserialize<DocumentPathModel>(await reader.ReadToEndAsync());
@@ -287,7 +287,7 @@ namespace Delopro.Server.Controllers
         [HttpPut]
         [Route("[action]")]
         [Authorize(Roles = "Owner, Admin")]
-        public IActionResult Update([FromBody] DocumentUpdateRequest? updateDocumentRequest)
+        public IActionResult UpdateDocument([FromBody] DocumentUpdateRequest? updateDocumentRequest)
         {
             if (updateDocumentRequest == null || updateDocumentRequest.NewName == null || updateDocumentRequest.Path == null || updateDocumentRequest.Type == null)
             {
