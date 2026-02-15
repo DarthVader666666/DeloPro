@@ -17,7 +17,7 @@ namespace Delopro.Server.Controllers
 {
     [EnableCors("AllowClient")]
     [Route("api/[controller]")]
-    public class UserAccountController: ControllerBase
+    public class AccountController: ControllerBase
     {
         private readonly UserManager _userManager;
         private readonly IRepository<User> _userRepository;
@@ -25,7 +25,7 @@ namespace Delopro.Server.Controllers
         private readonly IMapper _mapper;
         private readonly IMemoryCache _memoryCache;
 
-        public UserAccountController(UserManager userManager, IRepository<User> userRepository, CryptoService cryptoService, IMapper mapper, IMemoryCache memoryCache)
+        public AccountController(UserManager userManager, IRepository<User> userRepository, CryptoService cryptoService, IMapper mapper, IMemoryCache memoryCache)
         {
             _userManager = userManager;
             _userRepository = userRepository;
@@ -48,7 +48,7 @@ namespace Delopro.Server.Controllers
                 return Ok();
             }
 
-            var userAccountResponse = _mapper.Map<UserAccountResponse>(user);
+            var userAccountResponse = _mapper.Map<AccountResponse>(user);
 
             return Ok(userAccountResponse);
         }
@@ -57,27 +57,27 @@ namespace Delopro.Server.Controllers
         [Route("[action]")]
         [Authorize]
         [TrackIpAddress]
-        public async Task<IActionResult> UpdateCurrentUser([FromBody] UserAccountUpdateRequest? userAccountUpdateRequest)
+        public async Task<IActionResult> UpdateCurrentUser([FromBody] AccountUpdateRequest? accountUpdateRequest)
         {
             var user = await _userManager.GetCurrentUserAsync(HttpContext);
 
             try
             {
-                if (user is null || userAccountUpdateRequest is null)
+                if (user is null || accountUpdateRequest is null)
                 {
-                    return StatusCode(500, new { errorText = "Ошибка сервера" });
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
                 }
 
-                user.Nickname = userAccountUpdateRequest.Nickname;
-                user.FirstName = _cryptoService.Encrypt(userAccountUpdateRequest.FirstName);
-                user.LastName = _cryptoService.Encrypt(userAccountUpdateRequest.LastName);
-                user.BirthDate = userAccountUpdateRequest.BirthDate;
-                user.Country = userAccountUpdateRequest.Country;
-                user.City = userAccountUpdateRequest.City;
-                user.UserTitle = userAccountUpdateRequest.UserTitle;
-                user.Info = userAccountUpdateRequest.Info;
-                user.Email = _cryptoService.Encrypt(userAccountUpdateRequest.Email);
-                user.Phone = _cryptoService.Encrypt(userAccountUpdateRequest.Phone);
+                user.Nickname = accountUpdateRequest.Nickname;
+                user.FirstName = _cryptoService.Encrypt(accountUpdateRequest.FirstName);
+                user.LastName = _cryptoService.Encrypt(accountUpdateRequest.LastName);
+                user.BirthDate = accountUpdateRequest.BirthDate;
+                user.Country = accountUpdateRequest.Country;
+                user.City = accountUpdateRequest.City;
+                user.UserTitle = accountUpdateRequest.UserTitle;
+                user.Info = accountUpdateRequest.Info;
+                user.Email = _cryptoService.Encrypt(accountUpdateRequest.Email);
+                user.Phone = _cryptoService.Encrypt(accountUpdateRequest.Phone);
 
                 await _userRepository.UpdateAsync(user);
                 _memoryCache.Remove(CacheKeys.CurrentUserKey);

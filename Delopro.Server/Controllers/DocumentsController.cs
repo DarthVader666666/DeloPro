@@ -225,7 +225,7 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize(Roles = "Owner, Admin")]
-        public async Task<IActionResult> Upload([FromForm] UploadDocumentForm? uploadDocumentForm)
+        public async Task<IActionResult> Upload([FromForm] DocumentUploadForm? uploadDocumentForm)
         {
             if (uploadDocumentForm == null || uploadDocumentForm.Files == null || !uploadDocumentForm.Files.Any())
             {
@@ -287,7 +287,7 @@ namespace Delopro.Server.Controllers
         [HttpPut]
         [Route("[action]")]
         [Authorize(Roles = "Owner, Admin")]
-        public IActionResult Update([FromBody] UpdateDocumentRequest? updateDocumentRequest)
+        public IActionResult Update([FromBody] DocumentUpdateRequest? updateDocumentRequest)
         {
             if (updateDocumentRequest == null || updateDocumentRequest.NewName == null || updateDocumentRequest.Path == null || updateDocumentRequest.Type == null)
             {

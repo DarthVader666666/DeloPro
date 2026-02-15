@@ -29,7 +29,7 @@ function createFolder(path) {
         return;
     }
 
-    axios.post(`${store.state.serverUrl}/documents/addfolder`, 
+    axios.post(`${store.state.serverUrl}/documents/addfolder`,
         {
             folderPath: path + '\\' + newFolderName.value
         }
@@ -142,7 +142,7 @@ function mouseLeaveDocumentHandler(node) {
     const showSettings = document.getElementById(`${node.data.path}_${node.data.type}_show-settings`);
 
     if(!showSettings) {
-        return;  
+        return;
     }
 
     showSettings.style.display = 'none';
@@ -159,7 +159,7 @@ function updateName(node) {
         return;
     }
 
-    axios.put(`${store.state.serverUrl}/documents/update`, 
+    axios.put(`${store.state.serverUrl}/documents/update`,
         {
             newName: newName.value,
             oldName: node.data.name,
@@ -207,7 +207,7 @@ async function uploadFiles(event, path) {
         }
     })
     .then( async response => {
-        if(response.status === 200) {            
+        if(response.status === 200) {
             toast.success(response.data.okText);
             await store.dispatch('downloadDocumentNodes');
         }
@@ -276,8 +276,6 @@ async function moveFile() {
 }
 
 function resetTempValues() {
-    // editedNode.value = null;
-    // editedNodeId.value = null;
     moveFolder.value = null;
     newFolderName.value = null;
     newName.value = null;
@@ -330,7 +328,7 @@ function stopCountdown() {
                             <!-- Document name -->
                             <div @mouseenter="mouseEnterDocumentHandler(node)" @touchstart="startCountdown(node)" @touchend="stopCountdown" @touchmove="stopCountdown"
                                 :id="`${node.data.path}_${node.data.type}_name`">
-                                
+
                                 <i :class="node.icon" style="font-size: small; padding-right: 3px;"></i>
 
                                 <span :title="node.data.size "
@@ -343,7 +341,7 @@ function stopCountdown() {
 
                             <div v-if="(isAdmin || isOwner)">
                                 <!-- Settings -->
-                                <div class="setting-buttons" :id="`${node.data.path}_${node.data.type}_settings`">                                    
+                                <div class="setting-buttons" :id="`${node.data.path}_${node.data.type}_settings`">
                                     <div v-if="editedNode && editedNode.data.type != 'folder' && node.data.type != 'root'">
                                         <Button @click="copyUrlToClipboard"
                                             text rounded severity="contrast" icon="pi pi-link" title="Копировать ссылку"/>
@@ -351,7 +349,7 @@ function stopCountdown() {
                                             text rounded severity="contrast" icon="pi pi-file-export" title="Переместить"/>
                                     </div>
                                     <FileUpload v-if="node.data.type == 'folder' || node.data.type == 'root'"
-                                            mode="basic" 
+                                            mode="basic"
                                             name="files"
                                             :multiple="true"
                                             :maxFileSize="20000000"
@@ -371,13 +369,13 @@ function stopCountdown() {
                                     <Button v-if="node.data.type == 'folder' || node.data.type == 'root'"
                                             @click="showNewFolderInput"
                                             text rounded severity="contrast" icon="pi pi-folder-plus" title="Добавить папку"/>
-                                        
+
                                     <div v-if="node.data.type != 'root'">
                                         <Button @click="showRenameInput"
                                             text rounded severity="contrast" icon="pi pi-pencil" title="Переименовать"/>
                                         <Button v-if="node.data.type != 'root'" @click="deleteDocument"
                                             rounded severity="danger" text icon="pi pi-trash" title="Удалить"/>
-                                    </div>                                    
+                                    </div>
                                 </div>
 
                                 <!-- Move File -->
@@ -434,11 +432,11 @@ function stopCountdown() {
                 </Column>
             </TreeTable>
         </div>
-    </div>        
+    </div>
 </template>
 
 <style scoped>
-    .items {        
+    .items {
         text-align: start;
         padding: 10px;
     }
@@ -462,7 +460,7 @@ function stopCountdown() {
     }
 
     .tree-table {
-        font-size: small;        
+        font-size: small;
     }
 
     .tree-table:deep(th) {
@@ -503,10 +501,10 @@ function stopCountdown() {
     }
 
     .setting-buttons {
-        display: none; 
+        display: none;
         align-items: center;
-        border: solid; 
-        border-width: 1px; 
+        border: solid;
+        border-width: 1px;
         background-color: white;
         gap: 0px
     }

@@ -23,9 +23,9 @@ namespace Delopro.Server.Configurations
                 var config = new MapperConfiguration(autoMapperConfig =>
                 {
                     autoMapperConfig.CreateMap<RegisterRequest, User>()
-                        .ForMember(dest => dest.Nickname, opts => opts.MapFrom(src => EncodeUTF8(src.Nickname)))
-                        .ForMember(dest => dest.FirstName, opts => opts.MapFrom(src => EncodeUTF8(src.FirstName)))
-                        .ForMember(dest => dest.Password, opts => opts.MapFrom(src => EncodeUTF8(src.Password)))
+                        .ForMember(dest => dest.Nickname, opts => opts.MapFrom(src => src.Nickname))
+                        .ForMember(dest => dest.FirstName, opts => opts.MapFrom(src => src.FirstName))
+                        .ForMember(dest => dest.Password, opts => opts.MapFrom(src => src.Password))
                         .ForMember(dest => dest.IsConfirmed, opts => opts.Ignore());
 
                     autoMapperConfig.CreateMap<Chapter, ChapterResponse>()
@@ -91,7 +91,7 @@ namespace Delopro.Server.Configurations
                             (src.IsConfirmed ? UserStatus.Confirmed : UserStatus.NotConfirmed))
                         );
 
-                    autoMapperConfig.CreateMap<User, UserAccountResponse>()
+                    autoMapperConfig.CreateMap<User, AccountResponse>()
                         .ForMember(dest => dest.FirstName, opts => opts.MapFrom(src => cryptoService.Decrypt(src.FirstName)))
                         .ForMember(dest => dest.LastName, opts => opts.MapFrom(src => cryptoService.Decrypt(src.LastName)))
                         .ForMember(dest => dest.Email, opts => opts.MapFrom(src => cryptoService.Decrypt(src.Email)))
@@ -105,7 +105,7 @@ namespace Delopro.Server.Configurations
                                 : Enumerable.Empty<string?>())
                         );
 
-                    autoMapperConfig.CreateMap<UserAccountUpdateRequest, User>()
+                    autoMapperConfig.CreateMap<AccountUpdateRequest, User>()
                         .ForMember(dest => dest.FirstName, opts => opts.MapFrom(src => cryptoService.Encrypt(src.FirstName)))
                         .ForMember(dest => dest.LastName, opts => opts.MapFrom(src => cryptoService.Encrypt(src.LastName)))
                         .ForMember(dest => dest.Email, opts => opts.MapFrom(src => cryptoService.Encrypt(src.Email)))

@@ -1,6 +1,6 @@
 <script setup>
-import LeftColumnView from './LeftColumn.vue';
-import RightColumnView from './RightColumn.vue'
+import LeftColumn from './LeftColumn.vue';
+import RightColumn from './RightColumn.vue'
 import Button from 'primevue/button';
 import { RouterView } from 'vue-router';
 import { useStore } from 'vuex';
@@ -58,11 +58,11 @@ function hideDocuments() {
 <template>
     <div v-if="title" class="title">
         <h2 style="margin: 0">{{ title }}</h2>
-    </div>    
+    </div>
     <div class="main-container">
-        <LeftColumnView/>
+        <LeftColumn/>
         <RouterView id="central-container"/>
-        <RightColumnView/>
+        <RightColumn/>
         <div class="document-button">
             <Button v-if="!showRightColumn" @click="store.commit('setShowRightColumn', true)" severity="secondary" raised icon="pi pi-caret-left"></Button>
             <Button v-else @click="store.commit('setShowRightColumn', false)" severity="contrast" raised icon="pi pi-caret-right"></Button>

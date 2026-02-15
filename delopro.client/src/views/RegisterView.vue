@@ -1,6 +1,6 @@
 <script setup>
 import RegisterComponent from '@/components/RegisterComponent.vue'
-import SpinningCircleView from '@/components/SpinningCircle.vue'
+import SpinningCircle from '@/components/SpinningCircle.vue'
 import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
 import { useRouter } from 'vue-router'
@@ -16,8 +16,8 @@ const showEmailNotification = ref(false)
 
 const handlePending = async (promise) => {
 	if (promise) {
-		pending.value = true
-		store.commit('setTitle', null)
+		pending.value = true;
+		store.commit('setTitle', null);
 
 		showEmailNotification.value = await promise.catch((error) => {
 			if (error.response) {
@@ -26,7 +26,7 @@ const handlePending = async (promise) => {
 		})
 	}
 
-	pending.value = false
+  pending.value = false
 }
 </script>
 
@@ -51,7 +51,7 @@ const handlePending = async (promise) => {
 			Понятно
 		</Button>
 	</div>
-	<SpinningCircleView
+	<SpinningCircle
 		v-else-if="pending"
 		title="Письмо отправляется..."
 	/>

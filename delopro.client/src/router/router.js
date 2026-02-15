@@ -13,7 +13,7 @@ import PersonalDataAgreement from "@/views/PersonalDataAgreement.vue";
 import RecoverPasswordView from "@/views/RecoverPasswordView.vue";
 import UsersView from "@/views/UsersView.vue";
 import { computed, ref } from "vue";
-import UserAccountView from "@/views/UserAccountView.vue";
+import AccountView from "@/views/AccountView.vue";
 import { helper } from "@/helper/helper";
 
 const doScrollUp = ref(true);
@@ -93,7 +93,7 @@ const router = createRouter({
             path: '/user-account',
             name: 'user-account',
             meta: { requiresAuth: true, roles: ['Owner', 'Admin', 'User'] },
-            component: UserAccountView
+            component: AccountView
         }
     ]
 });
@@ -106,7 +106,7 @@ router.beforeEach(async (to, from, next) => {
             }
         }
 
-        if(!to.meta.roles.some(r => currentUser?.value?.roles?.includes(r) ?? false)) {            
+        if(!to.meta.roles.some(r => currentUser?.value?.roles?.includes(r) ?? false)) {
             return next('/');
         }
     }

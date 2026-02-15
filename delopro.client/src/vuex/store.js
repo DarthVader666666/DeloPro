@@ -257,6 +257,7 @@ const store = createStore({
         }
     },
     actions: {
+
       // CHAPTERS
         async downloadChapter({commit, state}, chapterId ) {
           await axios.get(`${state.serverUrl}/chapters/get/${chapterId}`)
@@ -580,29 +581,22 @@ const store = createStore({
             });
         },
 
-        // USERS
+        // ADMINISTRATION
         async downloadUsers({commit, state}) {
-          //const storedUsers = sessionStorage.getItem(state.sessionStorageKeys.usersKey);
-
-          //if(!storedUsers) {
-            await axios.get(`${state.serverUrl}/administration/getusers`)
-              .then(response => {
-                if(response.status === 200) {
-                  commit('setUsers', response.data);
-                }
-              })
-              .catch(error => {
-                if(error.response) {
-                    toast.error(error.response.data.errorText);
-                }
-              });
-          // }
-          // else {
-          //   commit('setUsers', JSON.parse(storedUsers));
-          // }
+          await axios.get(`${state.serverUrl}/administration/getusers`)
+            .then(response => {
+              if(response.status === 200) {
+                commit('setUsers', response.data);
+              }
+            })
+            .catch(error => {
+              if(error.response) {
+                  toast.error(error.response.data.errorText);
+              }
+            });
         },
         async downloadUser({commit, state}, userId) {
-          await axios.get(`${state.serverUrl}/administration/GetUser/${userId}`)
+          await axios.get(`${state.serverUrl}/administration/getuser/${userId}`)
             .then(response => {
               if(response.status === 200) {
                 commit('setUser', response.data);
@@ -614,11 +608,47 @@ const store = createStore({
               }
             });
         },
+
+        // ACCOUNT
+        async sendConfirmationEmail({state}, accountForm) {
+          return await axios.post(`${state.serverUrl}/authentication/register`, accountForm,
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if(response.status === 200) {
+                    toast.success(response.data.okText);
+                    return true;
+                }
+            })
+            .catch(error => {
+              if(error.response) {
+                toast.error(error.response.data.errorText);
+              }
+                return false;
+            });
+        },
+        async checkUserExists({state}, {nickname, email}) {
+          return await axios.get(`${state.serverUrl}/authentication/userexists?` + (nickname ? `nickname=${nickname}` : `email=${email}`))
+            .then(response => {
+              if(response.status === 200) {
+                return response.data.userExists;
+              }
+            })
+            .catch(error => {
+              if(error) {
+                return false;
+              }
+            })
+        },
+
         async downloadCurrentUser({commit, state}) {
           const storedCurrentUser = sessionStorage.getItem(state.sessionStorageKeys.currentUserKey);
 
           if(!storedCurrentUser) {
-            const url = '/useraccount/getcurrentuser';
+            const url = '/account/getcurrentuser';
             await axios.get(state.serverUrl + url)
               .then(response => {
                 if(response.status === 200 && response.data) {
@@ -677,7 +707,7 @@ const store = createStore({
             });
         },
         async updateCurrentUser({dispatch, state}, updatedUser) {
-          await axios.post(`${store.getters.serverUrl}/useraccount/updatecurrentuser`, updatedUser,
+          await axios.post(`${store.getters.serverUrl}/account/updatecurrentuser`, updatedUser,
             {
                 headers: {
                     'Content-Type': 'application/json'
@@ -699,7 +729,7 @@ const store = createStore({
             });
         },
         async uploadAvatar({dispatch, state}, formData) {
-          await axios.post(`${store.getters.serverUrl}/useraccount/uploadavatar`, formData,
+          await axios.post(`${store.getters.serverUrl}/account/uploadavatar`, formData,
             {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -721,7 +751,7 @@ const store = createStore({
             });
         },
         async deleteAvatar({dispatch, state}) {
-          await axios.delete(`${state.serverUrl}/useraccount/deleteavatar`)
+          await axios.delete(`${state.serverUrl}/account/deleteavatar`)
             .then(async response => {
                 if(response.status === 200) {
                     toast.success(response.data.okText);

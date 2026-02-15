@@ -1,6 +1,6 @@
 ﻿namespace Delopro.Server.Models
 {
-    public class SearchLineRequest
+    public class SearchRequest
     {
         public string? SearchLine { get; set; }
     }

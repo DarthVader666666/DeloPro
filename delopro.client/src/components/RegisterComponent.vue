@@ -1,7 +1,5 @@
 <script setup>
 import { ref, computed } from 'vue';
-import axios from 'axios';
-import { useToast } from 'vue-toastification';
 import { helper } from '@/helper/helper.js';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
@@ -19,7 +17,6 @@ const props = defineProps({
 
 const emit = defineEmits(['email-sent']);
 const store = useStore();
-const toast = useToast();
 const router = useRouter();
 
 const isCaptchaMatch = ref(false);
@@ -34,7 +31,7 @@ const registerModel = ref({
     password: null
 });
 
-const isDisabledSendButton = computed(() => {    
+const isDisabledSendButton = computed(() => {
     return !(registerModel.value.nickname && registerModel.value.email && registerModel.value.password && isMatchPassword.value && isCaptchaMatch.value && isAgreementChecked.value)
     || showNicknameError.value || showEmailError.value || showPasswordsError.value || props.pending;
 });
@@ -52,46 +49,22 @@ const showPasswordsError = computed(() => {
     }
 });
 
-const handleSend = () => {
-    const promise = axios.post(`${store.getters.serverUrl}/register/`, null,
-    {
-        headers: {
-            'Content-Type': 'application/json',
-            'Registration': JSON.stringify(
-                {
-                    nickname: helper.getUnicodeByteArray(registerModel.value.nickname),
-                    email: registerModel.value.email,
-                    firstName: helper.getUnicodeByteArray(registerModel.value.firstName),
-                    password: helper.getUnicodeByteArray(registerModel.value.password),
-                    registerDate: helper.getCurrentDate()
-                })
-        }
-    })
-    .then(response => {
-        const status = response.status;
+function handleSend() {
+  const accountForm = {
+    nickname: registerModel.value.nickname,
+    email: registerModel.value.email,
+    firstName: registerModel.value.firstName,
+    password: registerModel.value.password,
+    registerDate: helper.getCurrentDate()
+  };
 
-        if(status === 200) {
-            toast.success(response.data.okText);
-            return true;
-        }
-
-        return false;
-    });
-
-    emit('email-sent', promise);
+  const promise = store.dispatch('sendConfirmationEmail', accountForm);
+  emit('email-sent', promise);
 }
 
 async function doesUserExist (nickname, email) {
     await helper.timeoutAsync(500);
-
-    let url = `${store.getters.serverUrl}/register/userExists?` + (nickname ? `nickname=${nickname}` : `email=${email}`);
-    let response = await axios.get(url);
-
-    if(response.status === 200) {
-        return response.data.userExists;
-    }
-
-    return false;
+    return await store.dispatch('checkUserExists', {nickname, email});
 }
 
 const handleNicknameMatch = async (event) => {

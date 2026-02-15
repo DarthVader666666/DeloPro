@@ -29,7 +29,7 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Route("[action]")]
         [TrackIpAddress]
-        public async Task<IActionResult> GetSearchResult([FromBody] SearchLineRequest searchLine)
+        public async Task<IActionResult> GetSearchResult([FromBody] SearchRequest searchLine)
         {
             try
             {

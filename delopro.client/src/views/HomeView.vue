@@ -1,6 +1,6 @@
 <script setup>
 import { useStore } from 'vuex';
-import { computed, onMounted } from 'vue';
+import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import { helper } from '@/helper/helper';
 import SpinningCircle from '@/components/SpinningCircle.vue';
@@ -8,12 +8,6 @@ import SpinningCircle from '@/components/SpinningCircle.vue';
 const store = useStore();
 const pending = computed(() => store.getters.getPending);
 const chapters = computed(() => store.getters.getChapters);
-
-// onMounted(async () => {
-//   if(store.getters.isAuthenticated) {
-//     await store.dispatch('downloadCurrentUser');
-//   }
-// });
 
 </script>
 
@@ -83,7 +77,7 @@ const chapters = computed(() => store.getters.getChapters);
     -webkit-transform: scale(1.1);
     -moz-transform: scale(1.1);
     -o-transform: scale(1.1);
-    transform: scale(1.1);    
+    transform: scale(1.1);
 
     cursor: pointer;
 }

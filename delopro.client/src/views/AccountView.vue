@@ -1,7 +1,7 @@
 <script setup>
-import UserAccountCropper from '@/components/UserAccountCropper.vue';
-import UserAccountEdit from '@/components/UserAccountEdit.vue';
-import UserAccountInfo from '@/components/UserAccountInfo.vue';
+import AvatarCropper from '@/components/AvatarCropper.vue';
+import AccountEdit from '@/components/AccountEdit.vue';
+import AccountInfo from '@/components/AccountInfo.vue';
 import { helper } from '@/helper/helper';
 import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
@@ -45,17 +45,17 @@ function setIsSaveDisabled(value) {
 
 <template>
     <div>
-        <UserAccountInfo v-if="user && currentMode === modes.info"
+        <AccountInfo v-if="user && currentMode === modes.info"
             :user="user" :avatarBase64="avatarBase64"
             @switch-to-edit-mode="switchToEditMode">
-        </UserAccountInfo>
-        <UserAccountEdit v-show="user && currentMode === modes.edit"
+        </AccountInfo>
+        <AccountEdit v-show="user && currentMode === modes.edit"
             :user="user" :avatarBase64="avatarBase64" :isSaveDisabled="isSaveDisabled"
             @switch-to-info-mode="switchToInfoMode" @switch-to-avatar-mode="switchToAvatarMode" @set-avatar-base64="setAvatarBase64" @set-is-save-disabled="setIsSaveDisabled">
-        </UserAccountEdit>
-        <UserAccountCropper v-if="user && currentMode === modes.avatar"
+        </AccountEdit>
+        <AvatarCropper v-if="user && currentMode === modes.avatar"
             :user="user" :avatarBase64="avatarBase64"
             @switch-to-edit-mode="switchToEditMode" @switch-to-avatar-mode="switchToAvatarMode" @set-avatar-base64="setAvatarBase64" @set-is-save-disabled="setIsSaveDisabled">
-        </UserAccountCropper>
+        </AvatarCropper>
     </div>
 </template>

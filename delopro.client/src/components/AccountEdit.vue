@@ -5,7 +5,7 @@ import Textarea from 'primevue/textarea';
 import { computed, reactive, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 import axios from 'axios';
-import UserAccountAvatar from './UserAccountAvatar.vue';
+import AccountAvatar from './AccountAvatar.vue';
 import { helper } from '@/helper/helper';
 
 const store = useStore();
@@ -40,6 +40,7 @@ const updatedUser = reactive({
   info: props.user.info,
   email: props.user.email,
   phone: props.user.phone,
+  registerDate: helper.getDateString(props.user.registerDate, true),
 });
 
 const showNicknameError = ref(false);
@@ -164,7 +165,7 @@ async function handleEmailMatch(event) {
                 <div style="position: relative;">
                   <input type="file" id="fileInput" @change="onFileChange" accept="image/*" hidden />
 
-                  <UserAccountAvatar :avatarPath="props.user.avatarPath" :avatarBase64="props.avatarBase64"></UserAccountAvatar>
+                  <AccountAvatar :avatarPath="props.user.avatarPath" :avatarBase64="props.avatarBase64"></AccountAvatar>
 
                   <label for="fileInput" id="avatar-label" title="Загрузить фото">
                         <div class="avatar-button" style="bottom: 30%; left: 55%;">
@@ -179,7 +180,7 @@ async function handleEmailMatch(event) {
                     <span style="font-weight: bold; font-size: large">{{ props.user.nickname }}</span>
                     <span style="font-size: 1.2rem;">{{ `${props.user.firstName ?? ''} ${props.user.lastName ?? ''}` }}</span>
                     <span style="font-style: italic; color: gray">{{ props.user.roles.join(',') }}</span>
-                    <span v-if="updatedUser.registerDate">Дата регистрации: {{ updatedUser.registerDate }}</span>
+                    <span v-if="updatedUser.registerDate" style="font-style: italic;">Дата регистрации: {{ updatedUser.registerDate }}</span>
                     <div style="padding-top: 10px;">
                         <Button type="submit" raised severity="secondary" label="Сохранить" style="width: 100px; margin-bottom: 10px; margin-right: 10px;" :disabled="props.isSaveDisabled"></Button>
                         <Button raised severity="contrast" label="Отменить" style="width: 100px;" @click="handleCancel"/>
