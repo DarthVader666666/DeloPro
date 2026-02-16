@@ -531,8 +531,9 @@ const store = createStore({
 				.then(async (response) => {
 					if (response.status === 200) {
 						toast.success(response.data.okText)
+            sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.documentNodesKey)
-						await dispatch('downloadDocumentNodes')
+						await dispatch('downloadDocuments')
 						return true
 					} else {
 						return false
@@ -555,8 +556,9 @@ const store = createStore({
 				.then(async (response) => {
 					if (response.status === 200) {
 						toast.success(response.data.okText)
+            sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.documentNodesKey)
-						await dispatch('downloadDocumentNodes')
+						await dispatch('downloadDocuments')
 					}
 				})
 				.catch((error) => {
@@ -571,8 +573,9 @@ const store = createStore({
 				.then(async (response) => {
 					if (response.status === 200) {
 						toast.success(response.data.okText)
+            sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.documentNodesKey)
-						await dispatch('downloadDocumentNodes')
+						await dispatch('downloadDocuments')
 						return true
 					} else {
 						return false
@@ -591,8 +594,9 @@ const store = createStore({
 				.then(async (response) => {
 					if (response.status === 200) {
 						toast.success(response.data.okText)
+            sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.documentNodesKey)
-						await dispatch('downloadDocumentNodes')
+						await dispatch('downloadDocuments')
 						return true
 					} else {
 						return false
@@ -611,8 +615,9 @@ const store = createStore({
 				.then(async (response) => {
 					if (response.status === 200) {
 						toast.success(response.data.okText)
+            sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.documentNodesKey)
-						await dispatch('downloadDocumentNodes')
+						await dispatch('downloadDocuments')
 						return true
 					} else {
 						return false

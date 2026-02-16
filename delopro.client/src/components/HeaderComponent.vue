@@ -135,7 +135,8 @@ function handleBurgerClick() {
                     @click="() => { showMenu = false; router.push('/'); }"
                     severity="contrast" text label="Главная"
                     id="home-button"
-                />
+                >
+                </Button>
                 <div v-if="isOwner">
                     <Button
                         @click="() => { showMenu = false; router.push('/messages'); }"
@@ -152,7 +153,8 @@ function handleBurgerClick() {
                         @click="() => { showMenu = false; router.push('/create-chapter'); }"
                         severity="contrast" text label="Создать раздел"
                         id="create-chapter-button"
-                    />
+                    >
+                    </Button>
                     <Button
                         @click="() => { showMenu = false; router.push('/users'); }"
                         severity="contrast" text label="Пользователи"
@@ -164,17 +166,20 @@ function handleBurgerClick() {
                         @click="() => { showMenu = false; router.push('/feedback'); }"
                         severity="contrast" text label="Обратная связь"
                         id="feedback-button"
-                    />
+                    >
+                    </Button>
                     <Button
                         @click="() => { showMenu = false; showLogin = false; router.push('/register'); }"
                         severity="contrast" text label="Регистрация"
                         id="register-button"
-                    />
+                    >
+                    </Button>
                 </div>
                 <Button v-if="!isAuthenticated" @click="handleLoginButtonClick"
                     severity="contrast" text label="Войти" icon="pi pi-sign-in"
                     id="login-button"
-                />
+                >
+                </Button>
             </div>
             <div v-if="nickname && showUserAccountSettings" class="slide-container" id="account-settings">
                 <div style="text-align: center;">

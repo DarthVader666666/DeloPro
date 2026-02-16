@@ -7,7 +7,6 @@ import Select from 'primevue/select'
 import { computed, nextTick, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useToast } from 'vue-toastification'
-import axios from 'axios'
 
 const store = useStore()
 const toast = useToast()
@@ -144,7 +143,7 @@ function cancel() {
 	hideButtons()
 }
 
-async function updateName(node) {
+async function renameDocument(node) {
 	if (newName.value === node.data.name) {
 		cancel()
 		return
@@ -167,23 +166,23 @@ async function updateName(node) {
 	}
 }
 
-function download(node) {
+function downloadFile(node) {
 	if (node.data.path)
 		window.open(store.getters.serverUrl.replace('api', '') + node.data.path.replace('\\', '/'))
 }
 
 async function uploadFiles(event, path) {
 	const files = event.files
-	let upladForm = new FormData()
-	files.forEach((file) => upladForm.append('files', file))
+	let uploadModel = new FormData()
+	files.forEach((file) => uploadModel.append('files', file))
 
 	if (!path) {
 		hideButtons()
 		return
 	}
 
-	upladForm.append('folderName', path)
-	await store.dispatch('uploadDocuments', upladForm)
+	uploadModel.append('folderName', path)
+	await store.dispatch('uploadDocuments', uploadModel)
 
 	hideButtons()
 }
@@ -199,7 +198,7 @@ async function deleteDocument() {
 
 	const deleteModel = {
 		path: editedNode.value.data.path,
-		type: editedNode.value.data.type,
+		type: editedNode.value.data.type
 	}
 
 	const success = await store.dispatch('deleteDocument', deleteModel)
@@ -307,7 +306,7 @@ function stopCountdown() {
 								<span
 									:title="node.data.size"
 									:class="node.data.type"
-									@click="node.data.type === 'file' ? download(node) : null"
+									@click="node.data.type === 'file' ? downloadFile(node) : null"
 									:style="node.data.type === 'folder' ? 'font-weight:bold;' : 'font-weight:normal;'"
 								>
 									{{ node.data.name }}
@@ -321,9 +320,7 @@ function stopCountdown() {
 									:id="`${node.data.path}_${node.data.type}_settings`"
 								>
 									<div
-										v-if="
-											editedNode && editedNode.data.type != 'folder' && node.data.type != 'root'
-										"
+										v-if="editedNode && editedNode.data.type != 'folder' && node.data.type != 'root'"
 									>
 										<Button
 											@click="copyUrlToClipboard"
@@ -332,7 +329,8 @@ function stopCountdown() {
 											severity="contrast"
 											icon="pi pi-link"
 											title="Копировать ссылку"
-										/>
+										>
+                    </Button>
 										<Button
 											@click="showPathSelector"
 											text
@@ -340,7 +338,8 @@ function stopCountdown() {
 											severity="contrast"
 											icon="pi pi-file-export"
 											title="Переместить"
-										/>
+										>
+                    </Button>
 									</div>
 									<FileUpload
 										v-if="node.data.type == 'folder' || node.data.type == 'root'"
@@ -368,7 +367,8 @@ function stopCountdown() {
 										severity="contrast"
 										icon="pi pi-folder-plus"
 										title="Добавить папку"
-									/>
+									>
+                    </Button>
 
 									<div v-if="node.data.type != 'root'">
 										<Button
@@ -378,7 +378,8 @@ function stopCountdown() {
 											severity="contrast"
 											icon="pi pi-pencil"
 											title="Переименовать"
-										/>
+										>
+                    </Button>
 										<Button
 											v-if="node.data.type != 'root'"
 											@click="deleteDocument"
@@ -387,7 +388,8 @@ function stopCountdown() {
 											text
 											icon="pi pi-trash"
 											title="Удалить"
-										/>
+										>
+                    </Button>
 									</div>
 								</div>
 
@@ -416,7 +418,8 @@ function stopCountdown() {
 										severity="contrast"
 										icon="pi pi-arrow-left"
 										title="Назад"
-									/>
+									>
+                  </Button>
 								</div>
 
 								<!-- Rename -->
@@ -431,17 +434,18 @@ function stopCountdown() {
 										:id="`${node.data.path}_${node.data.type}_rename-input`"
 										@keydown.stop="enableArrowKeysEvents"
 										@keydown.esc="showSettings(node)"
-										@keydown.enter="updateName(node)"
+										@keydown.enter="renameDocument(node)"
 									/>
 
 									<Button
-										@click="updateName(node)"
+										@click="renameDocument(node)"
 										rounded
 										severity="primary"
 										text
 										icon="pi pi-check"
 										title="Ок"
-									/>
+									>
+                  </Button>
 									<Button
 										@click="showSettings(node)"
 										rounded
@@ -449,7 +453,8 @@ function stopCountdown() {
 										text
 										icon="pi pi-ban"
 										title="Отмена"
-									/>
+									>
+                  </Button>
 								</div>
 
 								<!-- New Folder -->
@@ -474,7 +479,8 @@ function stopCountdown() {
 										text
 										icon="pi pi-check"
 										title="Ок"
-									/>
+									>
+                  </Button>
 									<Button
 										@click="showSettings(node)"
 										rounded
@@ -482,7 +488,8 @@ function stopCountdown() {
 										text
 										icon="pi pi-ban"
 										title="Отмена"
-									/>
+									>
+                </Button>
 								</div>
 
 								<!-- Show settings -->
@@ -495,7 +502,8 @@ function stopCountdown() {
 									title="Настройки"
 									style="display: none"
 									:id="`${node.data.path}_${node.data.type}_show-settings`"
-								/>
+								>
+                </Button>
 
 								<!-- Close settings -->
 								<Button
@@ -507,7 +515,8 @@ function stopCountdown() {
 									title="Закрыть"
 									style="display: none"
 									:id="`${node.data.path}_${node.data.type}_close-settings`"
-								/>
+								>
+                </Button>
 							</div>
 						</div>
 					</template>
