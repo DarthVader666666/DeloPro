@@ -129,11 +129,8 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize(Roles = "Owner, Admin")]
-        public async Task<IActionResult> DeleteDocument()
+        public async Task<IActionResult> DeleteDocument([FromBody] DocumentPathModel documentPathModel)
         {
-            var reader = new StreamReader(HttpContext.Request.Body);
-            var documentPathModel = JsonSerializer.Deserialize<DocumentPathModel>(await reader.ReadToEndAsync());
-
             if (documentPathModel == null || documentPathModel.Path == null || documentPathModel.Type == null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка при удалении файла" });
@@ -189,10 +186,10 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize(Roles = "Owner, Admin")]
-        public async Task<IActionResult> AddFolder()
+        public async Task<IActionResult> AddFolder([FromBody] FolderPathModel? folderPathModel)
         {
             var reader = new StreamReader(HttpContext.Request.Body);
-            var folderPath = JsonSerializer.Deserialize<FolderPathModel>(await reader.ReadToEndAsync())?.FolderPath?.Replace('-', ' ');
+            var folderPath = folderPathModel?.FolderPath?.Replace('-', ' ');
             var path = Path.Combine(webRootPath!, folderPath!);
 
             try
@@ -225,7 +222,7 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize(Roles = "Owner, Admin")]
-        public async Task<IActionResult> Upload([FromForm] DocumentUploadForm? uploadDocumentForm)
+        public async Task<IActionResult> UploadDocuments([FromForm] DocumentUploadForm? uploadDocumentForm)
         {
             if (uploadDocumentForm == null || uploadDocumentForm.Files == null || !uploadDocumentForm.Files.Any())
             {
@@ -329,11 +326,8 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize(Roles = "Owner, Admin")]
-        public async Task<IActionResult> Move()
+        public async Task<IActionResult> Move([FromBody] MoveFileModel? moveFileModel)
         {
-            var reader = new StreamReader(HttpContext.Request.Body);
-            var moveFileModel = JsonSerializer.Deserialize<MoveFileModel>(await reader.ReadToEndAsync());
-
             if (moveFileModel == null || moveFileModel.OldPath == null || moveFileModel.NewPath == null)
             {
                 return BadRequest(new { errorText = "Не указан путь для перемещения файла" });
