@@ -166,6 +166,9 @@ namespace Delopro.Server.Controllers
 
                         Directory.Delete(path, recursive: true);
                         _ = Task.Run(() => _driveService.Delete(path, isFolder: true));
+
+                        _memoryCache.Remove(CacheKeys.DocumentsKey);
+                        _memoryCache.Remove(CacheKeys.DocumentNodesKey);
                     }
                     else
                     {

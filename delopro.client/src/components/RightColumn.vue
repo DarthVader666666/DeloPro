@@ -198,12 +198,13 @@ async function deleteDocument() {
 
 	const deleteModel = {
 		path: editedNode.value.data.path,
-		type: editedNode.value.data.type
+		type: editedNode.value.data.type,
 	}
 
 	const success = await store.dispatch('deleteDocument', deleteModel)
 
 	if (success) {
+		//hideButtons()
 		editedNode.value = null
 		editedNodeId.value = null
 	}
@@ -219,13 +220,14 @@ async function moveFile() {
 		newPath: newPath,
 	}
 
+	// hideButtons()
+
 	const success = await store.dispatch('moveDocument', moveModel)
 
 	if (success) {
+		resetTempValues()
 		editedNode.value = null
 		editedNodeId.value = null
-		hideButtons()
-		resetTempValues()
 	}
 }
 
@@ -320,7 +322,9 @@ function stopCountdown() {
 									:id="`${node.data.path}_${node.data.type}_settings`"
 								>
 									<div
-										v-if="editedNode && editedNode.data.type != 'folder' && node.data.type != 'root'"
+										v-if="
+											editedNode && editedNode.data.type != 'folder' && node.data.type != 'root'
+										"
 									>
 										<Button
 											@click="copyUrlToClipboard"
@@ -329,8 +333,7 @@ function stopCountdown() {
 											severity="contrast"
 											icon="pi pi-link"
 											title="Копировать ссылку"
-										>
-                    </Button>
+										></Button>
 										<Button
 											@click="showPathSelector"
 											text
@@ -338,8 +341,7 @@ function stopCountdown() {
 											severity="contrast"
 											icon="pi pi-file-export"
 											title="Переместить"
-										>
-                    </Button>
+										></Button>
 									</div>
 									<FileUpload
 										v-if="node.data.type == 'folder' || node.data.type == 'root'"
@@ -367,8 +369,7 @@ function stopCountdown() {
 										severity="contrast"
 										icon="pi pi-folder-plus"
 										title="Добавить папку"
-									>
-                    </Button>
+									></Button>
 
 									<div v-if="node.data.type != 'root'">
 										<Button
@@ -378,8 +379,7 @@ function stopCountdown() {
 											severity="contrast"
 											icon="pi pi-pencil"
 											title="Переименовать"
-										>
-                    </Button>
+										></Button>
 										<Button
 											v-if="node.data.type != 'root'"
 											@click="deleteDocument"
@@ -388,8 +388,7 @@ function stopCountdown() {
 											text
 											icon="pi pi-trash"
 											title="Удалить"
-										>
-                    </Button>
+										></Button>
 									</div>
 								</div>
 
@@ -418,8 +417,7 @@ function stopCountdown() {
 										severity="contrast"
 										icon="pi pi-arrow-left"
 										title="Назад"
-									>
-                  </Button>
+									></Button>
 								</div>
 
 								<!-- Rename -->
@@ -444,8 +442,7 @@ function stopCountdown() {
 										text
 										icon="pi pi-check"
 										title="Ок"
-									>
-                  </Button>
+									></Button>
 									<Button
 										@click="showSettings(node)"
 										rounded
@@ -453,8 +450,7 @@ function stopCountdown() {
 										text
 										icon="pi pi-ban"
 										title="Отмена"
-									>
-                  </Button>
+									></Button>
 								</div>
 
 								<!-- New Folder -->
@@ -479,8 +475,7 @@ function stopCountdown() {
 										text
 										icon="pi pi-check"
 										title="Ок"
-									>
-                  </Button>
+									></Button>
 									<Button
 										@click="showSettings(node)"
 										rounded
@@ -488,8 +483,7 @@ function stopCountdown() {
 										text
 										icon="pi pi-ban"
 										title="Отмена"
-									>
-                </Button>
+									></Button>
 								</div>
 
 								<!-- Show settings -->
@@ -502,8 +496,7 @@ function stopCountdown() {
 									title="Настройки"
 									style="display: none"
 									:id="`${node.data.path}_${node.data.type}_show-settings`"
-								>
-                </Button>
+								></Button>
 
 								<!-- Close settings -->
 								<Button
@@ -515,8 +508,7 @@ function stopCountdown() {
 									title="Закрыть"
 									style="display: none"
 									:id="`${node.data.path}_${node.data.type}_close-settings`"
-								>
-                </Button>
+								></Button>
 							</div>
 						</div>
 					</template>

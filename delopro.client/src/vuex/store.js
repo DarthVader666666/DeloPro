@@ -413,9 +413,9 @@ const store = createStore({
 				commit('setPending', false)
 			}
 		},
-		async deleteTheme({ dispatch, state }, themeId) {
+		async deleteTheme({ dispatch, state }, theme) {
 			axios
-				.delete(`${state.serverUrl}/themes/deletetheme/${themeId}`, null, {
+				.delete(`${state.serverUrl}/themes/deletetheme/${theme.themeId}`, null, {
 					headers: {
 						Content: 'application/json',
 						Accept: '*/*',
@@ -427,6 +427,7 @@ const store = createStore({
 						sessionStorage.removeItem(state.sessionStorageKeys.chaptersKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.chapterNodesKey)
 						await dispatch('downloadChapters')
+						await dispatch('downloadChapter', theme.chapterId)
 					}
 				})
 				.catch((error) => {
@@ -449,6 +450,7 @@ const store = createStore({
 						sessionStorage.removeItem(state.sessionStorageKeys.chaptersKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.chapterNodesKey)
 						await dispatch('downloadChapters')
+						await dispatch('downloadChapter', newTheme.chapterId)
 					}
 				})
 				.catch((error) => {
@@ -531,9 +533,9 @@ const store = createStore({
 				.then(async (response) => {
 					if (response.status === 200) {
 						toast.success(response.data.okText)
-            sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
+						//sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.documentNodesKey)
-						await dispatch('downloadDocuments')
+						await dispatch('downloadDocumentNodes')
 						return true
 					} else {
 						return false
@@ -556,9 +558,9 @@ const store = createStore({
 				.then(async (response) => {
 					if (response.status === 200) {
 						toast.success(response.data.okText)
-            sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
+						//sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.documentNodesKey)
-						await dispatch('downloadDocuments')
+						await dispatch('downloadDocumentNodes')
 					}
 				})
 				.catch((error) => {
@@ -573,9 +575,9 @@ const store = createStore({
 				.then(async (response) => {
 					if (response.status === 200) {
 						toast.success(response.data.okText)
-            sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
+						//sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.documentNodesKey)
-						await dispatch('downloadDocuments')
+						await dispatch('downloadDocumentNodes')
 						return true
 					} else {
 						return false
@@ -594,9 +596,9 @@ const store = createStore({
 				.then(async (response) => {
 					if (response.status === 200) {
 						toast.success(response.data.okText)
-            sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
+						//sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.documentNodesKey)
-						await dispatch('downloadDocuments')
+						await dispatch('downloadDocumentNodes')
 						return true
 					} else {
 						return false
@@ -615,9 +617,9 @@ const store = createStore({
 				.then(async (response) => {
 					if (response.status === 200) {
 						toast.success(response.data.okText)
-            sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
+						//sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.documentNodesKey)
-						await dispatch('downloadDocuments')
+						await dispatch('downloadDocumentNodes')
 						return true
 					} else {
 						return false

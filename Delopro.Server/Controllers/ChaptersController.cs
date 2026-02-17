@@ -114,7 +114,7 @@ namespace Delopro.Server.Controllers
                 catch (Exception ex)
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = ex.Message });
-                }                
+                }
             }
 
             return Ok(chapterResponse);
