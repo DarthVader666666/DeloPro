@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useToast } from 'vue-toastification'
 import router from '@/router/router'
 import { helper } from '@/helper/helper'
+import { StepStyle } from 'primevue'
 // vueQuery ?
 const toast = useToast()
 
@@ -34,6 +35,7 @@ const store = createStore({
 		users: [],
 		user: null,
 		currentUser: null,
+		visits: [],
 		sessionStorageKeys: {
 			chaptersKey: 'chapters',
 			chapterNodesKey: 'chapterNodes',
@@ -156,6 +158,11 @@ const store = createStore({
 		getCaptcha(state) {
 			return state.captcha
 		},
+
+		// VISITS
+		getVisits(state) {
+			return state.visits
+		},
 	},
 	mutations: {
 		// ACCOUNT
@@ -253,6 +260,11 @@ const store = createStore({
 		},
 		setImageNames(state, value) {
 			state.imageNames = value
+		},
+
+		// VISITS
+		setVisits(state, value) {
+			state.visits = value
 		},
 	},
 	actions: {
@@ -912,6 +924,22 @@ const store = createStore({
 						sessionStorage.removeItem(state.sessionStorageKeys.usersKey)
 						await dispatch('downloadCurrentUser')
 						await dispatch('downloadUsers')
+					}
+				})
+				.catch((error) => {
+					if (error.response) {
+						toast.error(error.response.data.errorText)
+					}
+				})
+		},
+
+		// VISITS
+		async downloadVisits({ commit, state }) {
+			await axios
+				.get(`${state.serverUrl}/visits/getvisits`)
+				.then(async (response) => {
+					if (response.status === 200) {
+						commit('setVisits', response.data)
 					}
 				})
 				.catch((error) => {

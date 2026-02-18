@@ -1,428 +1,580 @@
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from 'vue';
-import { RouterLink, useRouter } from 'vue-router';
-import { helper } from '@/helper/helper.js';
-import { useStore } from 'vuex';
-import Button from 'primevue/button';
-import InputText from 'primevue/inputtext';
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
+import { helper } from '@/helper/helper.js'
+import { useStore } from 'vuex'
+import Button from 'primevue/button'
+import InputText from 'primevue/inputtext'
 
 const loginRequestForm = ref({
-    nicknameOrEmail: null,
-    password: null,
-    remember: false
-});
+	nicknameOrEmail: null,
+	password: null,
+	remember: false,
+})
 
-const store = useStore();
-const router = useRouter();
+const store = useStore()
+const router = useRouter()
 
-const nickname = computed(() => store.getters.getNickname);
-const isAuthenticated = computed(() => store.getters.isAuthenticated);
-const isAdmin = computed(() => store.getters.isAdmin);
-const isOwner = computed(() => store.getters.isOwner);
-const isUser = computed(() => store.getters.isUser);
-const unreadMessagesCount = computed(() => store.getters.getUnreadMessagesCount);
-const darkenBackground = computed(() => showLogin.value || showMenu.value || showUserAccountSettings.value);
-const user = computed(() => store.getters.getCurrentUser);
+const nickname = computed(() => store.getters.getNickname)
+const isAuthenticated = computed(() => store.getters.isAuthenticated)
+const isAdmin = computed(() => store.getters.isAdmin)
+const isOwner = computed(() => store.getters.isOwner)
+const isUser = computed(() => store.getters.isUser)
+const unreadMessagesCount = computed(() => store.getters.getUnreadMessagesCount)
+const darkenBackground = computed(
+	() => showLogin.value || showMenu.value || showUserAccountSettings.value,
+)
+const user = computed(() => store.getters.getCurrentUser)
 
-const showLogin = ref(false);
-const showMenu = ref(false);
-const showUserAccountSettings = ref(false);
+const showLogin = ref(false)
+const showMenu = ref(false)
+const showUserAccountSettings = ref(false)
 
 onMounted(async () => {
-    window.addEventListener('click', (event) => { if(!helper.closeMenu(event, ['login-form', 'login-button'])) showLogin.value = false });
-    window.addEventListener('click', (event) => { if(!helper.closeMenu(event, ['menu', 'burger-button'])) showMenu.value = false });
-    window.addEventListener('click', (event) => { if(!helper.closeMenu(event, ['account-settings', 'account-button'])) showUserAccountSettings.value = false });
-    window.addEventListener('resize', handleScreenSizeChange);
-});
+	window.addEventListener('click', (event) => {
+		if (!helper.closeMenu(event, ['login-form', 'login-button'])) showLogin.value = false
+	})
+	window.addEventListener('click', (event) => {
+		if (!helper.closeMenu(event, ['menu', 'burger-button'])) showMenu.value = false
+	})
+	window.addEventListener('click', (event) => {
+		if (!helper.closeMenu(event, ['account-settings', 'account-button']))
+			showUserAccountSettings.value = false
+	})
+	window.addEventListener('resize', handleScreenSizeChange)
+})
 
 watch(showMenu, (oldValue, newValue) => {
-    const menu = document.getElementById('menu');
+	const menu = document.getElementById('menu')
 
-    if(newValue) {
-        menu.classList.remove('slide-container');
-        menu.classList.add('menu');
-    }
-    else {
-        menu.classList.remove('menu');
-        menu.classList.add('slide-container');
-    }
-});
+	if (newValue) {
+		menu.classList.remove('slide-container')
+		menu.classList.add('menu')
+	} else {
+		menu.classList.remove('menu')
+		menu.classList.add('slide-container')
+	}
+})
 
 watch(darkenBackground, (oldValue, newValue) => {
-    if(!newValue) {
-        helper.darkenBackground();
-    }
-    else {
-        helper.lightenBackground();
-    }
-});
+	if (!newValue) {
+		helper.darkenBackground()
+	} else {
+		helper.lightenBackground()
+	}
+})
 
 const handleScreenSizeChange = () => {
-    if(document.documentElement.clientWidth > 800) {
-        showMenu.value = false;
-    }
-};
+	if (document.documentElement.clientWidth > 800) {
+		showMenu.value = false
+	}
+}
 
-async function handleLogIn () {
-    await store.dispatch('logIn', loginRequestForm.value);
+async function handleLogIn() {
+	await store.dispatch('logIn', loginRequestForm.value)
 
-    loginRequestForm.value.nicknameOrEmail = null;
-    loginRequestForm.value.password = null;
-    loginRequestForm.value.nicknameOrEmail = null;
-    loginRequestForm.value.password = null;
-    showLogin.value = false;
-};
+	loginRequestForm.value.nicknameOrEmail = null
+	loginRequestForm.value.password = null
+	loginRequestForm.value.nicknameOrEmail = null
+	loginRequestForm.value.password = null
+	showLogin.value = false
+}
 
 function handleLogout() {
-    if(!window.confirm('Вы уверены, что хотите выйти?')) {
-        return;
-    }
+	if (!window.confirm('Вы уверены, что хотите выйти?')) {
+		return
+	}
 
-    store.dispatch('logOut');
+	store.dispatch('logOut')
 
-    showUserAccountSettings.value = false;
+	showUserAccountSettings.value = false
 }
 
 const handleLoginButtonClick = async () => {
-    showMenu.value = false;
-    showLogin.value = !showLogin.value;
+	showMenu.value = false
+	showLogin.value = !showLogin.value
 
-    if(showLogin.value) {
-        loginRequestForm.value.nicknameOrEmail = null;
-        loginRequestForm.value.password = null;
+	if (showLogin.value) {
+		loginRequestForm.value.nicknameOrEmail = null
+		loginRequestForm.value.password = null
 
-        await nextTick();
-        const loginInput = document.getElementById('login-input');
-        loginInput.focus();
-    }
+		await nextTick()
+		const loginInput = document.getElementById('login-input')
+		loginInput.focus()
+	}
 }
 
 function handleBurgerClick() {
-    showMenu.value = !showMenu.value;
+	showMenu.value = !showMenu.value
 }
-
 </script>
 
 <template>
-    <div class="header-container" ref="header">
-        <div class="logo">
-            <RouterLink to="/"><h1>DeloPro</h1></RouterLink>
-        </div>
-        <div class="account-and-menu">
-            <div class="menu-burger" >
-                <span v-if="nickname" style="font-weight: bold;">{{ nickname }}</span>
-                <Button
-                    @click="handleBurgerClick"
-                    security="contrast" rounded text
-                    id="burger-button"
-                >
-                    <i class="pi pi-bars"></i>
-                </Button>
-            </div>
-            <div class="menu" id="menu">
-                <div v-if="nickname" class="account">
-                    <Button
-                        @click="() => { showUserAccountSettings = !showUserAccountSettings; showMenu = false }"
-                        severity="secondary" rounded
-                        id="account-button"
-                    >
-                    <img v-if="user && user.avatarPath" :src="user.avatarPath" width="50px" height="50px">
-                    <i v-else class="pi pi-user" style="font-size: x-large;"></i>
-                    </Button>
-                    <span>{{ nickname }}</span>
-                </div>
-                <Button
-                    @click="() => { showMenu = false; router.push('/'); }"
-                    severity="contrast" text label="Главная"
-                    id="home-button"
-                >
-                </Button>
-                <div v-if="isOwner">
-                    <Button
-                        @click="() => { showMenu = false; router.push('/messages'); }"
-                        severity="contrast" text
-                        id="messages-button"
-                    >
-                        <span>Сообщения</span>
-                        <span class="unread-messages-count" :style="unreadMessagesCount ? '' : 'display: none;'">{{ unreadMessagesCount }}</span>
-                    </Button>
-                </div>
-                <div v-if="isAdmin"></div>
-                <div v-if="isOwner || isAdmin">
-                    <Button
-                        @click="() => { showMenu = false; router.push('/create-chapter'); }"
-                        severity="contrast" text label="Создать раздел"
-                        id="create-chapter-button"
-                    >
-                    </Button>
-                    <Button
-                        @click="() => { showMenu = false; router.push('/users'); }"
-                        severity="contrast" text label="Пользователи"
-                    >
-                    </Button>
-                </div>
-                <div v-if="!isAuthenticated || isUser">
-                    <Button
-                        @click="() => { showMenu = false; router.push('/feedback'); }"
-                        severity="contrast" text label="Обратная связь"
-                        id="feedback-button"
-                    >
-                    </Button>
-                    <Button
-                        @click="() => { showMenu = false; showLogin = false; router.push('/register'); }"
-                        severity="contrast" text label="Регистрация"
-                        id="register-button"
-                    >
-                    </Button>
-                </div>
-                <Button v-if="!isAuthenticated" @click="handleLoginButtonClick"
-                    severity="contrast" text label="Войти" icon="pi pi-sign-in"
-                    id="login-button"
-                >
-                </Button>
-            </div>
-            <div v-if="nickname && showUserAccountSettings" class="slide-container" id="account-settings">
-                <div style="text-align: center;">
-                    <span style="font-size: large;">
-                        {{ nickname }}
-                    </span>
-                    <Button @click="showUserAccountSettings = false" severity="contrast" rounded text icon="pi pi-times" style="position: absolute; right: 5px; top: 5px; height: 25px; width: 25px"></Button>
-                </div>
-                <div style="padding-top: 20px;">
-                    <Button
-                        @click="() => { showUserAccountSettings = false; router.push(`/account`);}"
-                        text label="Личный кабинет"
-                        style="padding: 12px;">
-                    </Button>
-                    <Button
-                        @click="handleLogout"
-                        text label="Выйти"
-                        icon="pi pi-sign-out"
-                        id="logout-button"
-                        style="padding: 12px;">
-                    </Button>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div
+		class="header-container"
+		ref="header"
+	>
+		<div class="logo">
+			<RouterLink to="/"><h1>DeloPro</h1></RouterLink>
+		</div>
+		<div class="account-and-menu">
+			<div class="menu-burger">
+				<span
+					v-if="nickname"
+					style="font-weight: bold"
+				>
+					{{ nickname }}
+				</span>
+				<Button
+					@click="handleBurgerClick"
+					security="contrast"
+					rounded
+					text
+					id="burger-button"
+				>
+					<i class="pi pi-bars"></i>
+				</Button>
+			</div>
+			<div
+				class="menu"
+				id="menu"
+			>
+				<div
+					v-if="nickname"
+					class="account"
+				>
+					<Button
+						@click="
+							() => {
+								showUserAccountSettings = !showUserAccountSettings
+								showMenu = false
+							}
+						"
+						severity="secondary"
+						rounded
+						id="account-button"
+					>
+						<img
+							v-if="user && user.avatarPath"
+							:src="user.avatarPath"
+							width="50px"
+							height="50px"
+						/>
+						<i
+							v-else
+							class="pi pi-user"
+							style="font-size: x-large"
+						></i>
+					</Button>
+					<span>{{ nickname }}</span>
+				</div>
+				<Button
+					@click="
+						() => {
+							showMenu = false
+							router.push('/')
+						}
+					"
+					severity="contrast"
+					text
+					label="Главная"
+					id="home-button"
+				></Button>
+				<div v-if="isOwner">
+					<Button
+						@click="
+							() => {
+								showMenu = false
+								router.push('/messages')
+							}
+						"
+						severity="contrast"
+						text
+						id="messages-button"
+					>
+						<span>Сообщения</span>
+						<span
+							class="unread-messages-count"
+							:style="unreadMessagesCount ? '' : 'display: none;'"
+						>
+							{{ unreadMessagesCount }}
+						</span>
+					</Button>
+				</div>
+				<div v-if="isAdmin"></div>
+				<div v-if="isOwner || isAdmin">
+					<Button
+						@click="
+							() => {
+								showMenu = false
+								router.push('/create-chapter')
+							}
+						"
+						severity="contrast"
+						text
+						label="Создать раздел"
+						id="create-chapter-button"
+					></Button>
+					<Button
+						@click="
+							() => {
+								showMenu = false
+								router.push('/users')
+							}
+						"
+						severity="contrast"
+						text
+						label="Пользователи"
+					></Button>
+					<Button
+						@click="
+							() => {
+								showMenu = false
+								router.push('/visits')
+							}
+						"
+						severity="contrast"
+						text
+						label="Статистика посещений"
+					></Button>
+				</div>
+				<div v-if="!isAuthenticated || isUser">
+					<Button
+						@click="
+							() => {
+								showMenu = false
+								router.push('/feedback')
+							}
+						"
+						severity="contrast"
+						text
+						label="Обратная связь"
+						id="feedback-button"
+					></Button>
+					<Button
+						@click="
+							() => {
+								showMenu = false
+								showLogin = false
+								router.push('/register')
+							}
+						"
+						severity="contrast"
+						text
+						label="Регистрация"
+						id="register-button"
+					></Button>
+				</div>
+				<Button
+					v-if="!isAuthenticated"
+					@click="handleLoginButtonClick"
+					severity="contrast"
+					text
+					label="Войти"
+					icon="pi pi-sign-in"
+					id="login-button"
+				></Button>
+			</div>
+			<div
+				v-if="nickname && showUserAccountSettings"
+				class="slide-container"
+				id="account-settings"
+			>
+				<div style="text-align: center">
+					<span style="font-size: large">
+						{{ nickname }}
+					</span>
+					<Button
+						@click="showUserAccountSettings = false"
+						severity="contrast"
+						rounded
+						text
+						icon="pi pi-times"
+						style="position: absolute; right: 5px; top: 5px; height: 25px; width: 25px"
+					></Button>
+				</div>
+				<div style="padding-top: 20px">
+					<Button
+						@click="
+							() => {
+								showUserAccountSettings = false
+								router.push(`/account`)
+							}
+						"
+						text
+						label="Личный кабинет"
+						style="padding: 12px"
+					></Button>
+					<Button
+						@click="handleLogout"
+						text
+						label="Выйти"
+						icon="pi pi-sign-out"
+						id="logout-button"
+						style="padding: 12px"
+					></Button>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <form v-show="showLogin" class="slide-container" @submit.prevent="handleLogIn" @keydown.enter.prevent="handleLogIn" id="login-form">
-        <div class="login-input">
-            <label>Логин: </label>
-            <InputText v-model="loginRequestForm.nicknameOrEmail" type="text" placeholder="Почта или никнэйм" required id="login-input"/>
-        </div>
-        <div class="login-input">
-            <label>Пароль: </label>
-            <InputText v-model="loginRequestForm.password" type="password" placeholder="Пароль" required/>
-        </div>
-        <div class="bottom-part">
-            <div class="remember">
-                <label for="remember-checkbox">Запомнить</label>
-                <input v-model="loginRequestForm.remember" type="checkbox" id="remember-checkbox"/>
-            </div>
-            <Button type="submit" severity="secondary" icon="pi pi-sign-in" label="Войти" raised form="login-form"></Button>
-        </div>
-        <RouterLink to="/recover-password" @click="() => { showMenu = false; showLogin = !showLogin; }">Забыли пароль?</RouterLink>
-    </form>
+	<form
+		v-show="showLogin"
+		class="slide-container"
+		@submit.prevent="handleLogIn"
+		@keydown.enter.prevent="handleLogIn"
+		id="login-form"
+	>
+		<div class="login-input">
+			<label>Логин:</label>
+			<InputText
+				v-model="loginRequestForm.nicknameOrEmail"
+				type="text"
+				placeholder="Почта или никнэйм"
+				required
+				id="login-input"
+			/>
+		</div>
+		<div class="login-input">
+			<label>Пароль:</label>
+			<InputText
+				v-model="loginRequestForm.password"
+				type="password"
+				placeholder="Пароль"
+				required
+			/>
+		</div>
+		<div class="bottom-part">
+			<div class="remember">
+				<label for="remember-checkbox">Запомнить</label>
+				<input
+					v-model="loginRequestForm.remember"
+					type="checkbox"
+					id="remember-checkbox"
+				/>
+			</div>
+			<Button
+				type="submit"
+				severity="secondary"
+				icon="pi pi-sign-in"
+				label="Войти"
+				raised
+				form="login-form"
+			></Button>
+		</div>
+		<RouterLink
+			to="/recover-password"
+			@click="
+				() => {
+					showMenu = false
+					showLogin = !showLogin
+				}
+			"
+		>
+			Забыли пароль?
+		</RouterLink>
+	</form>
 </template>
 
 <style scoped>
-    .header-container {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      background-image: var(--BCKGND-GRADIENT);
-      box-shadow: var(--COMPONENT-BOX-SHADOW);
-      border-radius: 0 0 5px 5px;
-      height: var(--HEADER-HEIGHT);
-    }
+.header-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	background-image: var(--BCKGND-GRADIENT);
+	box-shadow: var(--COMPONENT-BOX-SHADOW);
+	border-radius: 0 0 5px 5px;
+	height: var(--HEADER-HEIGHT);
+}
 
-    .account-and-menu {
-        display: flex;
-        flex-direction: row;
-    }
+.account-and-menu {
+	display: flex;
+	flex-direction: row;
+}
 
-    .account {
-        position: absolute;
-        right: 20px;
-        padding-bottom: 8px;
-        display: flex;
-        flex-direction: column;
-        font-size: medium;
-        align-items: center;
-    }
+.account {
+	position: absolute;
+	right: 20px;
+	padding-bottom: 8px;
+	display: flex;
+	flex-direction: column;
+	font-size: medium;
+	align-items: center;
+}
 
-    .account button {
-        height: 50px;
-        width: 50px;
-    }
+.account button {
+	height: 50px;
+	width: 50px;
+}
 
-    .slide-container {
-        position: fixed;
-        top: var(--HEADER-HEIGHT);
-        right: 0;
-        z-index: 1;
-        background-color: var(--MENU-BCKGND-CLR);
-        display: flex;
-        flex-direction: column;
-        padding: 15px;
-        border-radius: 3px;
-        box-shadow: var(--MENU-BOX-SHADOW);
-        animation-name: slide;
-        animation-duration: 0.2s;
-        transform: translateX(0%);
-        min-width: 220px;
-    }
+.slide-container {
+	position: fixed;
+	top: var(--HEADER-HEIGHT);
+	right: 0;
+	z-index: 1;
+	background-color: var(--MENU-BCKGND-CLR);
+	display: flex;
+	flex-direction: column;
+	padding: 15px;
+	border-radius: 3px;
+	box-shadow: var(--MENU-BOX-SHADOW);
+	animation-name: slide;
+	animation-duration: 0.2s;
+	transform: translateX(0%);
+	min-width: 220px;
+}
 
-    .slide-container:deep(button):not(.account button) {
-        width: 100%;
-        border-radius: 0;
-    }
+.slide-container:deep(button):not(.account button) {
+	width: 100%;
+	border-radius: 0;
+}
 
-    .slide-container button:deep(span) {
-        font-weight: bold;
-        color: var(--TEXT-COLOR);
-    }
+.slide-container button:deep(span) {
+	font-weight: bold;
+	color: var(--TEXT-COLOR);
+}
 
-    .slide-container input[type="text"], input[type="password"] {
-        font-size: medium;
-        height: 30px;
-    }
+.slide-container input[type='text'],
+input[type='password'] {
+	font-size: medium;
+	height: 30px;
+}
 
-    .menu {
-        display: flex;
-        flex-direction: row;
-        align-items: end;
-        gap: 0px;
-    }
+.menu {
+	display: flex;
+	flex-direction: row;
+	align-items: end;
+	gap: 0px;
+}
 
-    .menu button:not(.account button)  {
-        border-radius: 0;
-    }
+.menu button:not(.account button) {
+	border-radius: 0;
+}
 
-    .menu button:deep(span) {
-        font-weight:bold;
-        color: var(--TEXT-COLOR);
-    }
+.menu button:deep(span) {
+	font-weight: bold;
+	color: var(--TEXT-COLOR);
+}
 
-    .menu-burger {
-        display: none;
-        align-content: center;
-    }
+.menu-burger {
+	display: none;
+	align-content: center;
+}
 
-    .menu-burger button {
-        margin: 0 10px 0 10px;
-        padding: 12px;
-    }
+.menu-burger button {
+	margin: 0 10px 0 10px;
+	padding: 12px;
+}
 
-    .menu-burger button {
-        border-width: 1px;
-        border-color: rgba(0, 0, 0, 0.332);
-    }
+.menu-burger button {
+	border-width: 1px;
+	border-color: rgba(0, 0, 0, 0.332);
+}
 
-    .menu-burger i {
-        color: var(--TEXT-COLOR);
-        font-size: x-large;
-    }
+.menu-burger i {
+	color: var(--TEXT-COLOR);
+	font-size: x-large;
+}
 
-    .login-input {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-    }
+.login-input {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
 
-    .login-input input {
-        border-radius: 4px;
-    }
+.login-input input {
+	border-radius: 4px;
+}
 
-    .login-input:hover:deep(input) {
-        cursor:text;
-    }
+.login-input:hover:deep(input) {
+	cursor: text;
+}
 
-    .bottom-part {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        margin-top: 8px;
-    }
+.bottom-part {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-top: 8px;
+}
 
-    .bottom-part button {
-        font-size: medium;
-        height: 30px;
-        padding: 8px;
-        margin-left: 22px;
-        border-radius: 4px;
-    }
+.bottom-part button {
+	font-size: medium;
+	height: 30px;
+	padding: 8px;
+	margin-left: 22px;
+	border-radius: 4px;
+}
 
-    .unread-messages-count {
-        right: 0;
-        background:red;
-        color:white !important;
-        font-size: small;
-        font-weight:normal !important;
-        padding:3px 0 0 0;
-        border-radius:50%;
-        height:20px;
-        width:20px;
-    }
+.unread-messages-count {
+	right: 0;
+	background: red;
+	color: white !important;
+	font-size: small;
+	font-weight: normal !important;
+	padding: 3px 0 0 0;
+	border-radius: 50%;
+	height: 20px;
+	width: 20px;
+}
 
-    .remember {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 5px;
-    }
+.remember {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 5px;
+}
 
-    .remember label:hover, input:hover {
-        cursor: pointer;
-    }
+.remember label:hover,
+input:hover {
+	cursor: pointer;
+}
 
-    .logo {
-        position: absolute;
-        left: 0;
-        text-shadow: 3px 3px rgba(22, 22, 22, 0.651);
-        height: 18px;
-        margin-left: 10px;
-        width: 10px;
-    }
+.logo {
+	position: absolute;
+	left: 0;
+	text-shadow: 3px 3px rgba(22, 22, 22, 0.651);
+	height: 18px;
+	margin-left: 10px;
+	width: 10px;
+}
 
-    .logo a {
-        text-decoration: none;
-        color: var(--LOGO-COLOR);
-        font-size: 18px;
-    }
+.logo a {
+	text-decoration: none;
+	color: var(--LOGO-COLOR);
+	font-size: 18px;
+}
 
-    .logo a:hover {
-        color: var(--LOGO-COLOR);
-    }
+.logo a:hover {
+	color: var(--LOGO-COLOR);
+}
 
-    label {
-        font-weight: bold;
-    }
+label {
+	font-weight: bold;
+}
 
-    @media(max-width: 800px) {
-        .header-container {
-            justify-content: end;
-        }
+@media (max-width: 800px) {
+	.header-container {
+		justify-content: end;
+	}
 
-        .menu {
-            display: none;
-        }
+	.menu {
+		display: none;
+	}
 
-        .menu-burger {
-            display: flex;
-            align-items: center;
-        }
+	.menu-burger {
+		display: flex;
+		align-items: center;
+	}
 
-        .account {
-            position: relative;
-            padding: 0 0 15px 0;
-            right: 0;
-            margin: auto;
-        }
+	.account {
+		position: relative;
+		padding: 0 0 15px 0;
+		right: 0;
+		margin: auto;
+	}
 
-        .account-and-menu {
-            flex-direction: row-reverse;
-        }
-    }
+	.account-and-menu {
+		flex-direction: row-reverse;
+	}
+}
 </style>

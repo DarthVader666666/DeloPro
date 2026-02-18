@@ -141,6 +141,7 @@ async function handleDeleteChapter() {
 				height="120px"
 			/>
 			<Button
+				v-if="chapter.chapterId"
 				severity="danger"
 				style="height: 30%; width: 100px; margin-right: 1.5%"
 				@click="handleDeleteChapter"

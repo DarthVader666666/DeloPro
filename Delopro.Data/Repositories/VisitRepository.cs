@@ -65,7 +65,9 @@ namespace Delopro.Data.Repositories
 
         public Task<IEnumerable<Visit?>> GetListAsync(int? id = null)
         {
-            return Task.FromResult(id != null ? _dbContext.Visits : _dbContext.Visits.Where(v => v.VisitorId == id).Include(v => v.Visitor).AsEnumerable<Visit?>());
+            return Task.FromResult<IEnumerable<Visit?>>(_dbContext.Visits
+                .Where(v => v.VisitDate.Year == DateTime.Now.Year && v.VisitDate.Month == DateTime.Now.Month)
+                .OrderBy(v => v.VisitDate));
         }
 
         public Task<Visit?> UpdateAsync(Visit? item)
