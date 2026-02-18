@@ -90,7 +90,7 @@ function handleLogout() {
 	showUserAccountSettings.value = false
 }
 
-const handleLoginButtonClick = async () => {
+const showLogInForm = async () => {
 	showMenu.value = false
 	showLogin.value = !showLogin.value
 
@@ -267,7 +267,7 @@ function handleBurgerClick() {
 				</div>
 				<Button
 					v-if="!isAuthenticated"
-					@click="handleLoginButtonClick"
+					@click="showLogInForm"
 					severity="contrast"
 					text
 					label="Войти"
