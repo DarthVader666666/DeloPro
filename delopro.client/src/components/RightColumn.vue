@@ -575,7 +575,7 @@ function stopCountdown() {
 
 .file:hover {
 	cursor: pointer;
-	text-decoration: underline;
+	color: gray;
 }
 
 .settings-input {

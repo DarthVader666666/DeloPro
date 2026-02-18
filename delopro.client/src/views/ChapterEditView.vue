@@ -64,14 +64,6 @@ function clearNewTheme() {
 	newTheme.value.content = null
 }
 
-async function handleDeleteChapter() {
-	if (!window.confirm('Этот раздел и его темы будут удалены. Вы уверены?')) {
-		return
-	}
-
-	await store.dispatch('deleteChapter', chapter.value)
-}
-
 async function updateChapter(updatedChapter) {
 	chapter.value.chapterTitle = updatedChapter.chapterTitle
 	chapter.value.imagePath = updatedChapter.imagePath
@@ -143,16 +135,6 @@ async function updateChapter(updatedChapter) {
 			:removeTheme="removeTheme"
 			:themes="chapter.themes"
 		></ThemeList>
-		<div class="delete-button">
-			<Button
-				v-if="!isFormActive && (isAdmin || isOwner)"
-				severity="danger"
-				@click="handleDeleteChapter"
-			>
-				<i class="pi pi-trash"></i>
-				<span>Удалить</span>
-			</Button>
-		</div>
 	</div>
 </template>
 
@@ -202,13 +184,6 @@ async function updateChapter(updatedChapter) {
 .collapsed {
 	height: 300px;
 	transform: translateY(-100%);
-}
-
-.delete-button {
-	position: absolute;
-	bottom: 0;
-	right: 0;
-	padding: 0 20px 20px 0;
 }
 
 @keyframes slide-in {

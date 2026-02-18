@@ -85,6 +85,14 @@ function handleSelect(value) {
 	imagePath.value = helper.getImagePath() + value
 	handleInput()
 }
+
+async function handleDeleteChapter() {
+	if (!window.confirm('Этот раздел и его темы будут удалены. Вы уверены?')) {
+		return
+	}
+
+	await store.dispatch('deleteChapter', chapter)
+}
 </script>
 
 <template>
@@ -132,13 +140,23 @@ function handleSelect(value) {
 				width="150px"
 				height="120px"
 			/>
+			<Button
+				severity="danger"
+				style="height: 30%; width: 100px; margin-right: 1.5%"
+				@click="handleDeleteChapter"
+			>
+				<i class="pi pi-trash"></i>
+				<span>Удалить</span>
+			</Button>
 		</div>
 	</div>
 </template>
 
 <style scoped>
 .image {
-	margin: 10px;
+	display: flex;
+	justify-content: space-between;
+	align-items: end;
 }
 
 .form-container {
