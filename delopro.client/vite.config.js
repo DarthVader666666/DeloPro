@@ -11,7 +11,7 @@ const certFilePath = `${certificateName}.pem`;
 const keyFilePath = `${certificateName}.key`;
 
 const isDev = env.VITE_API_ENVIRONMENT === 'development'
-
+console.log(env.VITE_API_ENVIRONMENT)
 if(isDev) {
   if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
     if (0 !== child_process.spawnSync('dotnet', [
@@ -39,7 +39,7 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./src', import.meta.url))
         }
     },
-    server: {
+    server: isDev ? {
         proxy: {
             '^/delopro': {
                 target,
@@ -51,6 +51,7 @@ export default defineConfig({
           key: fs.readFileSync(keyFilePath),
           cert: fs.readFileSync(certFilePath),
         }
-    },
+    }
+    : undefined ,
     build: { chunkSizeWarningLimit: 2000 }
 })
