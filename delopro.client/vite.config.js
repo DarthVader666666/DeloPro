@@ -10,7 +10,10 @@ const certificateName = "delopro.client";
 const certFilePath = `${certificateName}.pem`;
 const keyFilePath = `${certificateName}.key`;
 
-if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
+const isDev = env.VITE_API_ENVIRONMENT === 'development'
+
+if(isDev) {
+  if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
     if (0 !== child_process.spawnSync('dotnet', [
         'dev-certs',
         'https',
@@ -22,6 +25,7 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
     ], { stdio: 'inherit', }).status) {
         throw new Error("Could not create certificate.");
     }
+  }
 }
 
 const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
