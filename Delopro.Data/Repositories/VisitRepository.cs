@@ -99,8 +99,10 @@ namespace Delopro.Data.Repositories
                 toDate = (DateTime)to;
             }
 
+            toDate = toDate.AddDays(1);
+
             return Task.FromResult<IEnumerable<Visit?>>(_dbContext.Visits
-                .Where(v => v.VisitDate >= fromDate && v.VisitDate <= toDate)
+                .Where(v => v.VisitDate >= fromDate && v.VisitDate < toDate)
                 .OrderBy(v => v.VisitDate));
         }
     }

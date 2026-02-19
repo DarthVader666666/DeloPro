@@ -52,7 +52,7 @@ namespace Delopro.Server.Controllers
 
             var visits = await _visitRepository.GetRangeAsync(fromDate, toDate);
 
-            var grouped = visits.GroupBy(v => v!.VisitDate.Date).ToDictionary(g => g.Key, g => g.ToList());
+            var groupedByDate = visits.GroupBy(v => v!.VisitDate.Date).ToDictionary(g => g.Key, g => g.ToList());
 
             var actionCounts = new List<int>(); 
             var uniqueVisitorCounts = new List<int>(); 
@@ -60,7 +60,7 @@ namespace Delopro.Server.Controllers
             
             foreach (var date in allDates) 
             { 
-                if (grouped.TryGetValue(date, out var dayVisits)) 
+                if (groupedByDate.TryGetValue(date, out var dayVisits)) 
                 { 
                     actionCounts.Add(dayVisits.Count);
                     uniqueVisitorCounts.Add(dayVisits.GroupBy(v => v!.VisitorId).Count()); 
