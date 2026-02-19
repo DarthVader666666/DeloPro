@@ -540,11 +540,12 @@ const store = createStore({
 		},
 		async deleteDocument({ dispatch, state }, deleteModel) {
 			return axios
-				.post(`${state.serverUrl}/documents/deletedocument`, deleteModel)
+				.delete(
+					`${state.serverUrl}/documents/deletedocument?path=${deleteModel.path}&type=${deleteModel.type}`,
+				)
 				.then(async (response) => {
 					if (response.status === 200) {
 						toast.success(response.data.okText)
-						//sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.documentNodesKey)
 						await dispatch('downloadDocumentNodes')
 						return true
@@ -569,7 +570,6 @@ const store = createStore({
 				.then(async (response) => {
 					if (response.status === 200) {
 						toast.success(response.data.okText)
-						//sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.documentNodesKey)
 						await dispatch('downloadDocumentNodes')
 					}
@@ -586,7 +586,6 @@ const store = createStore({
 				.then(async (response) => {
 					if (response.status === 200) {
 						toast.success(response.data.okText)
-						//sessionStorage.removeItem(state.sessionStorageKeys.documentsKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.documentNodesKey)
 						await dispatch('downloadDocumentNodes')
 						return true
@@ -644,10 +643,19 @@ const store = createStore({
 				})
 		},
 
+		// FEEDBACK
+		async sendFeedback({ state }, formData) {
+			return axios.post(`${state.serverUrl}/feedback/sendfeedback`, formData, {
+				headers: {
+					Content: 'multipart/form-data',
+				},
+			})
+		},
+
 		// MESSAGES
 		async downloadMessages({ commit, state }, isRead) {
 			await axios
-				.get(`${state.serverUrl}/feedback/getmessages/${isRead}`)
+				.get(`${state.serverUrl}/messages/getmessages/${isRead}`)
 				.then((response) => {
 					if (response.status === 200) {
 						commit('setMessages', response.data)
@@ -661,7 +669,7 @@ const store = createStore({
 		},
 		async downloadMessage({ commit, state }, messageId) {
 			await axios
-				.get(`${state.serverUrl}/feedback/getmessage/${messageId}`)
+				.get(`${state.serverUrl}/messages/getmessage/${messageId}`)
 				.then((response) => {
 					if (response.status === 200) {
 						commit('setMessage', response.data)
@@ -674,14 +682,14 @@ const store = createStore({
 				})
 		},
 		async downloadUnreadMessagesCount({ commit, state }) {
-			await axios.get(`${state.serverUrl}/feedback/getunreadmessagescount`).then((response) => {
+			await axios.get(`${state.serverUrl}/messages/getunreadmessagescount`).then((response) => {
 				if (response.status === 200) {
 					commit('setUnreadMessagesCount', response.data)
 				}
 			})
 		},
 		async updateMessage({ state }, messageId) {
-			await axios.put(`${state.serverUrl}/feedback/updatemessage/${messageId}`).catch((error) => {
+			await axios.put(`${state.serverUrl}/messages/updatemessage/${messageId}`).catch((error) => {
 				if (error.response) {
 					toast.error(error.response.data.errorText)
 				}
@@ -768,10 +776,10 @@ const store = createStore({
 				})
 		},
 
-		// ACCOUNT
-		async sendConfirmationEmail({ state }, accountForm) {
+		// REGISTER
+		async registerUser({ state }, registerRequest) {
 			return await axios
-				.post(`${state.serverUrl}/authentication/register`, accountForm, {
+				.post(`${state.serverUrl}/register/registeruser`, registerRequest, {
 					headers: {
 						'Content-Type': 'application/json',
 					},
@@ -792,7 +800,7 @@ const store = createStore({
 		async checkUserExists({ state }, { nickname, email }) {
 			return await axios
 				.get(
-					`${state.serverUrl}/authentication/userexists?` +
+					`${state.serverUrl}/register/checkuserexists?` +
 						(nickname ? `nickname=${nickname}` : `email=${email}`),
 				)
 				.then((response) => {
@@ -806,6 +814,8 @@ const store = createStore({
 					}
 				})
 		},
+
+		// ACCOUNT
 		async downloadCurrentUser({ commit, state }) {
 			const storedCurrentUser = sessionStorage.getItem(state.sessionStorageKeys.currentUserKey)
 
@@ -878,9 +888,10 @@ const store = createStore({
 		},
 		async updateCurrentUser({ dispatch, state }, updatedUser) {
 			await axios
-				.post(`${state.serverUrl}/account/updatecurrentuser`, updatedUser, {
+				.put(`${state.serverUrl}/account/updatecurrentuser`, updatedUser, {
 					headers: {
-						'Content-Type': 'application/json',
+						Content: 'application/json',
+						Accept: '*/*',
 					},
 				})
 				.then(async (response) => {
@@ -888,7 +899,9 @@ const store = createStore({
 						sessionStorage.removeItem(state.sessionStorageKeys.currentUserKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.usersKey)
 						await dispatch('downloadCurrentUser')
-						await dispatch('downloadUsers')
+						if (state.getters.isAdmin || state.getters.isOwner) {
+							await dispatch('downloadUsers')
+						}
 						toast.success(response.data.okText)
 					}
 				})
@@ -911,7 +924,9 @@ const store = createStore({
 						sessionStorage.removeItem(state.sessionStorageKeys.currentUserKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.usersKey)
 						await dispatch('downloadCurrentUser')
-						await dispatch('downloadUsers')
+						if (state.getters.isAdmin || state.getters.isOwner) {
+							await dispatch('downloadUsers')
+						}
 					}
 				})
 				.catch((error) => {
@@ -929,7 +944,9 @@ const store = createStore({
 						sessionStorage.removeItem(state.sessionStorageKeys.currentUserKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.usersKey)
 						await dispatch('downloadCurrentUser')
-						await dispatch('downloadUsers')
+						if (state.getters.isAdmin || state.getters.isOwner) {
+							await dispatch('downloadUsers')
+						}
 					}
 				})
 				.catch((error) => {
@@ -937,6 +954,14 @@ const store = createStore({
 						toast.error(error.response.data.errorText)
 					}
 				})
+		},
+		async recoverPassword({ state }, email) {
+			return axios.post(`${state.serverUrl}/account/recoverpassword`, null, {
+				headers: {
+					Content: 'application/json',
+					Email: `${email}`,
+				},
+			})
 		},
 
 		// VISITS

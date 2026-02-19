@@ -1,7 +1,6 @@
 <script setup>
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-import axios from 'axios'
 import { useStore } from 'vuex'
 import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
@@ -40,14 +39,8 @@ async function handleSendProcess(promise) {
 	pending.value = false
 }
 
-function sendMessage() {
-	const promise = axios.post(`${store.state.serverUrl}/authentication/recoverpassword`, null, {
-		headers: {
-			'Content-Type': 'application/json',
-			Email: `${email.value}`,
-		},
-	})
-
+function sendRecoverPasswordRequest() {
+	const promise = store.dispatch('recoverPassword', email.value)
 	handleSendProcess(promise)
 }
 
@@ -61,7 +54,7 @@ function setCaptchaMatch(isMatch) {
 		<div v-if="!pending">
 			<h3 style="padding: 11px">Новый пароль будет отправлен на ваш email</h3>
 			<form
-				@submit.prevent="sendMessage"
+				@submit.prevent="sendRecoverPasswordRequest"
 				class="send-message-form"
 			>
 				<div class="send-message-input">

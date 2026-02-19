@@ -38,7 +38,7 @@ const emit = defineEmits(['switchToEditMode'])
 					v-if="props.user.registerDate"
 					style="font-style: italic"
 				>
-					Дата регистрации: {{ helper.getDateStringForUI(props.user.registerDate, true) }}
+					Дата регистрации: {{ props.user.registerDate.slice(0, 10) }}
 				</span>
 				<div style="padding-top: 10px">
 					<Button

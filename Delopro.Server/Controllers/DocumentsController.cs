@@ -11,8 +11,6 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
-using System.Text.Json;
-
 namespace Delopro.Server.Controllers
 {
     [Route("api/[controller]")]
@@ -126,21 +124,21 @@ namespace Delopro.Server.Controllers
             return Ok(new List<DocumentNode?> { node });
         }
 
-        [HttpPost]
+        [HttpDelete]
         [Route("[action]")]
         [Authorize(Roles = "Owner, Admin")]
-        public async Task<IActionResult> DeleteDocument([FromBody] DocumentPathModel documentPathModel)
+        public async Task<IActionResult> DeleteDocument([FromQuery] string? Path, [FromQuery] string? Type)
         {
-            if (documentPathModel == null || documentPathModel.Path == null || documentPathModel.Type == null)
+            if (Path == null || Type == null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка при удалении файла" });
             }
 
-            var path = Path.Combine(webRootPath ?? string.Empty, documentPathModel.Path);
+            var path = System.IO.Path.Combine(webRootPath ?? string.Empty, Path);
 
             try
             {
-                if (documentPathModel.Type.Equals(nameof(DocumentType.File), StringComparison.OrdinalIgnoreCase))
+                if (Type.Equals(nameof(DocumentType.File), StringComparison.OrdinalIgnoreCase))
                 {
                     if (System.IO.File.Exists(path))
                     {
@@ -181,9 +179,9 @@ namespace Delopro.Server.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = $"Ошибка при удалении\n\r{ex.Message}" });
             }
 
-            return Ok(new { okText = documentPathModel.Type.Equals(nameof(DocumentType.File), StringComparison.OrdinalIgnoreCase) 
-                ? $"Файл \"{Path.GetFileName(path)}\" успешно удален" 
-                : $"Папка \"{path.Split(Path.DirectorySeparatorChar).Last()}\" успешно удалена" });
+            return Ok(new { okText = Type.Equals(nameof(DocumentType.File), StringComparison.OrdinalIgnoreCase) 
+                ? $"Файл \"{System.IO.Path.GetFileName(path)}\" успешно удален" 
+                : $"Папка \"{path.Split(System.IO.Path.DirectorySeparatorChar).Last()}\" успешно удалена" });
         }
 
         [HttpPost]

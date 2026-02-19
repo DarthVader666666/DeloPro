@@ -69,7 +69,7 @@ function handleSend() {
 		registerDate: helper.getCurrentDateString(),
 	}
 
-	const promise = store.dispatch('sendConfirmationEmail', accountForm)
+	const promise = store.dispatch('registerUser', accountForm)
 	emit('email-sent', promise)
 }
 

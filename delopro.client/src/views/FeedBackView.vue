@@ -94,11 +94,7 @@ function sendMessage() {
 	formData.append('text', messageForm.value.text)
 	formData.append('dateSent', helper.getCurrentDateString())
 
-	const promise = axios.post(`${store.state.serverUrl}/feedback/send`, formData, {
-		headers: {
-			'Content-Type': 'multipart/form-data',
-		},
-	})
+	const promise = store.dispatch('sendFeedback', formData)
 
 	handleSendProcess(promise)
 }

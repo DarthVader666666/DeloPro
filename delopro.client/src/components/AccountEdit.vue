@@ -4,7 +4,6 @@ import Button from 'primevue/button'
 import Textarea from 'primevue/textarea'
 import { computed, reactive, ref, watch } from 'vue'
 import { useStore } from 'vuex'
-import axios from 'axios'
 import AccountAvatar from './AccountAvatar.vue'
 import { helper } from '@/helper/helper'
 
@@ -29,14 +28,14 @@ const updatedUser = reactive({
 	nickname: props.user.nickname,
 	firstName: props.user.firstName,
 	lastName: props.user.lastName,
-	birthDate: props.user.birthDate.slice(0, 10),
+	birthDate: props.user.birthDate?.slice(0, 10),
 	country: props.user.country,
 	city: props.user.city,
 	userTitle: props.user.userTitle,
 	info: props.user.info,
 	email: props.user.email,
 	phone: props.user.phone,
-	registerDate: helper.getDateStringForUI(props.user.registerDate, true),
+	registerDate: props.user.registerDate,
 })
 
 const showNicknameError = ref(false)
@@ -112,8 +111,8 @@ function handleDeleteAvatar() {
 async function handleCancel() {
 	;((updatedUser.nickname = props.user.nickname),
 		(updatedUser.firstName = props.user.firstName),
-		(updatedUser.lastName = props.user?.lastName ?? null),
-		(updatedUser.birthDate = props.user.birthDate.slice(0, 10)),
+		(updatedUser.lastName = props.user?.lastName),
+		(updatedUser.birthDate = props.user.birthDate?.slice(0, 10)),
 		(updatedUser.country = props.user.country),
 		(updatedUser.city = props.user.city),
 		(updatedUser.userTitle = props.user.userTitle),
@@ -128,17 +127,7 @@ async function handleCancel() {
 
 async function doesUserExist(nickname, email) {
 	await helper.timeoutAsync(500)
-
-	let url =
-		`${store.getters.serverUrl}/register/userExists?` +
-		(nickname ? `nickname=${nickname}` : `email=${email}`)
-	let response = await axios.get(url)
-
-	if (response.status === 200) {
-		return response.data.userExists
-	}
-
-	return false
+	return await store.dispatch('checkUserExists', { nickname: nickname, email: email })
 }
 
 async function handleNicknameMatch(event) {
@@ -217,7 +206,8 @@ async function handleEmailMatch(event) {
 						v-if="updatedUser.registerDate"
 						style="font-style: italic"
 					>
-						Дата регистрации: {{ updatedUser.registerDate }}
+						Дата регистрации:
+						{{ updatedUser.registerDate.slice(0, 10) }}
 					</span>
 					<div style="padding-top: 10px">
 						<Button

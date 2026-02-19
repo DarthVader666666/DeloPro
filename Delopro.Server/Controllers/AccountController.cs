@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 
 using Delopro.Bll;
+using Delopro.Bll.Interfaces;
 using Delopro.Bll.Services;
 using Delopro.Data.Entities;
 using Delopro.Data.Interfaces;
@@ -24,14 +25,16 @@ namespace Delopro.Server.Controllers
         private readonly CryptoService _cryptoService;
         private readonly IMapper _mapper;
         private readonly IMemoryCache _memoryCache;
+        private readonly IEmailSender _emailSender;
 
-        public AccountController(UserManager userManager, IRepository<User> userRepository, CryptoService cryptoService, IMapper mapper, IMemoryCache memoryCache)
+        public AccountController(UserManager userManager, IRepository<User> userRepository, CryptoService cryptoService, IMapper mapper, IMemoryCache memoryCache, IEmailSender emailSender)
         {
             _userManager = userManager;
             _userRepository = userRepository;
             _cryptoService = cryptoService;
             _mapper = mapper;
             _memoryCache = memoryCache;
+            _emailSender = emailSender;
         }
 
         [HttpGet]
@@ -53,7 +56,7 @@ namespace Delopro.Server.Controllers
             return Ok(userAccountResponse);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("[action]")]
         [Authorize]
         [TrackIpAddress]
@@ -146,6 +149,47 @@ namespace Delopro.Server.Controllers
 
             return Ok(new { okText = $"Данные пользователя {user.Nickname} успешно обговлены" });
         }
+
+        [HttpPost]
+        [Route("[action]")]
+        [TrackIpAddress]
+        public async Task<IActionResult> RecoverPassword()
+        {
+            var headers = HttpContext.Request.Headers;
+
+            if (headers is null)
+            {
+                return BadRequest();
+            }
+
+            var email = headers["Email"].ToString();
+            var userExists = await _userManager.DoesUserExistAsync(email, doEncrypt: true);
+
+            if (!userExists)
+            {
+                return NotFound(new { errorText = $"Пользователь с email \"{email}\" не найден" });
+            }
+
+            var password = UserManager.GeneratePassword();
+
+            if (!_emailSender.SendEmail(email, "Восстановление пароля", $"Ваш новый пароль:\n\r{password}"))
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка отправки сообщения" });
+            }
+
+            try
+            {
+                var user = await _userManager.GetUserByAsync(email: email);
+                await _userManager.ChangePasswordAsync(user, password);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка при изменении пароля" });
+            }
+
+            return Ok("Сообщение успешно отправлено");
+        }
+
 
         private static void DeleteOldAvatars(int userId) 
         {
