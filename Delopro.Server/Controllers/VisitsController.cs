@@ -26,27 +26,73 @@ namespace Delopro.Server.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<IActionResult> GetVisits()
+        public async Task<IActionResult> GetVisits([FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate)
         {
-            var visits = await _visitRepository.GetListAsync();
+            var nowDate = DateTime.Now;
 
-            var visitResponse = new VisitResponse();
+            if (fromDate is null)
+            {
+                fromDate = new DateTime(nowDate.Year, nowDate.Month, 1);
+            }
+            else
+            {
+                fromDate = (DateTime)fromDate;
+            }
 
-            var actionDataset = new VisitDataset();
-            var uniqueActionDataset = new VisitDataset();
+            if (toDate is null)
+            {
+                toDate = new DateTime(nowDate.Year, nowDate.Month, nowDate.Day);
+            }
+            else
+            {
+                toDate = (DateTime)toDate;
+            }
 
-            var dateGroup = visits.GroupBy(v => v?.VisitDate.Date);
+            var allDates = Enumerable.Range(0, (toDate - fromDate).Value.Days + 1).Select(i => fromDate.Value.AddDays(i)).ToList();
 
-            actionDataset.Label = "Действия";
-            actionDataset.Data = dateGroup.Select(vg => vg.Count()).ToArray();
-            actionDataset.BorderColor = "rgb(170,50,50)";
+            var visits = await _visitRepository.GetRangeAsync(fromDate, toDate);
 
-            uniqueActionDataset.Label = "Посетители";
-            uniqueActionDataset.Data = dateGroup.Select(vg => vg.GroupBy(v => v?.VisitorId).Count()).ToArray();
-            uniqueActionDataset.BorderColor = "rgb(20,100,20)";
+            var grouped = visits.GroupBy(v => v!.VisitDate.Date).ToDictionary(g => g.Key, g => g.ToList());
 
-            visitResponse.Labels = dateGroup.Select(vg => vg.Key.Value.ToString("dd.MM")).ToArray();
-            visitResponse.Datasets = [actionDataset, uniqueActionDataset];
+            var actionCounts = new List<int>(); 
+            var uniqueVisitorCounts = new List<int>(); 
+            var labels = new List<string>(); 
+            
+            foreach (var date in allDates) 
+            { 
+                if (grouped.TryGetValue(date, out var dayVisits)) 
+                { 
+                    actionCounts.Add(dayVisits.Count);
+                    uniqueVisitorCounts.Add(dayVisits.GroupBy(v => v!.VisitorId).Count()); 
+                } 
+                else 
+                { 
+                    actionCounts.Add(0);
+                    uniqueVisitorCounts.Add(0); 
+                } 
+                
+                labels.Add(date.ToString("dd.MM")); 
+            }
+
+            var visitResponse = new VisitResponse 
+            { 
+                Labels = labels.ToArray(), 
+                Datasets = 
+                [
+                    new VisitDataset 
+                    {
+                        Label = "Действия", 
+                        Data = actionCounts.ToArray(),
+                        BorderColor = "rgb(170,50,50)"
+                    },
+                    new VisitDataset 
+                    {
+                        Label = "Посетители", 
+                        Data = uniqueVisitorCounts.ToArray(), 
+                        BorderColor = "rgb(20,100,20)" 
+                    }
+                ] 
+            };
 
             return Ok(visitResponse);
         }

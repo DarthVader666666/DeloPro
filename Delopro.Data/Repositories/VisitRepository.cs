@@ -74,5 +74,34 @@ namespace Delopro.Data.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public Task<IEnumerable<Visit?>> GetRangeAsync(object? from, object? to)
+        {
+            var nowDate = DateTime.Now;
+            DateTime fromDate;
+            DateTime toDate;
+
+            if (from is null)
+            {
+                fromDate = new DateTime(nowDate.Year, nowDate.Month, 1);
+            }
+            else
+            {
+                fromDate = (DateTime)from;
+            }
+
+            if (to is null)
+            {
+                toDate = new DateTime(nowDate.Year, nowDate.Month, nowDate.Day);
+            }
+            else
+            {
+                toDate = (DateTime)to;
+            }
+
+            return Task.FromResult<IEnumerable<Visit?>>(_dbContext.Visits
+                .Where(v => v.VisitDate >= fromDate && v.VisitDate <= toDate)
+                .OrderBy(v => v.VisitDate));
+        }
     }
 }

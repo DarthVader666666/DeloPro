@@ -14,5 +14,9 @@
         { 
             return Task.FromResult(Enumerable.Empty<TEntity?>());
         }
+        virtual Task<IEnumerable<TEntity?>> GetRangeAsync(object? from, object? to)
+        {
+            return Task.FromResult(Enumerable.Empty<TEntity?>());
+        }
     }
 }

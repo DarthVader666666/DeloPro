@@ -680,14 +680,13 @@ const store = createStore({
 				}
 			})
 		},
-    async updateMessage({state}, messageId) {
-      await axios.put(`${state.serverUrl}/feedback/updatemessage/${messageId}`)
-      .catch(error => {
-          if(error.response) {
-              toast.error(error.response.data.errorText)
-          }
-      });
-    },
+		async updateMessage({ state }, messageId) {
+			await axios.put(`${state.serverUrl}/feedback/updatemessage/${messageId}`).catch((error) => {
+				if (error.response) {
+					toast.error(error.response.data.errorText)
+				}
+			})
+		},
 
 		// SEARCH
 		async downloadSearchResult({ commit, state }, searchLine) {
@@ -941,9 +940,14 @@ const store = createStore({
 		},
 
 		// VISITS
-		async downloadVisits({ commit, state }) {
+		async downloadVisits({ commit, state }, dateRangeForm) {
 			await axios
-				.get(`${state.serverUrl}/visits/getvisits`)
+				.get(`${state.serverUrl}/visits/getvisits`, {
+					params: {
+						fromDate: dateRangeForm.fromDate,
+						toDate: dateRangeForm.toDate,
+					},
+				})
 				.then(async (response) => {
 					if (response.status === 200) {
 						commit('setVisits', response.data)
