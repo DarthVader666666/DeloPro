@@ -681,7 +681,7 @@ const store = createStore({
 			})
 		},
     async updateMessage({state}, messageId) {
-      await axios.post(`${state.serverUrl}/feedback/update/${messageId}`)
+      await axios.put(`${state.serverUrl}/feedback/updatemessage/${messageId}`)
       .catch(error => {
           if(error.response) {
               toast.error(error.response.data.errorText)
