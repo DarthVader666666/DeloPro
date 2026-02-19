@@ -46,7 +46,7 @@ export default defineConfig({
         https: {
           key: fs.readFileSync(keyFilePath),
           cert: fs.readFileSync(certFilePath),
-        },
-        build: { chunkSizeWarningLimit: 2000 }
-    }
+        }
+    },
+    build: { chunkSizeWarningLimit: 2000 }
 })
