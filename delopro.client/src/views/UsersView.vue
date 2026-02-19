@@ -129,7 +129,7 @@ function closeUserModal() {
 				sortable
 			>
 				<template #body="{ data }">
-					{{ helper.getDateString(data.registerDate, true) }}
+					{{ helper.getDateStringForUI(data.registerDate, true) }}
 				</template>
 				<template #filter="{ filterModel, filterCallback }">
 					<InputText

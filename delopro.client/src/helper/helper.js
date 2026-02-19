@@ -1,237 +1,249 @@
-import store from "@/vuex/store";
-import axios from "axios";
+import store from '@/vuex/store'
+import axios from 'axios'
 
 export const helper = {
-    getUnicodeByteArray(text) {
-        const utf8Encode = new TextEncoder();
-        return Object.values(utf8Encode.encode(text));
-    },
-    validateEmail(email) {
-      const result = email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
-      return result;
-    },
-    timeoutAsync(ms) {
-      new Promise(resolve => setTimeout(resolve, ms))
-    },
-    getCurrentDate(hmsFormat = false) {
-        const today = new Date();
-        const day = String(today.getDate()).padStart(2, '0');
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const year = today.getFullYear();
-        const hours = withLeadingZero(today.getHours());
-        const minutes = withLeadingZero(today.getMinutes());
-        const seconds = withLeadingZero(today.getSeconds());
+	getUnicodeByteArray(text) {
+		const utf8Encode = new TextEncoder()
+		return Object.values(utf8Encode.encode(text))
+	},
+	validateEmail(email) {
+		const result = email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
+		return result
+	},
+	timeoutAsync(ms) {
+		new Promise((resolve) => setTimeout(resolve, ms))
+	},
+	getCurrentDateString(hmsFormat = false) {
+		const today = new Date()
+		return this.getDateStringCore(today, hmsFormat)
+	},
+	getDateStringForUI(dateString, short = false) {
+		if (!dateString) {
+			return null
+		}
 
-        function withLeadingZero(value) {
-            if(String(value).length < 2) {
-                return `0${value}`;
-            };
+		const date = new Date(dateString)
 
-            return value;
-        };
+		if (short) {
+			return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'numeric', year: 'numeric' })
+		} else {
+			return date.toLocaleDateString('ru-RU', {
+				day: 'numeric',
+				month: 'long',
+				year: 'numeric',
+				hour: '2-digit',
+				minute: '2-digit',
+			})
+		}
+	},
+	getDateStringForInput(dateString) {
+		const date = new Date(dateString)
+		return this.getDateStringCore(date).split('T')[0]
+	},
+	getDateStringCore(date, hmsFormat = false) {
+		const day = String(date.getDate()).padStart(2, '0')
+		const month = String(date.getMonth() + 1).padStart(2, '0')
+		const year = date.getFullYear()
+		const hours = withLeadingZero(date.getHours())
+		const minutes = withLeadingZero(date.getMinutes())
+		const seconds = withLeadingZero(date.getSeconds())
 
-        return year + '-' + month + '-' + day + 'T' + (!hmsFormat
-            ? hours + ':' + minutes + ':' + seconds
-            : hours + 'h' + minutes + 'm' + seconds + 's');
-    },
-    getDateString(dateValue, short = false) {
-        if(!dateValue) {
-            return null;
-        }
+		function withLeadingZero(value) {
+			if (String(value).length < 2) {
+				return `0${value}`
+			}
 
-        const date = new Date(dateValue);
+			return value
+		}
 
-        if(short) {
-            return date.toLocaleDateString('ru-RU', {day: 'numeric', month: 'numeric', year: 'numeric'});
-        }
-        else {
-            return date.toLocaleDateString('ru-RU', {day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'});
-        }
-    },
-    getConvertedDate(date) {
-        if(date) {
-            const [day, month, year] = date.split('.');
-            return `${year}-${month}-${day}`
-        }
-        else {
-            return date;
-        }
-    },
-    getQueryString(array, key) {
-        const queryString = array.map(value => `${key}=${value}&`).join('').slice(0, -1);
-        return '?' + queryString;
-    },
-    getImagePath() {
-        return store.getters.environment === 'development' ? '/src/assets/chapters/chapter-' : '/chapters/chapter-';
-    },
-    scrollToTheme(themeId) {
-        if(themeId) {
-            let links = document.getElementsByClassName('link active');
+		return (
+			year +
+			'-' +
+			month +
+			'-' +
+			day +
+			'T' +
+			(!hmsFormat
+				? hours + ':' + minutes + ':' + seconds
+				: hours + 'h' + minutes + 'm' + seconds + 's')
+		)
+	},
+	getQueryString(array, key) {
+		const queryString = array
+			.map((value) => `${key}=${value}&`)
+			.join('')
+			.slice(0, -1)
+		return '?' + queryString
+	},
+	getImagePath() {
+		return store.getters.environment === 'development'
+			? '/src/assets/chapters/chapter-'
+			: '/chapters/chapter-'
+	},
+	scrollToTheme(themeId) {
+		if (themeId) {
+			let links = document.getElementsByClassName('link active')
 
-            for (let item of links) {
-                item.classList.remove('active');
-            }
+			for (let item of links) {
+				item.classList.remove('active')
+			}
 
-            document.getElementById(`listItem_${themeId}`).classList.add('active');
-        }
-    },
-    closeMenu(event, ids, hasSelect = false) {
-        let isValidClick = false;
+			document.getElementById(`listItem_${themeId}`).classList.add('active')
+		}
+	},
+	closeMenu(event, ids, hasSelect = false) {
+		let isValidClick = false
 
-        if(hasSelect) {
-            let select = document.getElementsByClassName('p-select-list-container')[0];
+		if (hasSelect) {
+			let select = document.getElementsByClassName('p-select-list-container')[0]
 
-            if(anyChildren(event, select))
-                isValidClick = true;
-        }
+			if (anyChildren(event, select)) isValidClick = true
+		}
 
-        ids.forEach(id => {
-            if(anyChildren(event, document.getElementById(id)))
-                isValidClick = true;
-        });
+		ids.forEach((id) => {
+			if (anyChildren(event, document.getElementById(id))) isValidClick = true
+		})
 
-        return isValidClick;
+		return isValidClick
 
-        function anyChildren(event, element) {
-            if(element && element.children.length) {
-                if(event.target === element) {
-                    return true;
-                }
+		function anyChildren(event, element) {
+			if (element && element.children.length) {
+				if (event.target === element) {
+					return true
+				}
 
-                for (let i = 0; i < element.children.length; i++) {
-                    if(event.target === element.children[i]) {
-                        return true;
-                    }
-                    else {
-                        if(anyChildren(event, element.children[i])) {
-                            return true;
-                        }
-                    }
-                }
-            }
+				for (let i = 0; i < element.children.length; i++) {
+					if (event.target === element.children[i]) {
+						return true
+					} else {
+						if (anyChildren(event, element.children[i])) {
+							return true
+						}
+					}
+				}
+			}
 
-            return false;
-        }
-    },
-    userStatuses: ['Подтвержден','Не подтвержден','Удален'],
-    getUserTagSeverity(status) {
-        switch (status) {
-            case 0:
-                return 'success';
+			return false
+		}
+	},
+	userStatuses: ['Подтвержден', 'Не подтвержден', 'Удален'],
+	getUserTagSeverity(status) {
+		switch (status) {
+			case 0:
+				return 'success'
 
-            case 1:
-                return 'warn';
+			case 1:
+				return 'warn'
 
-            case 2:
-                return 'danger';
+			case 2:
+				return 'danger'
 
-            default:
-                return null;
-        }
-    },
-    roles: ['Owner','Admin','User'],
-    getFutureDate(days) {
-        let date = this.getCurrentDate();
-        const result = new Date(date);
-        result.setDate(result.getDate() + days);
-        return result;
-    },
-    darkenContainers: [
-            document.getElementsByClassName('main-container'),
-            document.getElementsByClassName('search-bar'),
-            document.getElementsByClassName('title')
-        ],
-    lightenContainers: [
-        document.getElementsByClassName('message'),
-    ],
-    darkenBackground() {
-        this.darkenContainers.forEach(items => {
-            for(let item of items) {
-                item.style.opacity = 0.8;
-                item.style.filter = 'brightness(50%)';
-            }
-        })
-    },
-    lightenBackground() {
-        this.darkenContainers.forEach(items => {
-            for(let item of items) {
-                item.style.removeProperty('opacity');
-                item.style.removeProperty('filter');
-            }
-        })
-    },
-    trimTags(htmlTag) {
-        return htmlTag.replace(/<\/?[^>]+(>|$)/g, "").trim();
-    },
-    decodeHtml(htmlString) {
-        const txt = document.createElement("textarea");
-        txt.innerHTML = htmlString;
-        return txt.value;
-    },
-    base64ToBytes(base64) {
-      const binary = atob(base64.split(",")[1]);
-      const len = binary.length;
-      const bytes = new Uint8Array(len);
+			default:
+				return null
+		}
+	},
+	roles: ['Owner', 'Admin', 'User'],
+	getFutureDate(days) {
+		let date = this.getCurrentDateString()
+		const result = new Date(date)
+		result.setDate(result.getDate() + days)
+		return result
+	},
+	darkenContainers: [
+		document.getElementsByClassName('main-container'),
+		document.getElementsByClassName('search-bar'),
+		document.getElementsByClassName('title'),
+	],
+	lightenContainers: [document.getElementsByClassName('message')],
+	darkenBackground() {
+		this.darkenContainers.forEach((items) => {
+			for (let item of items) {
+				item.style.opacity = 0.8
+				item.style.filter = 'brightness(50%)'
+			}
+		})
+	},
+	lightenBackground() {
+		this.darkenContainers.forEach((items) => {
+			for (let item of items) {
+				item.style.removeProperty('opacity')
+				item.style.removeProperty('filter')
+			}
+		})
+	},
+	trimTags(htmlTag) {
+		return htmlTag.replace(/<\/?[^>]+(>|$)/g, '').trim()
+	},
+	decodeHtml(htmlString) {
+		const txt = document.createElement('textarea')
+		txt.innerHTML = htmlString
+		return txt.value
+	},
+	base64ToBytes(base64) {
+		const binary = atob(base64.split(',')[1])
+		const len = binary.length
+		const bytes = new Uint8Array(len)
 
-      for (let i = 0; i < len; i++) {
-        bytes[i] = binary.charCodeAt(i);
-      }
+		for (let i = 0; i < len; i++) {
+			bytes[i] = binary.charCodeAt(i)
+		}
 
-      return bytes;
-    },
-    bytesToBase64(bytes) {
-      let binary = "";
-      const len = bytes.byteLength;
+		return bytes
+	},
+	bytesToBase64(bytes) {
+		let binary = ''
+		const len = bytes.byteLength
 
-      for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
-      }
+		for (let i = 0; i < len; i++) {
+			binary += String.fromCharCode(bytes[i])
+		}
 
-      const r = 'data:image/png;base64,' + btoa(binary);
-      return r;
-    },
-    async fileToBytesAsync(file)
-    {
-      return new Promise((resolve, reject) => {
-         const reader = new FileReader();
-         reader.onload = () => {
-           const arrayBuffer = reader.result;
-           const bytes = new Uint8Array(arrayBuffer);
-           resolve(bytes);
-        };
+		const r = 'data:image/png;base64,' + btoa(binary)
+		return r
+	},
+	async fileToBytesAsync(file) {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader()
+			reader.onload = () => {
+				const arrayBuffer = reader.result
+				const bytes = new Uint8Array(arrayBuffer)
+				resolve(bytes)
+			}
 
-        reader.onerror = reject;
-        reader.readAsArrayBuffer(file);
-      });
-    },
-    async fileToBase64Async(file) {
-        if(!file) {
-            return null;
-        }
+			reader.onerror = reject
+			reader.readAsArrayBuffer(file)
+		})
+	},
+	async fileToBase64Async(file) {
+		if (!file) {
+			return null
+		}
 
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader()
 
-            reader.onload = () => {
-                resolve(reader.result);
-            }
+			reader.onload = () => {
+				resolve(reader.result)
+			}
 
-            reader.onerror = (error) => {
-                reject(error);
-            };
+			reader.onerror = (error) => {
+				reject(error)
+			}
 
-            reader.readAsDataURL(file);
-        })
-    },
-    clearSession() {
-      store.commit('setCurrentUser', null);
-      const keys = store.state.sessionStorageKeys;
+			reader.readAsDataURL(file)
+		})
+	},
+	clearSession() {
+		store.commit('setCurrentUser', null)
+		const keys = store.state.sessionStorageKeys
 
-      for(const key in keys) {
-        sessionStorage.removeItem(keys[key]);
-      }
-    },
-    async isAuthenticated() {
-        return await axios.get(`${store.state.serverUrl}/authentication/checkauthentication`, { withCredentials: true }).then(response => response.data);
-    }
+		for (const key in keys) {
+			sessionStorage.removeItem(keys[key])
+		}
+	},
+	async isAuthenticated() {
+		return await axios
+			.get(`${store.state.serverUrl}/authentication/checkauthentication`, { withCredentials: true })
+			.then((response) => response.data)
+	},
 }

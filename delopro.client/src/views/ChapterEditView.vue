@@ -45,7 +45,7 @@ function changeFormStatus() {
 
 async function addNewTheme() {
 	newTheme.value.chapterId = chapter.value.chapterId
-	newTheme.value.dateCreated = helper.getCurrentDate()
+	newTheme.value.dateCreated = helper.getCurrentDateString()
 
 	await store.dispatch('createTheme', newTheme.value)
 

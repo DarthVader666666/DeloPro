@@ -1,26 +1,27 @@
 <script setup>
-import ChapterCreateUpdateForm from '@/components/ChapterCreateUpdateForm.vue';
-import { useStore } from 'vuex';
-import { helper } from '@/helper/helper';
+import ChapterCreateUpdateForm from '@/components/ChapterCreateUpdateForm.vue'
+import { useStore } from 'vuex'
+import { helper } from '@/helper/helper'
 
-const store = useStore();
+const store = useStore()
 
 async function createChapter(newChapter) {
-    let formData = new FormData();
+	let formData = new FormData()
 
-    formData.append('chapterTitle', newChapter.chapterTitle);
-    formData.append('imagePath', newChapter.imagePath);
-    formData.append('dateCreated', helper.getCurrentDate());
+	formData.append('chapterTitle', newChapter.chapterTitle)
+	formData.append('imagePath', newChapter.imagePath)
+	formData.append('dateCreated', helper.getCurrentDateString())
 
-    await store.dispatch('createChapter', formData);
+	await store.dispatch('createChapter', formData)
 }
-
 </script>
 
 <template>
-    <ChapterCreateUpdateForm :isCreateForm="true" :doClearChapter="true" :createChapter="createChapter"/>
+	<ChapterCreateUpdateForm
+		:isCreateForm="true"
+		:doClearChapter="true"
+		:createChapter="createChapter"
+	/>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

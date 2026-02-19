@@ -94,7 +94,7 @@ onMounted(() => {
 				v-if="!useShortMode"
 				class="date"
 			>
-				{{ helper.getDateString(props.theme.dateCreated) }}
+				{{ helper.getDateStringForUI(props.theme.dateCreated) }}
 			</span>
 
 			<Button

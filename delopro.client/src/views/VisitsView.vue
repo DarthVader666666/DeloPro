@@ -3,9 +3,11 @@ import Chart from 'primevue/chart'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import InputText from 'primevue/inputtext'
+import { helper } from '@/helper/helper'
 
 const store = useStore()
 const visitResponse = computed(() => store.getters.getVisits)
+const currentDate = new Date()
 
 const chartData = ref()
 const chartOptions = ref()
@@ -15,12 +17,26 @@ const dateRangeForm = reactive({
 })
 
 onMounted(async () => {
+	dateRangeForm.fromDate = helper.getDateStringForInput(new Date().setDate(1))
+	dateRangeForm.toDate = helper.getDateStringForInput(currentDate)
+
 	await store.dispatch('downloadVisits', dateRangeForm)
 	chartData.value = setChartData()
 	chartOptions.value = setChartOptions()
 })
 
 async function handleDateChange() {
+	const fromDate = new Date(dateRangeForm.fromDate)
+	const toDate = new Date(dateRangeForm.toDate)
+
+	if (toDate > currentDate) {
+		dateRangeForm.toDate = helper.getDateStringForInput(currentDate)
+	}
+
+	if (fromDate > currentDate) {
+		dateRangeForm.fromDate = helper.getDateStringForInput(currentDate)
+	}
+
 	await store.dispatch('downloadVisits', dateRangeForm)
 	chartData.value = setChartData()
 }
