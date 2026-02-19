@@ -144,7 +144,7 @@ namespace Delopro.Server.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPost]
         [Route("[action]/{messageId:int}")]
         [Authorize(Roles = "Owner")]
         public async Task<IActionResult> UpdateMessage([FromRoute] int messageId)

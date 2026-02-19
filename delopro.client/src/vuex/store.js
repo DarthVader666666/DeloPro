@@ -680,6 +680,14 @@ const store = createStore({
 				}
 			})
 		},
+    async updateMessage({state}, messageId) {
+      await axios.post(`${state.serverUrl}/feedback/update/${messageId}`)
+      .catch(error => {
+          if(error.response) {
+              toast.error(error.response.data.errorText)
+          }
+      });
+    },
 
 		// SEARCH
 		async downloadSearchResult({ commit, state }, searchLine) {

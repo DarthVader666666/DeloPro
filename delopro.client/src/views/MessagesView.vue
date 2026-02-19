@@ -2,17 +2,14 @@
 import { helper } from '@/helper/helper';
 import { computed, onBeforeUnmount, ref } from 'vue';
 import { useStore } from 'vuex';
-import { useToast } from 'vue-toastification';
 import { FilterMatchMode } from '@primevue/core/api';
 import DataTable from 'primevue/datatable';
 import InputText from 'primevue/inputtext';
 import Column from 'primevue/column';
 import ToggleSwitch from 'primevue/toggleswitch'
 import MessageComponent from '@/components/MessageComponent.vue';
-import axios from 'axios';
 
 const store = useStore();
-const toast = useToast();
 const messages = computed(() => store.getters.getMessages);
 const message = computed(() => store.getters.getMessage);
 
@@ -26,15 +23,6 @@ const filters = ref({
     dateSent: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
 
-// watch(showMessage, (oldValue, newValue) => {
-//     if(!newValue) {
-//         helper.darkenBackground();
-//     }
-//     else {
-//         helper.lightenBackground();
-//     }
-// });
-
 onBeforeUnmount(() => {
     showMessage.value = false;
     store.commit('setMessages', []);
@@ -43,17 +31,11 @@ onBeforeUnmount(() => {
 
 async function onRowSelect(event) {
     const messageId = event.data.messageId;
-    //await store.dispatch('downloadMessage', messageId);
+
     store.commit('setMessageById', messageId);
 
     if(message.value) {
-        await axios.put(`${store.state.serverUrl}/feedback/update/${messageId}`)
-            .catch(error => {
-                if(error.response) {
-                    toast.error(error.response.data.errorText);
-                }
-            });
-            
+        await store.dispatch('updateMessage', messageId)
         await store.dispatch('downloadMessages', isRead.value);
         showMessage.value = true;
     }
@@ -71,7 +53,7 @@ function closeMessageModal() {
 <template>
 <div class="messages-container">
     <div>
-        <div style="display: flex; align-items: center; gap:10px; justify-content: center; padding: 10px;">        
+        <div style="display: flex; align-items: center; gap:10px; justify-content: center; padding: 10px;">
             <ToggleSwitch v-model="isRead" @change.prevent="() => { store.dispatch('downloadMessages', isRead) }">
                 <template #handle="{ checked }">
                     <span :style="`${!checked ? 'padding-right:160px;color:black;font-weight:bold;' : 'display:none;'}`">Непрочитанные</span>
@@ -79,11 +61,11 @@ function closeMessageModal() {
                 </template>
             </ToggleSwitch>
         </div>
-        <DataTable :value="messages" paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]" v-model:filters="filters" filterDisplay="row" 
+        <DataTable :value="messages" paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]" v-model:filters="filters" filterDisplay="row"
             :globalFilterFields="['text', 'name', 'contacts', 'dateSent']" stripedRows showGridlines selectionMode="single" @rowSelect="onRowSelect">
             <Column field="text" header="Сообщение">
                 <template #body="{ data }">
-                    {{ data.text }}         
+                    {{ data.text }}
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
                     <InputText v-model="filterModel.value" type="text" @input="filterCallback()" style="width:100%" placeholder="Поиск" />
@@ -125,7 +107,7 @@ function closeMessageModal() {
 }
 
 .messages-container:deep(td) {
-    white-space: nowrap; 
+    white-space: nowrap;
     max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
