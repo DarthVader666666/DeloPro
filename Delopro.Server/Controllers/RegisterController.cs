@@ -57,7 +57,7 @@ namespace Delopro.Server.Controllers
             {
                 var user = _mapper.Map<User>(registerRequest);
 
-                var result = await _userManager.RegisterAsync(user, HttpContext?.Request?.GetDisplayUrl());
+                var result = await _userManager.RegisterAsync(user, HttpContext?.Request?.GetDisplayUrl().Replace("RegisterUser", string.Empty, StringComparison.OrdinalIgnoreCase));
 
                 if (result)
                 {
@@ -77,7 +77,7 @@ namespace Delopro.Server.Controllers
         [HttpGet]
         [Route("[action]")]
         [TrackIpAddress]
-        public async Task<IActionResult> RegisterUserConfirm([FromQuery] int[]? key1, [FromQuery] int[]? key2)
+        public async Task<IActionResult> ConfirmUser([FromQuery] int[]? key1, [FromQuery] int[]? key2)
         {
             var confirmedUser = await _userManager.ConfirmUserAsync(
                 [

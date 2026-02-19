@@ -116,7 +116,7 @@ namespace Delopro.Bll.Services
 
             var url = 
                 $"<button type=\"button\" style=\"border: black; border-width: 1px\">" +
-                $"<a href='{serverUrl}confirm?{key1}={nicknameByteString}{and}{key2}={emailByteString}'" +
+                $"<a href='{serverUrl}confirmuser?{key1}={nicknameByteString}{and}{key2}={emailByteString}'" +
                 $"style=\"text-decoration: none; color: black\">" +
                 $"Подтвердить регистрацию" +
                 $"</a>" +
