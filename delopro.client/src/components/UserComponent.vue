@@ -163,6 +163,7 @@ async function updateUser() {
 				@update:model-value="handleUpdateStatus"
 				:options="helper.userStatuses"
 				class="selector"
+        appendTo="self"
 			>
 				<template #value>
 					<Tag

@@ -1,11 +1,10 @@
 <script setup>
-import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-import Textarea from 'primevue/textarea'
 import { computed, reactive, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import AccountAvatar from './AccountAvatar.vue'
 import { helper } from '@/helper/helper'
+import InputComponent from './InputComponent.vue'
 
 const store = useStore()
 
@@ -95,7 +94,7 @@ async function handleAccountUpdate() {
 		updatedUser.birthDate = null
 	}
 
-	store.dispatch('updateCurrentUser', updatedUser)
+	await store.dispatch('updateCurrentUser', updatedUser)
 
 	if (!needLogout.value) {
 		emit('switchToInfoMode')
@@ -134,6 +133,8 @@ async function handleCancel() {
 		(updatedUser.email = props.user.email),
 		(updatedUser.phone = props.user.phone))
 
+    showEmailError.value = false
+    showNicknameError.value = false
 	await helper.timeoutAsync(20)
 	emit('switchToInfoMode')
 }
@@ -143,16 +144,14 @@ async function doesUserExist(nickname, email) {
 	return await store.dispatch('checkUserExists', { nickname: nickname, email: email })
 }
 
-async function handleNicknameMatch(event) {
-	const nickname = event.target.value
+async function handleNicknameMatch(nickname) {
 	if (nickname === props.user.nickname) {
 		return
 	}
 	showNicknameError.value = await doesUserExist(nickname, null)
 }
 
-async function handleEmailMatch(event) {
-	const email = event.target.value
+async function handleEmailMatch(email) {
 	if (email === props.user.email) {
 		return
 	}
@@ -163,8 +162,7 @@ async function handleEmailMatch(event) {
 	}
 }
 
-async function checkOldPassword(event) {
-	const password = event.target.value
+async function checkOldPassword(password) {
 	const result = await store.dispatch('checkPassword', password)
 	isOldPasswordCorrect.value = result && password.length > 0
 }
@@ -178,249 +176,200 @@ async function deleteAccount() {
 </script>
 
 <template>
-	<form @submit.prevent="handleAccountUpdate">
-		<div class="account-properties">
-			<div class="account-header">
-				<div style="position: relative">
-					<input
-						type="file"
-						id="fileInput"
-						@change="onFileChange"
-						accept="image/*"
-						hidden
-					/>
-
-					<AccountAvatar
-						:avatarPath="props.user?.avatarPath"
-						:avatarBase64="props.avatarBase64"
-					></AccountAvatar>
-
-					<label
-						for="fileInput"
-						id="avatar-label"
-						title="Загрузить фото"
-					>
-						<div
-							class="avatar-button"
-							style="bottom: 30%; left: 55%"
-						>
-							<i
-								class="pi pi-camera"
-								style="font-size: 2rem"
-							></i>
-						</div>
-					</label>
+  <div class="account-properties">
+		<div class="account-header">
+			<div style="position: relative">
+				<input
+					type="file"
+					id="fileInput"
+					@change="onFileChange"
+					accept="image/*"
+					hidden
+				/>
+				<AccountAvatar
+					:avatarPath="props.user?.avatarPath"
+					:avatarBase64="props.avatarBase64"
+				></AccountAvatar>
+				<label
+					for="fileInput"
+					id="avatar-label"
+					title="Загрузить фото"
+				>
 					<div
 						class="avatar-button"
-						style="bottom: 30%; left: 10%"
-						title="Удалить фото"
-						@click="handleDeleteAvatar"
+						style="bottom: 30%; left: 55%"
 					>
 						<i
-							class="pi pi-times"
-							style="font-size: 1.7rem; padding-top: 5px"
+							class="pi pi-camera"
+							style="font-size: 2rem"
 						></i>
 					</div>
-				</div>
-				<div class="account-short-info">
-					<span style="font-weight: bold; font-size: large">{{ props.user?.nickname }}</span>
-					<span style="font-size: 1.2rem">
-						{{ `${props.user?.firstName ?? ''} ${props.user?.lastName ?? ''}` }}
-					</span>
-					<span style="font-style: italic; color: gray">{{ props.user?.roles.join(',') }}</span>
-					<span
-						v-if="updatedUser.registerDate"
-						style="font-style: italic"
-					>
-						Дата регистрации:
-						{{ updatedUser.registerDate.slice(0, 10) }}
-					</span>
-					<div style="padding-top: 10px">
-						<Button
-							type="submit"
-							raised
-							severity="secondary"
-							label="Сохранить"
-							style="width: 100px; margin-bottom: 10px; margin-right: 10px"
-							:disabled="props.isSaveDisabled"
-						></Button>
-						<Button
-							raised
-							severity="contrast"
-							label="Отменить"
-							style="width: 100px"
-							@click="handleCancel"
-						/>
-					</div>
+				</label>
+				<div
+					class="avatar-button"
+					style="bottom: 30%; left: 10%"
+					title="Удалить фото"
+					@click="handleDeleteAvatar"
+				>
+					<i
+						class="pi pi-times"
+						style="font-size: 1.7rem; padding-top: 5px"
+					></i>
 				</div>
 			</div>
-			<div class="account-input">
-				<span>
-					Никнэйм:
-					<span
-						v-if="showNicknameError"
-						style="color: red; font-weight: lighter"
-					>
-						Никнэйм занят
-					</span>
+			<div class="account-short-info">
+				<span style="font-weight: bold; font-size: large">{{ props.user?.nickname }}</span>
+				<span style="font-size: 1.2rem">
+					{{ `${props.user?.firstName ?? ''} ${props.user?.lastName ?? ''}` }}
 				</span>
-				<InputText
-					type="text"
-					placeholder="Никнэйм"
-					v-model="updatedUser.nickname"
-					@input.prevent="handleNicknameMatch"
-					maxlength="30"
-					required
-				></InputText>
-			</div>
-			<div class="account-input">
-				<span>
-					Email:
-					<span
-						v-if="showEmailError"
-						style="color: red; font-weight: lighter"
-					>
-						Email занят
-					</span>
+				<span style="font-style: italic; color: gray">{{ props.user?.roles.join(',') }}</span>
+				<span
+					v-if="updatedUser.registerDate"
+					style="font-style: italic"
+				>
+					Дата регистрации:
+					{{ updatedUser.registerDate.slice(0, 10) }}
 				</span>
-				<InputText
-					type="email"
-					placeholder="Email"
-					v-model="updatedUser.email"
-					@input.prevent="handleEmailMatch"
-					maxlength="50"
-					required
-				></InputText>
+				<div style="padding-top: 10px">
+					<Button
+						type="submit"
+            form="account-form"
+						raised
+						severity="secondary"
+						label="Сохранить"
+						style="width: 100px; margin-bottom: 10px; margin-right: 10px"
+						:disabled="props.isSaveDisabled"
+					></Button>
+					<Button
+						raised
+						severity="contrast"
+						label="Отменить"
+						style="width: 100px"
+						@click="handleCancel"
+					/>
+				</div>
 			</div>
-			<div class="account-input">
-				<span>Телефон:</span>
-				<InputText
-					type="phone"
-					placeholder="Телефон"
-					v-model="updatedUser.phone"
-				></InputText>
-			</div>
-			<div class="account-input">
-				<span>Имя:</span>
-				<InputText
-					type="text"
-					placeholder="Имя"
-					v-model="updatedUser.firstName"
-				></InputText>
-			</div>
-			<div class="account-input">
-				<span>Фамилия:</span>
-				<InputText
-					type="text"
-					placeholder="Фамилия"
-					v-model="updatedUser.lastName"
-				></InputText>
-			</div>
-			<div class="account-input">
-				<span>Дата рождения:</span>
-				<InputText
-					type="date"
-					v-model="updatedUser.birthDate"
-				></InputText>
-			</div>
-			<div class="account-input">
-				<span>Страна:</span>
-				<InputText
-					type="text"
-					placeholder="Страна"
-					v-model="updatedUser.country"
-				></InputText>
-			</div>
-			<div class="account-input">
-				<span>Город:</span>
-				<InputText
-					type="text"
-					placeholder="Город"
-					v-model="updatedUser.city"
-				></InputText>
-			</div>
-			<div class="account-input">
-				<span>Должность:</span>
-				<InputText
-					type="text"
-					placeholder="Должность"
-					v-model="updatedUser.userTitle"
-				></InputText>
-			</div>
-			<div class="account-input">
-				<span>О себе:</span>
-				<Textarea
-					v-model="updatedUser.info"
-					placeholder="Напишите о себе"
-				></Textarea>
-			</div>
-
-			<div
-				class="account-input"
-				style="background-color: var(--COLUMNS-BCKGND-CLR); padding: 10px"
-			>
+		</div>
+    <div class="account-container">
+      <form @submit.prevent="handleAccountUpdate" id="account-form">
+        <InputComponent
+          :title="'Никнэйм'"
+          :showError="showNicknameError"
+          :errorText="'Никнэйм занят'"
+          :placeholder="'Никнэйм'"
+          v-model="updatedUser.nickname"
+          :inputHandler="handleNicknameMatch"
+          :maxlength="30"
+          :required="true"
+        >
+        </InputComponent>
+        <InputComponent
+          :title="'Email'"
+          :showError="showEmailError"
+          :errorText="'Email занят'"
+          :placeholder="'Email'"
+          :type="'email'"
+          v-model="updatedUser.email"
+          :inputHandler="handleEmailMatch"
+          :required="true"
+        >
+        </InputComponent>
+        <InputComponent
+          :title="'Телефон'"
+          :placeholder="'Телефон'"
+          :type="'tel'"
+          v-model="updatedUser.phone"
+        >
+        </InputComponent>
+        <InputComponent
+          :title="'Имя'"
+          :placeholder="'Имя'"
+          v-model="updatedUser.firstName"
+        >
+        </InputComponent>
+        <InputComponent
+          :title="'Фамилия'"
+          :placeholder="'Фамилия'"
+          v-model="updatedUser.lastName"
+        >
+        </InputComponent>
+        <InputComponent
+          :title="'Дата рождения'"
+          :type="'date'"
+          v-model="updatedUser.birthDate"
+        >
+        </InputComponent>
+        <InputComponent
+          :title="'Страна'"
+          :placeholder="'Страна'"
+          v-model="updatedUser.country"
+        >
+        </InputComponent>
+        <InputComponent
+          :title="'Город'"
+          :placeholder="'Город'"
+          v-model="updatedUser.city"
+        >
+        </InputComponent>
+        <InputComponent
+          :title="'Должность'"
+          :placeholder="'Должность'"
+          v-model="updatedUser.userTitle"
+        >
+        </InputComponent>
+        <InputComponent
+          :title="'О себе'"
+          :placeholder="'Напишите о себе'"
+          v-model="updatedUser.info"
+          :isTextarea="true"
+        >
+        </InputComponent>
+	   </form>
+     <div
+		    style="background-color: var(--COLUMNS-BCKGND-CLR); padding: 10px"	>
 				<h3 style="margin-top: 0">Сменить пароль</h3>
+        <InputComponent
+          :title="'Cтарый пароль'"
+          :type="'password'"
+          :placeholder="'Cтарый пароль'"
+          :isCorrect="isOldPasswordCorrect"
+          v-model="oldPassword"
+          :maxlength="30"
+          :inputHandler="checkOldPassword"
+        >
+        </InputComponent>
+        <InputComponent
+          :title="'Новый пароль'"
+          :type="'password'"
+          :placeholder="'Новый пароль'"
+          :disabled="!oldPassword || !isOldPasswordCorrect"
+          v-model="newPassword"
+          :maxlength="30"
+        >
+        </InputComponent>
+        <InputComponent
+          :title="'Повторите новый пароль'"
+          :type="'password'"
+          :placeholder="'Повторите новый пароль'"
+          :isCorrect="isRepeatPasswordCorrect"
+          :disabled="!oldPassword || !isOldPasswordCorrect"
+          v-model="repeatNewPassword"
+          :maxlength="30"
+        >
+        </InputComponent>
 
-				<div class="change-password">
-					<span>
-						Cтарый пароль:
-						<i
-							style="color: green; position: absolute; padding-left: 10px; font-size: 1.2rem"
-							v-if="isOldPasswordCorrect"
-							class="pi pi-check"
-						></i>
-					</span>
-					<InputText
-						v-model="oldPassword"
-						type="password"
-						maxlength="30"
-						required
-						placeholder="Старый пароль"
-						@input="checkOldPassword"
-					/>
-				</div>
-				<div class="change-password">
-					<span>Новый пароль:</span>
-					<InputText
-						v-model="newPassword"
-						type="password"
-						maxlength="30"
-						required
-						:disabled="!oldPassword || !isOldPasswordCorrect"
-						placeholder="Новый пароль"
-					/>
-				</div>
-				<div class="change-password">
-					<span>
-						Повторите новый пароль:
-						<i
-							style="color: green; position: absolute; padding-left: 10px; font-size: 1.2rem"
-							v-if="isRepeatPasswordCorrect"
-							class="pi pi-check"
-						></i>
-					</span>
-					<InputText
-						v-model="repeatNewPassword"
-						type="password"
-						maxlength="30"
-						required
-						:disabled="!oldPassword || !isOldPasswordCorrect"
-						placeholder="Повторите новый пароль"
-					/>
-					<div style="text-align: end">
-						<Button
-							severity="secondary"
-							raised
-							style="width: 100px; margin-top: 10px"
-							label="Сменить"
-							:disabled="!(isOldPasswordCorrect && isRepeatPasswordCorrect)"
-							@click="changePassword"
-						></Button>
-					</div>
+        <div style="text-align: end;">
+					<Button
+						severity="secondary"
+						raised
+						style="margin-top: 10px; width: 100px"
+						label="Сменить"
+						:disabled="!(isOldPasswordCorrect && isRepeatPasswordCorrect)"
+						@click="changePassword"
+					></Button>
 				</div>
 			</div>
 			<div
-				class="account-input"
 				style="background-color: var(--COLUMNS-BCKGND-CLR); padding: 10px"
 			>
 				<div class="delete-account">
@@ -434,8 +383,8 @@ async function deleteAccount() {
 					></Button>
 				</div>
 			</div>
-		</div>
-	</form>
+    </div>
+	</div>
 </template>
 
 <style>

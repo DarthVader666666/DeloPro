@@ -403,6 +403,7 @@ function stopCountdown() {
 										v-model="moveFolder"
 										v-on:change="moveFile"
 										placeholder="Путь..."
+                    appendTo="self"
 									>
 										<template #option="{ option }">
 											<span style="font-size: small">

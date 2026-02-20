@@ -114,6 +114,7 @@ async function handleDeleteChapter() {
 					@update:model-value="handleSelect"
 					:options="imageNames"
 					placeholder="Путь к картинке"
+          appendTo="self"
 				/>
 			</div>
 			<div class="buttons">

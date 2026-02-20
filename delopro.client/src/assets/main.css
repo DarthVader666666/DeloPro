@@ -139,26 +139,6 @@ body {
 	margin-bottom: 20px;
 }
 
-.account-short-info {
-	margin-top: 10px;
-	display: flex;
-	flex-direction: column;
-	gap: 5px;
-	font-size: small;
-	width: 50%;
-}
-
-.account-input {
-	display: flex;
-	flex-direction: column;
-	width: 60%;
-}
-
-.account-input span {
-	font-weight: bold;
-	padding: 3px;
-}
-
 .account-property-name {
 	font-weight: bold;
 	padding-right: 10px;
@@ -173,6 +153,26 @@ body {
 	background-color: rgb(241, 245, 249, 1);
 	align-content: center;
 	text-align: center;
+}
+
+.account-short-info {
+	margin-top: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	font-size: small;
+	width: 50%;
+}
+
+.account-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 60%;
+}
+
+.account-container div{
+  padding-top: 10px;
 }
 
 @media (max-width: 1500px) {
@@ -214,9 +214,9 @@ body {
 		margin: 0;
 	}
 
-	.account-input {
-		width: 100%;
-	}
+  .account-container {
+    width: 100%;
+  }
 }
 
 @keyframes slide {

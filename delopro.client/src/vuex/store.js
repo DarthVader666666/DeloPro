@@ -898,13 +898,14 @@ const store = createStore({
 				})
 				.then(async (response) => {
 					if (response.status === 200) {
+            toast.success(response.data.okText)
 						sessionStorage.removeItem(state.sessionStorageKeys.currentUserKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.usersKey)
 						await dispatch('downloadCurrentUser')
+
 						if (state.getters.isAdmin || state.getters.isOwner) {
 							await dispatch('downloadUsers')
 						}
-						toast.success(response.data.okText)
 					}
 				})
 				.catch((error) => {
