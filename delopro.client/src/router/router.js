@@ -158,6 +158,10 @@ router.afterEach(async (to) => {
 	}
 
 	if (to.name === 'register') {
+		if (currentUser.value) {
+			router.push('/')
+		}
+
 		store.commit('setTitle', 'Заполните форму регистрации')
 		const captchaInput = document.getElementById('captcha-input')
 
@@ -173,6 +177,10 @@ router.afterEach(async (to) => {
 	}
 
 	if (to.name === 'feedback') {
+		if (currentUser.value) {
+			router.push('/')
+		}
+
 		store.commit('setTitle', 'Напишите ваше сообщение')
 		const captchaInput = document.getElementById('captcha-input')
 

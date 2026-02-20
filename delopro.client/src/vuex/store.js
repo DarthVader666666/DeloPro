@@ -58,9 +58,8 @@ const store = createStore({
 		getShowChapterList(state) {
 			return state.showChapterList
 		},
-		getImageNames(state) {
-			return state.imageNames
-		},
+
+		// THEMES
 		getTheme(state) {
 			return state.theme
 		},
@@ -156,6 +155,9 @@ const store = createStore({
 		},
 		getCaptcha(state) {
 			return state.captcha
+		},
+		getImageNames(state) {
+			return state.imageNames
 		},
 
 		// VISITS
@@ -962,6 +964,65 @@ const store = createStore({
 					Email: `${email}`,
 				},
 			})
+		},
+		async checkPassword({ state }, password) {
+			return axios
+				.get(`${state.serverUrl}/account/checkpassword`, {
+					headers: {
+						Password: `${password}`,
+					},
+				})
+				.then((response) => {
+					if (response.status === 200) {
+						return response.data
+					} else {
+						return false
+					}
+				})
+				.catch((error) => {
+					if (error.response) {
+						return false
+					}
+				})
+		},
+		async changePassword({ state }, password) {
+			await axios
+				.put(
+					`${state.serverUrl}/account/changepassword`,
+					{},
+					{
+						headers: {
+							Password: `${password}`,
+						},
+					},
+				)
+				.then((response) => {
+					if (response.status === 200) {
+						toast.success(response.data.okText)
+						sessionStorage.removeItem(state.sessionStorageKeys.currentUserKey)
+						sessionStorage.removeItem(state.sessionStorageKeys.usersKey)
+					}
+				})
+				.catch((error) => {
+					if (error.response) {
+						toast.error(error.response.data.errorText)
+					}
+				})
+		},
+		async deleteAccount({ state }) {
+			await axios
+				.delete(`${state.serverUrl}/account/deleteaccount`)
+				.then((response) => {
+					if (response.status === 200) {
+						toast.success(response.data.okText)
+						sessionStorage.removeItem(state.sessionStorageKeys.currentUserKey)
+					}
+				})
+				.catch((error) => {
+					if (error.response) {
+						toast.error(error.response.data.errorText)
+					}
+				})
 		},
 
 		// VISITS

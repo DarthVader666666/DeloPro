@@ -30,9 +30,18 @@ namespace Delopro.Data.Repositories
             return createdUser;
         }
 
-        public Task<User?> DeleteAsync(int? id_1, int? id_2 = null)
+        public async Task<User?> DeleteAsync(int? id_1, int? id_2 = null)
         {
-            throw new NotImplementedException();
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == id_1);
+
+            if (user is not null)
+            {
+                var deletedUser = _dbContext.Remove(user).Entity;
+                await _dbContext.SaveChangesAsync();
+                return deletedUser;
+            }
+
+            return null;
         }
 
         public Task DeleteRangeAsync(IEnumerable<User?> items)

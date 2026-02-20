@@ -44,6 +44,14 @@ const needLogout = computed(
 	() => updatedUser.nickname != props.user.nickname || updatedUser.email != props.user.email,
 )
 
+const isOldPasswordCorrect = ref(false)
+const oldPassword = ref(null)
+const newPassword = ref(null)
+const repeatNewPassword = ref(null)
+const isRepeatPasswordCorrect = computed(
+	() => repeatNewPassword.value && newPassword.value === repeatNewPassword.value,
+)
+
 const emit = defineEmits([
 	'switchToInfoMode',
 	'switchToAvatarMode',
@@ -93,7 +101,6 @@ async function handleAccountUpdate() {
 		emit('switchToInfoMode')
 	} else {
 		await store.dispatch('logOut')
-		await store.dispatch('logIn')
 	}
 }
 
@@ -108,6 +115,13 @@ function handleDeleteAvatar() {
 	}
 }
 
+async function changePassword() {
+	if (window.confirm('Внимание! После смены пароля необходимо будет заново войти в систему')) {
+		await store.dispatch('changePassword', newPassword.value)
+		await store.dispatch('logOut')
+	}
+}
+
 async function handleCancel() {
 	;((updatedUser.nickname = props.user.nickname),
 		(updatedUser.firstName = props.user.firstName),
@@ -118,8 +132,7 @@ async function handleCancel() {
 		(updatedUser.userTitle = props.user.userTitle),
 		(updatedUser.info = props.user.info),
 		(updatedUser.email = props.user.email),
-		(updatedUser.phone = props.user.phone),
-		(updatedUser.deleteAvatar = false))
+		(updatedUser.phone = props.user.phone))
 
 	await helper.timeoutAsync(20)
 	emit('switchToInfoMode')
@@ -149,6 +162,19 @@ async function handleEmailMatch(event) {
 		showEmailError.value = false
 	}
 }
+
+async function checkOldPassword(event) {
+	const password = event.target.value
+	const result = await store.dispatch('checkPassword', password)
+	isOldPasswordCorrect.value = result && password.length > 0
+}
+
+async function deleteAccount() {
+	if (window.confirm('Внимание! Ваш аккаунт будет полностью удалён')) {
+		await store.dispatch('deleteAccount')
+		await store.dispatch('logOut')
+	}
+}
 </script>
 
 <template>
@@ -165,7 +191,7 @@ async function handleEmailMatch(event) {
 					/>
 
 					<AccountAvatar
-						:avatarPath="props.user.avatarPath"
+						:avatarPath="props.user?.avatarPath"
 						:avatarBase64="props.avatarBase64"
 					></AccountAvatar>
 
@@ -197,11 +223,11 @@ async function handleEmailMatch(event) {
 					</div>
 				</div>
 				<div class="account-short-info">
-					<span style="font-weight: bold; font-size: large">{{ props.user.nickname }}</span>
+					<span style="font-weight: bold; font-size: large">{{ props.user?.nickname }}</span>
 					<span style="font-size: 1.2rem">
-						{{ `${props.user.firstName ?? ''} ${props.user.lastName ?? ''}` }}
+						{{ `${props.user?.firstName ?? ''} ${props.user?.lastName ?? ''}` }}
 					</span>
-					<span style="font-style: italic; color: gray">{{ props.user.roles.join(',') }}</span>
+					<span style="font-style: italic; color: gray">{{ props.user?.roles.join(',') }}</span>
 					<span
 						v-if="updatedUser.registerDate"
 						style="font-style: italic"
@@ -328,6 +354,86 @@ async function handleEmailMatch(event) {
 					placeholder="Напишите о себе"
 				></Textarea>
 			</div>
+
+			<div
+				class="account-input"
+				style="background-color: var(--COLUMNS-BCKGND-CLR); padding: 10px"
+			>
+				<h3 style="margin-top: 0">Сменить пароль</h3>
+
+				<div class="change-password">
+					<span>
+						Cтарый пароль:
+						<i
+							style="color: green; position: absolute; padding-left: 10px; font-size: 1.2rem"
+							v-if="isOldPasswordCorrect"
+							class="pi pi-check"
+						></i>
+					</span>
+					<InputText
+						v-model="oldPassword"
+						type="password"
+						maxlength="30"
+						required
+						placeholder="Старый пароль"
+						@input="checkOldPassword"
+					/>
+				</div>
+				<div class="change-password">
+					<span>Новый пароль:</span>
+					<InputText
+						v-model="newPassword"
+						type="password"
+						maxlength="30"
+						required
+						:disabled="!oldPassword || !isOldPasswordCorrect"
+						placeholder="Новый пароль"
+					/>
+				</div>
+				<div class="change-password">
+					<span>
+						Повторите новый пароль:
+						<i
+							style="color: green; position: absolute; padding-left: 10px; font-size: 1.2rem"
+							v-if="isRepeatPasswordCorrect"
+							class="pi pi-check"
+						></i>
+					</span>
+					<InputText
+						v-model="repeatNewPassword"
+						type="password"
+						maxlength="30"
+						required
+						:disabled="!oldPassword || !isOldPasswordCorrect"
+						placeholder="Повторите новый пароль"
+					/>
+					<div style="text-align: end">
+						<Button
+							severity="secondary"
+							raised
+							style="width: 100px; margin-top: 10px"
+							label="Сменить"
+							:disabled="!(isOldPasswordCorrect && isRepeatPasswordCorrect)"
+							@click="changePassword"
+						></Button>
+					</div>
+				</div>
+			</div>
+			<div
+				class="account-input"
+				style="background-color: var(--COLUMNS-BCKGND-CLR); padding: 10px"
+			>
+				<div class="delete-account">
+					<h3>Удалить аккаунт</h3>
+					<Button
+						severity="danger"
+						label="Удалить"
+						raised
+						style="width: 100px; height: 40px"
+						@click="deleteAccount"
+					></Button>
+				</div>
+			</div>
 		</div>
 	</form>
 </template>
@@ -347,5 +453,17 @@ async function handleEmailMatch(event) {
 	border-radius: 50%;
 	width: 50px;
 	height: 50px;
+}
+
+.change-password {
+	display: flex;
+	flex-direction: column;
+}
+
+.delete-account {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
 }
 </style>

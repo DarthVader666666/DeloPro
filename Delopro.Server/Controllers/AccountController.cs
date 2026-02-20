@@ -190,6 +190,57 @@ namespace Delopro.Server.Controllers
             return Ok("Сообщение успешно отправлено");
         }
 
+        [HttpGet]
+        [Authorize]
+        [Route("[action]")]
+        public async Task<IActionResult> CheckPassword()
+        { 
+            var password = HttpContext.Request.Headers["Password"].ToString();
+
+            var currentUser = await _userManager.GetCurrentUserAsync(HttpContext);
+            var result = currentUser is not null && _cryptoService.Encrypt(password) == currentUser.Password;
+
+            return Ok(result);
+        }
+
+        [HttpPut]
+        [Authorize]
+        [Route("[action]")]
+        public async Task<IActionResult> ChangePassword()
+        {
+            var password = HttpContext.Request.Headers["Password"].ToString();
+
+            try
+            {
+                var currentUser = await _userManager.GetCurrentUserAsync(HttpContext);
+                currentUser!.Password = _cryptoService.Encrypt(password);
+                await _userRepository.UpdateAsync(currentUser);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка при смене пароля" });
+            }
+
+            return Ok(new { okText = "Пароль успешно обновлён" });
+        }
+
+        [HttpDelete]
+        [Authorize]
+        [Route("[action]")]
+        public async Task<IActionResult> DeleteAccount()
+        {
+            try
+            {
+                var currentUser = await _userManager.GetCurrentUserAsync(HttpContext);
+                await _userRepository.DeleteAsync(currentUser!.UserId);
+
+                return Ok(new { okText = "Аккаунт успешно удалён" });
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка при удалении аккаунта" });
+            }
+        }
 
         private static void DeleteOldAvatars(int userId) 
         {

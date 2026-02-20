@@ -238,8 +238,9 @@ function handleBurgerClick() {
 						label="Статистика посещений"
 					></Button>
 				</div>
-				<div v-if="!isAuthenticated || isUser">
+				<div v-if="!isAuthenticated">
 					<Button
+						v-if="!isAuthenticated || isUser"
 						@click="
 							() => {
 								showMenu = false
@@ -252,6 +253,7 @@ function handleBurgerClick() {
 						id="feedback-button"
 					></Button>
 					<Button
+						v-if="!isAuthenticated || isUser"
 						@click="
 							() => {
 								showMenu = false

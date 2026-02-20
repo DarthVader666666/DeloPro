@@ -1,228 +1,226 @@
 @import 'primeicons/primeicons.css';
 
 :root {
-  /* COLORS */
-  --DANGER-RED: rgb(220, 0, 0);
-  --LOGO-COLOR: rgb(124, 172, 124);
-  --TEXT-COLOR: rgb(44, 44, 44);
-  --HOME-HEADER-COLOR: rgb(56, 185, 56);
+	/* COLORS */
+	--DANGER-RED: rgb(220, 0, 0);
+	--LOGO-COLOR: rgb(124, 172, 124);
+	--TEXT-COLOR: rgb(44, 44, 44);
+	--HOME-HEADER-COLOR: rgb(56, 185, 56);
 
-  /* BACKGROUNDS */
-  --CENTRAL-BCKGND-CLR: rgb(226, 219, 219);
-  --COLUMNS-BCKGND-CLR: rgb(242, 240, 240);
-  --TEXT-BCKGND-CLR: rgba(204, 204, 204, 0.98);
-  --SELECTED-LINK-BCKGND-CLR: rgb(49, 127, 62);
-  --MENU-BCKGND-CLR: rgb(88, 175, 88);
+	/* BACKGROUNDS */
+	--CENTRAL-BCKGND-CLR: rgb(226, 219, 219);
+	--COLUMNS-BCKGND-CLR: rgb(242, 240, 240);
+	--TEXT-BCKGND-CLR: rgba(204, 204, 204, 0.98);
+	--SELECTED-LINK-BCKGND-CLR: rgb(49, 127, 62);
+	--MENU-BCKGND-CLR: rgb(88, 175, 88);
 
-  /* SHADOWS */
-  --GLOW-BOX-SHADOW: rgba(158, 158, 158, 0.8) 0 0 10px 2px;
-  --COMPONENT-BOX-SHADOW: 0 7px 15px -3px black;
-  --INPUT-BOX-SHADOW: 0px 2px 3px -2px black;
-  --PNG-IMAGE-SHADOW: 5px 5px 5px #222;
-  --MENU-BOX-SHADOW: 0px 0px 10px 0px black;
+	/* SHADOWS */
+	--GLOW-BOX-SHADOW: rgba(158, 158, 158, 0.8) 0 0 10px 2px;
+	--COMPONENT-BOX-SHADOW: 0 7px 15px -3px black;
+	--INPUT-BOX-SHADOW: 0px 2px 3px -2px black;
+	--PNG-IMAGE-SHADOW: 5px 5px 5px #222;
+	--MENU-BOX-SHADOW: 0px 0px 10px 0px black;
 
-  /* GRADIENTS */
-  --BCKGND-GRADIENT: linear-gradient(to right,rgb(165, 218, 165),rgb(72, 163, 72));
-  --THEME-HEADER-BCKGND-GRADIENT: linear-gradient(to top,rgb(180, 231, 180),rgb(148, 216, 148));
+	/* GRADIENTS */
+	--BCKGND-GRADIENT: linear-gradient(to right, rgb(165, 218, 165), rgb(72, 163, 72));
+	--THEME-HEADER-BCKGND-GRADIENT: linear-gradient(to top, rgb(180, 231, 180), rgb(148, 216, 148));
 
-  /* SIZES */
-  --LEFT-COLUMN-WIDTH: 17%;
-  --RIGHT-COLUMN-WIDTH: 17%;
-  --CENTRAL-COLUMN_WIDTH: 66%;
-  --MAIN-COMPONENT-WIDTH: 85%;
-  --APP-COMPONENT-WIDTH: 90%;
-  --MAIN-COMPONENT-MIN-HEIGHT: 810px;
-  --HEADER-HEIGHT: 90px;
-  --SEARCHBAR-HEIGHT: 60px;
-  --TITLE-HEIGHT: 76px;
+	/* SIZES */
+	--LEFT-COLUMN-WIDTH: 17%;
+	--RIGHT-COLUMN-WIDTH: 17%;
+	--CENTRAL-COLUMN_WIDTH: 66%;
+	--MAIN-COMPONENT-WIDTH: 85%;
+	--APP-COMPONENT-WIDTH: 90%;
+	--MAIN-COMPONENT-MIN-HEIGHT: 810px;
+	--HEADER-HEIGHT: 90px;
+	--SEARCHBAR-HEIGHT: 60px;
+	--TITLE-HEIGHT: 76px;
 }
 
 html {
-  scroll-behavior: smooth;
+	scroll-behavior: smooth;
 }
 
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  margin: 0;
-  color: var(--TEXT-COLOR);
-  background-color: var(--CENTRAL-BCKGND-CLR);
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	margin: 0;
+	color: var(--TEXT-COLOR);
+	background-color: var(--CENTRAL-BCKGND-CLR);
 }
 
 #app {
-  width: 100%;
-  min-height: var(--MAIN-COMPONENT-MIN-HEIGHT);
+	width: 100%;
+	min-height: var(--MAIN-COMPONENT-MIN-HEIGHT);
 }
 
 .left-container {
-  width: var(--LEFT-COLUMN-WIDTH);
-  background-color: var(--COLUMNS-BCKGND-CLR);
-  word-break: break-word;
-  position: sticky;
-  height: 100vh;
-  top:0;
+	width: var(--LEFT-COLUMN-WIDTH);
+	background-color: var(--COLUMNS-BCKGND-CLR);
+	word-break: break-word;
+	position: sticky;
+	height: 100vh;
+	top: 0;
 }
 
 .main-container {
-  display: flex;
-  flex-direction: row;
-  background-color: var(--CENTRAL-BCKGND-CLR);
-  min-height: var(--MAIN-COMPONENT-MIN-HEIGHT);
-  box-shadow: var(--COMPONENT-BOX-SHADOW);
+	display: flex;
+	flex-direction: row;
+	background-color: var(--CENTRAL-BCKGND-CLR);
+	min-height: var(--MAIN-COMPONENT-MIN-HEIGHT);
+	box-shadow: var(--COMPONENT-BOX-SHADOW);
 }
-  
+
 .title {
-  text-align: center;
-  align-content: center;
-  height: var(--TITLE-HEIGHT);
-  background-color: var(--CENTRAL-BCKGND-CLR);
+	text-align: center;
+	align-content: center;
+	height: var(--TITLE-HEIGHT);
+	background-color: var(--CENTRAL-BCKGND-CLR);
 }
 
 .form-container {
-  padding: 20px;
-  font-size: small;
-  background-color: var(--CENTRAL-BCKGND-CLR);
+	padding: 20px;
+	font-size: small;
+	background-color: var(--CENTRAL-BCKGND-CLR);
 }
 
 .red-star {
-  color: red;
+	color: red;
 }
 
 .email-sent-notification {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;;
-  align-items: center;
-  width: var(--APP-COMPONENT-WIDTH);
-  padding-bottom: 10px;
-  background-color: var(--CENTRAL-BCKGND-CLR);
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	align-items: center;
+	width: var(--APP-COMPONENT-WIDTH);
+	padding-bottom: 10px;
+	background-color: var(--CENTRAL-BCKGND-CLR);
 }
 
 .email-sent-notification a {
-  text-decoration: none;
-  color: black;
+	text-decoration: none;
+	color: black;
 }
 
 .email-sent-notification button {
-  width: 80px;
+	width: 80px;
 }
 
 .email-sent-notification img {
-  width: fit-content;
+	width: fit-content;
 }
 
 .sending {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: var(--APP-COMPONENT-WIDTH);
-  padding: 10px;
-  background-color: var(--CENTRAL-BCKGND-CLR);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: var(--APP-COMPONENT-WIDTH);
+	padding: 10px;
+	background-color: var(--CENTRAL-BCKGND-CLR);
 }
 
 /* UserAccount */
 .account-properties {
-    position: relative;
-    background-color: white;
-    padding: 25px;
-    margin: 5px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+	position: relative;
+	background-color: white;
+	padding: 25px;
+	margin: 5px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 }
 
 .account-header {
-    display: flex;
-    gap: 25px;
-    margin-bottom: 20px;
+	display: flex;
+	gap: 25px;
+	margin-bottom: 20px;
 }
 
 .account-short-info {
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    font-size: small;
-    width: 50%;
+	margin-top: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	font-size: small;
+	width: 50%;
 }
 
 .account-input {
-    display: flex;
-    flex-direction: column;
+	display: flex;
+	flex-direction: column;
+	width: 60%;
 }
 
 .account-input span {
-    font-weight: bold;
-    padding: 3px;
-}
-
-.account-input input, textarea {
-    width: 60%;
+	font-weight: bold;
+	padding: 3px;
 }
 
 .account-property-name {
-    font-weight: bold;
-    padding-right: 10px;
+	font-weight: bold;
+	padding-right: 10px;
 }
 
 .account-avatar {
-    width:150px; 
-    height:150px; 
-    border-radius:50%;
-    font-size: 5rem; color: rgb(71, 85, 105, 1); 
-    background-color: rgb(241, 245, 249, 1);
-    align-content: center;
-    text-align: center;
+	width: 150px;
+	height: 150px;
+	border-radius: 50%;
+	font-size: 5rem;
+	color: rgb(71, 85, 105, 1);
+	background-color: rgb(241, 245, 249, 1);
+	align-content: center;
+	text-align: center;
 }
 
 @media (max-width: 1500px) {
-  #app {
-    width: 100%;
-  }
+	#app {
+		width: 100%;
+	}
 }
 
-@media(max-width: 1100px) {
-  .left-container {
-    display: none;
-  }
+@media (max-width: 1100px) {
+	.left-container {
+		display: none;
+	}
 
-  .register-form {
-    width: 100%;
-  }
+	.register-form {
+		width: 100%;
+	}
 
-  .form-container {
-    padding: 20px;
-  }
+	.form-container {
+		padding: 20px;
+	}
 
-  .sending {
-    width: 100%;
-  }
+	.sending {
+		width: 100%;
+	}
 
-  .email-sent-notification {
-    width: 100%;
-  }
+	.email-sent-notification {
+		width: 100%;
+	}
 
-  .email-sent-notification img {
-    width: 320px;
-  }
+	.email-sent-notification img {
+		width: 320px;
+	}
 
-  .create-form-container {
-    width: 100%;
-  }
+	.create-form-container {
+		width: 100%;
+	}
 
-  .account-properties {
-    margin: 0;    
-  }
+	.account-properties {
+		margin: 0;
+	}
 
-  .account-input input, textarea {
-    width: 100%;
-  }
+	.account-input {
+		width: 100%;
+	}
 }
 
 @keyframes slide {
-  0% {
-      transform: translateX(100%);
-  }
+	0% {
+		transform: translateX(100%);
+	}
 }
