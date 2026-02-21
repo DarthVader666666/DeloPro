@@ -2,9 +2,9 @@
 import Button from 'primevue/button'
 import { computed, reactive, ref, watch } from 'vue'
 import { useStore } from 'vuex'
-import AccountAvatar from './AccountAvatar.vue'
 import { helper } from '@/helper/helper'
 import InputComponent from './InputComponent.vue'
+import AvatarComponent from './AvatarComponent.vue'
 
 const store = useStore()
 
@@ -53,7 +53,7 @@ const isRepeatPasswordCorrect = computed(
 
 const emit = defineEmits([
 	'switchToInfoMode',
-	'switchToAvatarMode',
+	'switchToAvatarCropper',
 	'setAvatarBase64',
 	'setIsSaveDisabled',
 ])
@@ -69,17 +69,6 @@ watch(showNicknameError, (newValue) => {
 watch(showEmailError, (newValue) => {
 	emit('setIsSaveDisabled', newValue)
 })
-
-async function onFileChange(e) {
-	const file = e.target.files[0]
-
-	if (file) {
-		emit('setAvatarBase64', file)
-		emit('switchToAvatarMode')
-	}
-
-	e.target.value = ''
-}
 
 async function handleAccountUpdate() {
 	if (needLogout.value) {
@@ -103,17 +92,6 @@ async function handleAccountUpdate() {
 	}
 }
 
-function handleDeleteAvatar() {
-	if (!props.user.avatarPath) {
-		return
-	}
-
-	if (window.confirm('Вы уверены, что хотите удалить аватар?')) {
-		store.dispatch('deleteAvatar')
-		emit('setAvatarBase64', null)
-	}
-}
-
 async function changePassword() {
 	if (window.confirm('Внимание! После смены пароля необходимо будет заново войти в систему')) {
 		await store.dispatch('changePassword', newPassword.value)
@@ -133,8 +111,8 @@ async function handleCancel() {
 		(updatedUser.email = props.user.email),
 		(updatedUser.phone = props.user.phone))
 
-    showEmailError.value = false
-    showNicknameError.value = false
+	showEmailError.value = false
+	showNicknameError.value = false
 	await helper.timeoutAsync(20)
 	emit('switchToInfoMode')
 }
@@ -144,14 +122,14 @@ async function doesUserExist(nickname, email) {
 	return await store.dispatch('checkUserExists', { nickname: nickname, email: email })
 }
 
-async function handleNicknameMatch(nickname) {
+async function doesNicknameExist(nickname) {
 	if (nickname === props.user.nickname) {
 		return
 	}
 	showNicknameError.value = await doesUserExist(nickname, null)
 }
 
-async function handleEmailMatch(email) {
+async function doesEmailExist(email) {
 	if (email === props.user.email) {
 		return
 	}
@@ -176,47 +154,14 @@ async function deleteAccount() {
 </script>
 
 <template>
-  <div class="account-properties">
+	<div class="account-properties">
 		<div class="account-header">
-			<div style="position: relative">
-				<input
-					type="file"
-					id="fileInput"
-					@change="onFileChange"
-					accept="image/*"
-					hidden
-				/>
-				<AccountAvatar
-					:avatarPath="props.user?.avatarPath"
-					:avatarBase64="props.avatarBase64"
-				></AccountAvatar>
-				<label
-					for="fileInput"
-					id="avatar-label"
-					title="Загрузить фото"
-				>
-					<div
-						class="avatar-button"
-						style="bottom: 30%; left: 55%"
-					>
-						<i
-							class="pi pi-camera"
-							style="font-size: 2rem"
-						></i>
-					</div>
-				</label>
-				<div
-					class="avatar-button"
-					style="bottom: 30%; left: 10%"
-					title="Удалить фото"
-					@click="handleDeleteAvatar"
-				>
-					<i
-						class="pi pi-times"
-						style="font-size: 1.7rem; padding-top: 5px"
-					></i>
-				</div>
-			</div>
+			<AvatarComponent
+				:avatarPath="props.user?.avatarPath"
+				:avatarBase64="props.avatarBase64"
+				:switchToAvatarCropper="() => emit('switchToAvatarCropper')"
+				:setAvatarBase64="(file) => emit('setAvatarBase64', file)"
+			></AvatarComponent>
 			<div class="account-short-info">
 				<span style="font-weight: bold; font-size: large">{{ props.user?.nickname }}</span>
 				<span style="font-size: 1.2rem">
@@ -233,7 +178,7 @@ async function deleteAccount() {
 				<div style="padding-top: 10px">
 					<Button
 						type="submit"
-            form="account-form"
+						form="account-form"
 						raised
 						severity="secondary"
 						label="Сохранить"
@@ -250,115 +195,104 @@ async function deleteAccount() {
 				</div>
 			</div>
 		</div>
-    <div class="account-container">
-      <form @submit.prevent="handleAccountUpdate" id="account-form">
-        <InputComponent
-          :title="'Никнэйм'"
-          :showError="showNicknameError"
-          :errorText="'Никнэйм занят'"
-          :placeholder="'Никнэйм'"
-          v-model="updatedUser.nickname"
-          :inputHandler="handleNicknameMatch"
-          :maxlength="30"
-          :required="true"
-        >
-        </InputComponent>
-        <InputComponent
-          :title="'Email'"
-          :showError="showEmailError"
-          :errorText="'Email занят'"
-          :placeholder="'Email'"
-          :type="'email'"
-          v-model="updatedUser.email"
-          :inputHandler="handleEmailMatch"
-          :required="true"
-        >
-        </InputComponent>
-        <InputComponent
-          :title="'Телефон'"
-          :placeholder="'Телефон'"
-          :type="'tel'"
-          v-model="updatedUser.phone"
-        >
-        </InputComponent>
-        <InputComponent
-          :title="'Имя'"
-          :placeholder="'Имя'"
-          v-model="updatedUser.firstName"
-        >
-        </InputComponent>
-        <InputComponent
-          :title="'Фамилия'"
-          :placeholder="'Фамилия'"
-          v-model="updatedUser.lastName"
-        >
-        </InputComponent>
-        <InputComponent
-          :title="'Дата рождения'"
-          :type="'date'"
-          v-model="updatedUser.birthDate"
-        >
-        </InputComponent>
-        <InputComponent
-          :title="'Страна'"
-          :placeholder="'Страна'"
-          v-model="updatedUser.country"
-        >
-        </InputComponent>
-        <InputComponent
-          :title="'Город'"
-          :placeholder="'Город'"
-          v-model="updatedUser.city"
-        >
-        </InputComponent>
-        <InputComponent
-          :title="'Должность'"
-          :placeholder="'Должность'"
-          v-model="updatedUser.userTitle"
-        >
-        </InputComponent>
-        <InputComponent
-          :title="'О себе'"
-          :placeholder="'Напишите о себе'"
-          v-model="updatedUser.info"
-          :isTextarea="true"
-        >
-        </InputComponent>
-	   </form>
-     <div
-		    style="background-color: var(--COLUMNS-BCKGND-CLR); padding: 10px"	>
+		<div class="account-container">
+			<form
+				@submit.prevent="handleAccountUpdate"
+				id="account-form"
+			>
+				<InputComponent
+					:title="'Никнэйм'"
+					:showError="showNicknameError"
+					:errorText="'Никнэйм занят'"
+					:placeholder="'Никнэйм'"
+					v-model="updatedUser.nickname"
+					:inputHandler="doesNicknameExist"
+					:maxlength="30"
+					:required="true"
+				></InputComponent>
+				<InputComponent
+					:title="'Email'"
+					:showError="showEmailError"
+					:errorText="'Email занят'"
+					:placeholder="'Email'"
+					:type="'email'"
+					v-model="updatedUser.email"
+					:inputHandler="doesEmailExist"
+					:required="true"
+				></InputComponent>
+				<InputComponent
+					:title="'Телефон'"
+					:placeholder="'Телефон'"
+					:type="'tel'"
+					v-model="updatedUser.phone"
+				></InputComponent>
+				<InputComponent
+					:title="'Имя'"
+					:placeholder="'Имя'"
+					v-model="updatedUser.firstName"
+				></InputComponent>
+				<InputComponent
+					:title="'Фамилия'"
+					:placeholder="'Фамилия'"
+					v-model="updatedUser.lastName"
+				></InputComponent>
+				<InputComponent
+					:title="'Дата рождения'"
+					:type="'date'"
+					v-model="updatedUser.birthDate"
+				></InputComponent>
+				<InputComponent
+					:title="'Страна'"
+					:placeholder="'Страна'"
+					v-model="updatedUser.country"
+				></InputComponent>
+				<InputComponent
+					:title="'Город'"
+					:placeholder="'Город'"
+					v-model="updatedUser.city"
+				></InputComponent>
+				<InputComponent
+					:title="'Должность'"
+					:placeholder="'Должность'"
+					v-model="updatedUser.userTitle"
+				></InputComponent>
+				<InputComponent
+					:title="'О себе'"
+					:placeholder="'Напишите о себе'"
+					v-model="updatedUser.info"
+					:isTextarea="true"
+				></InputComponent>
+			</form>
+			<div style="background-color: var(--COLUMNS-BCKGND-CLR); padding: 10px">
 				<h3 style="margin-top: 0">Сменить пароль</h3>
-        <InputComponent
-          :title="'Cтарый пароль'"
-          :type="'password'"
-          :placeholder="'Cтарый пароль'"
-          :isCorrect="isOldPasswordCorrect"
-          v-model="oldPassword"
-          :maxlength="30"
-          :inputHandler="checkOldPassword"
-        >
-        </InputComponent>
-        <InputComponent
-          :title="'Новый пароль'"
-          :type="'password'"
-          :placeholder="'Новый пароль'"
-          :disabled="!oldPassword || !isOldPasswordCorrect"
-          v-model="newPassword"
-          :maxlength="30"
-        >
-        </InputComponent>
-        <InputComponent
-          :title="'Повторите новый пароль'"
-          :type="'password'"
-          :placeholder="'Повторите новый пароль'"
-          :isCorrect="isRepeatPasswordCorrect"
-          :disabled="!oldPassword || !isOldPasswordCorrect"
-          v-model="repeatNewPassword"
-          :maxlength="30"
-        >
-        </InputComponent>
+				<InputComponent
+					:title="'Cтарый пароль'"
+					:type="'password'"
+					:placeholder="'Cтарый пароль'"
+					:isCorrect="isOldPasswordCorrect"
+					v-model="oldPassword"
+					:maxlength="30"
+					:inputHandler="checkOldPassword"
+				></InputComponent>
+				<InputComponent
+					:title="'Новый пароль'"
+					:type="'password'"
+					:placeholder="'Новый пароль'"
+					:disabled="!oldPassword || !isOldPasswordCorrect"
+					v-model="newPassword"
+					:maxlength="30"
+				></InputComponent>
+				<InputComponent
+					:title="'Повторите новый пароль'"
+					:type="'password'"
+					:placeholder="'Повторите новый пароль'"
+					:isCorrect="isRepeatPasswordCorrect"
+					:disabled="!oldPassword || !isOldPasswordCorrect"
+					v-model="repeatNewPassword"
+					:maxlength="30"
+				></InputComponent>
 
-        <div style="text-align: end;">
+				<div style="text-align: end">
 					<Button
 						severity="secondary"
 						raised
@@ -369,9 +303,7 @@ async function deleteAccount() {
 					></Button>
 				</div>
 			</div>
-			<div
-				style="background-color: var(--COLUMNS-BCKGND-CLR); padding: 10px"
-			>
+			<div style="background-color: var(--COLUMNS-BCKGND-CLR); padding: 10px">
 				<div class="delete-account">
 					<h3>Удалить аккаунт</h3>
 					<Button
@@ -383,27 +315,11 @@ async function deleteAccount() {
 					></Button>
 				</div>
 			</div>
-    </div>
+		</div>
 	</div>
 </template>
 
 <style>
-.avatar-button :hover {
-	cursor: pointer;
-	opacity: 0.6;
-}
-
-.avatar-button {
-	align-content: center;
-	text-align: center;
-	position: absolute;
-	background-color: lightgray;
-	opacity: 0.4;
-	border-radius: 50%;
-	width: 50px;
-	height: 50px;
-}
-
 .change-password {
 	display: flex;
 	flex-direction: column;

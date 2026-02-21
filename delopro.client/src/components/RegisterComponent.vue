@@ -4,9 +4,9 @@ import { helper } from '@/helper/helper.js'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
 import CaptchaComponent from '@/components/CaptchaComponent.vue'
 import ConfirmAgreement from './ConfirmAgreement.vue'
+import InputComponent from './InputComponent.vue'
 
 const props = defineProps({
 	pending: {
@@ -97,114 +97,95 @@ function setCaptchaMatch(isMatch) {
 </script>
 
 <template>
-	<form @submit.prevent="handleSend">
-		<div class="register-inputs">
-			<div class="register-input">
-				<span>Имя:</span>
-				<InputText
-					v-model="registerModel.firstName"
-					type="text"
-					maxlength="30"
-				/>
-			</div>
-			<div class="register-input">
-				<span>
-					Никнэйм:
-					<span class="red-star">
-						*
-						<span v-if="showNicknameError">Никнэйм занят</span>
-					</span>
-				</span>
-				<InputText
-					v-model="registerModel.nickname"
-					@input.prevent="handleNicknameMatch"
-					type="text"
-					maxlength="30"
-					required
-				/>
-			</div>
-			<div class="register-input">
-				<span>
-					Email:
-					<span class="red-star">
-						*
-						<span v-if="showEmailError">Email занят</span>
-					</span>
-				</span>
-				<InputText
-					v-model="registerModel.email"
-					@input.prevent="handleEmailMatch"
-					type="email"
-					maxlength="50"
-					required
-				/>
-			</div>
-			<div class="register-input">
-				<span>
-					Пароль:
-					<span class="red-star">
-						*
-						<span v-if="showPasswordsError">Пароли не совпадают</span>
-					</span>
-				</span>
-				<InputText
-					v-model="registerModel.password"
-					type="password"
-					maxlength="30"
-					required
-				/>
-			</div>
-			<div class="register-input">
-				<span>
-					Повторите пароль:
-					<span class="red-star">*</span>
-				</span>
-				<InputText
-					v-model="repeatPassword"
-					type="password"
-					maxlength="30"
-					required
-				/>
-			</div>
-			<CaptchaComponent @captcha-match="setCaptchaMatch"></CaptchaComponent>
+	<div class="register-inputs">
+		<form @submit.prevent="handleSend">
+			<InputComponent
+				title="Имя"
+				v-model="registerModel.firstName"
+				:maxlength="30"
+			></InputComponent>
+			<InputComponent
+				title="Никнэйм"
+				v-model="registerModel.nickname"
+				errorText="Никнэйм занят"
+				:showError="showNicknameError"
+				:onInput="handleNicknameMatch"
+				:maxLength="30"
+				:required="true"
+				:showRedStar="true"
+			></InputComponent>
+			<InputComponent
+				title="Email"
+				v-model="registerModel.email"
+				errorText="Email занят"
+				:showError="showEmailError"
+				:onInput="handleEmailMatch"
+				type="email"
+				:required="true"
+				:showRedStar="true"
+			></InputComponent>
+			<InputComponent
+				title="Пароль"
+				v-model="registerModel.password"
+				type="password"
+				:maxLength="30"
+				:required="true"
+				:showRedStar="true"
+			></InputComponent>
+			<InputComponent
+				title="Повторите пароль"
+				v-model="repeatPassword"
+				errorText="Пароли не совпадают"
+				:showError="showPasswordsError"
+				type="password"
+				:maxLength="30"
+				:required="true"
+				:showRedStar="true"
+			></InputComponent>
+
+			<CaptchaComponent
+				@captcha-match="setCaptchaMatch"
+				style="padding: 10px 0 10px 0"
+			></CaptchaComponent>
 			<ConfirmAgreement
 				@agreement-checked="isAgreementChecked = !isAgreementChecked"
 				:isAgreementChecked="isAgreementChecked"
 			></ConfirmAgreement>
-		</div>
-		<hr />
-		<div class="buttons">
-			<Button
-				severity="secondary"
-				type="submit"
-				:disabled="isDisabledSendButton"
-			>
-				Отправить
-			</Button>
-			<Button
-				severity="contrast"
-				type="button"
-				@click="router.push('/')"
-			>
-				Отменить
-			</Button>
-		</div>
-	</form>
+
+			<hr />
+			<div class="buttons">
+				<Button
+					severity="secondary"
+					type="submit"
+					:disabled="isDisabledSendButton"
+				>
+					Отправить
+				</Button>
+				<Button
+					severity="contrast"
+					type="button"
+					@click="router.push('/')"
+				>
+					Отменить
+				</Button>
+			</div>
+		</form>
+	</div>
 </template>
 
 <style scoped>
 .register-inputs {
-	padding: 10px;
+	margin: 10px;
 	display: flex;
 	flex-direction: column;
 	align-items: start;
 	gap: 10px;
+	width: 60%;
 }
 
 .register-input {
 	display: flex;
 	flex-direction: column;
-	min-width: 50%;
 }
 
 .buttons {

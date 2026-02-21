@@ -1,7 +1,7 @@
 <script setup>
 import Button from 'primevue/button'
-import AccountProperty from './AccountProperty.vue'
-import AccountAvatar from './AccountAvatar.vue'
+import PropertyComponent from './PropertyComponent.vue'
+import AvatarImage from './AvatarImage.vue'
 import { useRouter } from 'vue-router'
 import { helper } from '@/helper/helper'
 
@@ -23,10 +23,10 @@ const emit = defineEmits(['switchToEditMode'])
 <template>
 	<div class="account-properties">
 		<div class="account-header">
-			<AccountAvatar
+			<AvatarImage
 				:avatarPath="props.user.avatarPath"
 				:avatarBase64="props.avatarBase64"
-			></AccountAvatar>
+			></AvatarImage>
 
 			<div class="account-short-info">
 				<span style="font-weight: bold; font-size: large">{{ props.user.nickname }}</span>
@@ -63,45 +63,45 @@ const emit = defineEmits(['switchToEditMode'])
 				style="font-size: 1.3rem; padding-top: 3px"
 			></i>
 		</Button>
-		<AccountProperty
-			propertyName="Никнэйм"
-			:propertyValue="props.user.nickname"
+		<PropertyComponent
+			propName="Никнэйм"
+			:propValue="props.user.nickname"
 		/>
-		<AccountProperty
-			propertyName="Email"
-			:propertyValue="props.user.email"
+		<PropertyComponent
+			propName="Email"
+			:propValue="props.user.email"
 		/>
-		<AccountProperty
-			propertyName="Телефон"
-			:propertyValue="props.user.phone"
+		<PropertyComponent
+			propName="Телефон"
+			:propValue="props.user.phone"
 		/>
-		<AccountProperty
-			propertyName="Имя"
-			:propertyValue="props.user.firstName"
+		<PropertyComponent
+			propName="Имя"
+			:propValue="props.user.firstName"
 		/>
-		<AccountProperty
-			propertyName="Фамилия"
-			:propertyValue="props.user.lastName"
+		<PropertyComponent
+			propName="Фамилия"
+			:propValue="props.user.lastName"
 		/>
-		<AccountProperty
-			propertyName="Дата рождения"
-			:propertyValue="helper.getDateStringForUI(props.user.birthDate, true)"
+		<PropertyComponent
+			propName="Дата рождения"
+			:propValue="helper.getDateStringForUI(props.user.birthDate, true)"
 		/>
-		<AccountProperty
-			propertyName="Страна"
-			:propertyValue="props.user.country"
+		<PropertyComponent
+			propName="Страна"
+			:propValue="props.user.country"
 		/>
-		<AccountProperty
-			propertyName="Город"
-			:propertyValue="props.user.city"
+		<PropertyComponent
+			propName="Город"
+			:propValue="props.user.city"
 		/>
-		<AccountProperty
-			propertyName="Должность"
-			:propertyValue="props.user.userTitle"
+		<PropertyComponent
+			propName="Должность"
+			:propValue="props.user.userTitle"
 		/>
-		<AccountProperty
-			propertyName="О себе"
-			:propertyValue="props.user.info"
+		<PropertyComponent
+			propName="О себе"
+			:propValue="props.user.info"
 		/>
 	</div>
 </template>

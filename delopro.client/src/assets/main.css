@@ -86,10 +86,6 @@ body {
 	background-color: var(--CENTRAL-BCKGND-CLR);
 }
 
-.red-star {
-	color: red;
-}
-
 .email-sent-notification {
 	display: flex;
 	flex-direction: column;
@@ -139,11 +135,6 @@ body {
 	margin-bottom: 20px;
 }
 
-.account-property-name {
-	font-weight: bold;
-	padding-right: 10px;
-}
-
 .account-avatar {
 	width: 150px;
 	height: 150px;
@@ -165,14 +156,10 @@ body {
 }
 
 .account-container {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 60%;
-}
-
-.account-container div{
-  padding-top: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	width: 60%;
 }
 
 @media (max-width: 1500px) {
@@ -214,9 +201,9 @@ body {
 		margin: 0;
 	}
 
-  .account-container {
-    width: 100%;
-  }
+	.account-container {
+		width: 100%;
+	}
 }
 
 @keyframes slide {
