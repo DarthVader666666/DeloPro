@@ -646,12 +646,32 @@ const store = createStore({
 		},
 
 		// FEEDBACK
-		async sendFeedback({ state }, formData) {
-			return axios.post(`${state.serverUrl}/feedback/sendfeedback`, formData, {
-				headers: {
-					Content: 'multipart/form-data',
-				},
-			})
+		async sendFeedback({ commit, state }, formData) {
+			commit('setPending', true)
+			const result = await axios
+				.post(`${state.serverUrl}/feedback/sendfeedback`, formData, {
+					headers: {
+						Content: 'multipart/form-data',
+					},
+				})
+				.then((response) => {
+					if (response.status === 200) {
+						toast.success('Сообщение успешно отправлено')
+						return true
+					}
+					return false
+				})
+				.catch((error) => {
+					if (error.response) {
+						toast.error(error.response.data.errorText)
+						return false
+					}
+				})
+				.finally(() => {
+					commit('setPending', false)
+				})
+
+			return result
 		},
 
 		// MESSAGES
@@ -898,7 +918,7 @@ const store = createStore({
 				})
 				.then(async (response) => {
 					if (response.status === 200) {
-            toast.success(response.data.okText)
+						toast.success(response.data.okText)
 						sessionStorage.removeItem(state.sessionStorageKeys.currentUserKey)
 						sessionStorage.removeItem(state.sessionStorageKeys.usersKey)
 						await dispatch('downloadCurrentUser')

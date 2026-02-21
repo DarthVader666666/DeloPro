@@ -17,7 +17,8 @@ const dateRangeForm = reactive({
 })
 
 onMounted(async () => {
-	dateRangeForm.fromDate = helper.getDateStringForInput(new Date().setDate(1))
+	const dateNow = new Date()
+	dateRangeForm.fromDate = helper.getDateStringForInput(dateNow.setDate(dateNow.getDate() - 30))
 	dateRangeForm.toDate = helper.getDateStringForInput(currentDate)
 
 	await store.dispatch('downloadVisits', dateRangeForm)

@@ -1,28 +1,24 @@
 <script setup>
-import InputText from 'primevue/inputtext'
-import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
-import axios from 'axios'
 import { useStore } from 'vuex'
-import { ref, watch } from 'vue'
-import { useToast } from 'vue-toastification'
+import { computed, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { helper } from '@/helper/helper'
 import SpinningCircle from '@/components/SpinningCircle.vue'
 import CaptchaComponent from '@/components/CaptchaComponent.vue'
 import ConfirmAgreement from '@/components/ConfirmAgreement.vue'
+import InputComponent from '@/components/InputComponent.vue'
 
 const placeholder = 'Должен быть указан Email и/или Номер телефона'
 
 const store = useStore()
-const toast = useToast()
 const router = useRouter()
 
 const isCaptchaMatch = ref(false)
-const pending = ref(false)
+const pending = computed(() => store.getters.getPending)
 const invalid = ref(false)
 const isAgreementChecked = ref(false)
-const messageForm = ref({
+const messageForm = reactive({
 	name: null,
 	email: null,
 	phone: null,
@@ -30,7 +26,7 @@ const messageForm = ref({
 	dateSent: null,
 })
 
-watch(messageForm.value, (oldValue, newValue) => {
+watch(messageForm, (oldValue, newValue) => {
 	if (newValue.email || newValue.phone) {
 		invalid.value = false
 		const email = document.getElementById('email')
@@ -40,35 +36,8 @@ watch(messageForm.value, (oldValue, newValue) => {
 	}
 })
 
-async function handleSendProcess(promise) {
-	if (promise) {
-		pending.value = true
-
-		await promise
-			.then((response) => {
-				if (response.status === 200) {
-					toast.success('Сообщение успешно отправлено')
-					messageForm.value.name = null
-					messageForm.value.email = null
-					messageForm.value.phone = null
-					messageForm.value.text = null
-					messageForm.value.dateSent = null
-					router.push('/')
-				}
-			})
-			.catch((error) => {
-				if (error.response) {
-					toast.error(error.response.data.errorText)
-					isCaptchaMatch.value = false
-				}
-			})
-	}
-
-	pending.value = false
-}
-
-function sendMessage() {
-	if (!(messageForm.value.email || messageForm.value.phone)) {
+async function sendFeedback() {
+	if (!(messageForm.email || messageForm.phone)) {
 		invalid.value = true
 		const email = document.getElementById('email')
 		const phone = document.getElementById('phone')
@@ -79,24 +48,28 @@ function sendMessage() {
 		return
 	}
 
-	if (!messageForm.value.email) {
-		messageForm.value.email = ''
+	if (!messageForm.email) {
+		messageForm.email = ''
 	}
 
-	if (!messageForm.value.phone) {
-		messageForm.value.phone = ''
+	if (!messageForm.phone) {
+		messageForm.phone = ''
 	}
 
 	var formData = new FormData()
-	formData.append('name', messageForm.value.name)
-	formData.append('email', messageForm.value.email)
-	formData.append('phone', messageForm.value.phone)
-	formData.append('text', messageForm.value.text)
+	formData.append('name', messageForm.name)
+	formData.append('email', messageForm.email)
+	formData.append('phone', messageForm.phone)
+	formData.append('text', messageForm.text)
 	formData.append('dateSent', helper.getCurrentDateString())
 
-	const promise = store.dispatch('sendFeedback', formData)
+	const result = await store.dispatch('sendFeedback', formData)
 
-	handleSendProcess(promise)
+	if (result) {
+		router.push('/')
+	} else {
+		isCaptchaMatch.value = false
+	}
 }
 
 function setCaptchaMatch(isMatch) {
@@ -105,113 +78,82 @@ function setCaptchaMatch(isMatch) {
 </script>
 
 <template>
-	<div class="feedback-container">
-		<div v-if="!pending">
-			<form
-				@submit.prevent="sendMessage"
-				class="send-message-form"
-			>
-				<div class="send-message-input">
-					<span>Ваше имя:</span>
-					<InputText
-						required
-						v-model="messageForm.name"
-					></InputText>
-				</div>
-				<h4 style="margin: 10px 0 0 0">Email или номер телефона</h4>
-				<div class="send-message-input">
-					<span>Ваш Email:</span>
-					<InputText
-						type="email"
-						:invalid="invalid"
-						v-model="messageForm.email"
-						id="email"
-					></InputText>
-				</div>
-				<div class="send-message-input">
-					<span>Ваш номер телефона:</span>
-					<InputText
-						type="tel"
-						:invalid="invalid"
-						v-model="messageForm.phone"
-						id="phone"
-					></InputText>
-				</div>
-				<div class="send-message-input">
-					<span>Ваше сообщение:</span>
-					<Textarea
-						v-model="messageForm.text"
-						required
-					></Textarea>
-				</div>
-				<CaptchaComponent @captcha-match="setCaptchaMatch"></CaptchaComponent>
-				<ConfirmAgreement
-					@agreement-checked="isAgreementChecked = !isAgreementChecked"
-					:isAgreementChecked="isAgreementChecked"
-				></ConfirmAgreement>
-				<div>
-					<Button
-						severity="secondary"
-						:disabled="!(isCaptchaMatch && isAgreementChecked)"
-						type="submit"
-						raised
-					>
-						Отправить
-					</Button>
-					<Button
-						severity="contrast"
-						raised
-						@click="router.push('/')"
-					>
-						Отменить
-					</Button>
-				</div>
-			</form>
-		</div>
-		<SpinningCircle
-			v-else
-			title="Сообщение отправляется..."
-		></SpinningCircle>
-	</div>
-</template>
+	<div v-if="!pending">
+		<form
+			class="feedback-container"
+			@submit.prevent="sendFeedback"
+		>
+			<InputComponent
+				title="Ваше имя"
+				:required="true"
+				v-model="messageForm.name"
+				:titleFont="{ fontWeight: 'normal' }"
+			></InputComponent>
 
+			<h3 style="margin: 20px 0 0 0">Email или номер телефона</h3>
+
+			<InputComponent
+				title="Ваш Email"
+				:required="true"
+				:invalid="invalid"
+				v-model="messageForm.email"
+				type="email"
+				:titleFont="{ fontWeight: 'normal' }"
+			></InputComponent>
+			<InputComponent
+				title="Ваш номер телефона"
+				type="tel"
+				:invalid="invalid"
+				v-model="messageForm.phone"
+				:titleFont="{ fontWeight: 'normal' }"
+			></InputComponent>
+			<InputComponent
+				title="Ваше сообщение"
+				:is-textarea="true"
+				:required="true"
+				v-model="messageForm.text"
+				:titleFont="{ fontWeight: 'normal' }"
+			></InputComponent>
+			<CaptchaComponent
+				style="padding: 10px 0 10px 0"
+				@captcha-match="setCaptchaMatch"
+			></CaptchaComponent>
+			<ConfirmAgreement
+				@agreement-checked="isAgreementChecked = !isAgreementChecked"
+				:isAgreementChecked="isAgreementChecked"
+			></ConfirmAgreement>
+			<div style="padding-top: 10px; display: flex; gap: 10px">
+				<Button
+					severity="secondary"
+					:disabled="!(isCaptchaMatch && isAgreementChecked)"
+					type="submit"
+					raised
+				>
+					Отправить
+				</Button>
+				<Button
+					severity="contrast"
+					raised
+					@click="router.push('/')"
+				>
+					Отменить
+				</Button>
+			</div>
+		</form>
+	</div>
+	<SpinningCircle
+		v-else
+		title="Сообщение отправляется..."
+	></SpinningCircle>
+</template>
 <style scoped>
-.feedback-container form {
+.feedback-container {
+	width: 60%;
 	padding: 10px;
 }
 
-.feedback-container h1 {
-	margin-top: 0;
-}
-
-.send-message-form {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	align-items: start;
-}
-
-.send-message-input {
-	display: flex;
-	flex-direction: column;
-	min-width: 70%;
-}
-
-.send-message-input textarea {
-	min-height: 200px;
-	max-height: 250px;
-}
-
-button {
-	margin: 5px;
-}
-
-@media (max-width: 800px) {
+@media (max-width: 1100px) {
 	.feedback-container {
-		padding: 15px;
-	}
-
-	.send-message-input {
 		width: 100%;
 	}
 }

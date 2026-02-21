@@ -246,4 +246,7 @@ export const helper = {
 			.get(`${store.state.serverUrl}/authentication/checkauthentication`, { withCredentials: true })
 			.then((response) => response.data)
 	},
+	resetObject(obj) {
+		Object.keys(obj).forEach((key) => (obj[key] = null))
+	},
 }

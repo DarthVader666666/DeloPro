@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-
-using Delopro.Data.Entities;
+﻿using Delopro.Data.Entities;
 using Delopro.Data.Interfaces;
 using Delopro.Server.Models;
 
@@ -16,12 +14,10 @@ namespace Delopro.Server.Controllers
     public class VisitsController: ControllerBase
     {
         private readonly IRepository<Visit> _visitRepository;
-        private readonly IMapper _mapper;
 
-        public VisitsController(IRepository<Visit> visitRepository, IMapper mapper)
+        public VisitsController(IRepository<Visit> visitRepository)
         {
             _visitRepository = visitRepository;
-            _mapper = mapper;
         }
 
         [HttpGet]
@@ -32,7 +28,8 @@ namespace Delopro.Server.Controllers
 
             if (fromDate is null)
             {
-                fromDate = new DateTime(nowDate.Year, nowDate.Month, 1);
+                var date = nowDate.AddDays(-30);
+                fromDate = new DateTime(date.Year, date.Month, date.Day);
             }
             else
             {

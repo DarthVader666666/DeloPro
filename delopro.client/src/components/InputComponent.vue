@@ -55,6 +55,16 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	invalid: {
+		type: Boolean,
+		default: false,
+	},
+	titleFont: {
+		type: Object,
+		default: () => ({
+			fontWeight: 'bold',
+		}),
+	},
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -71,7 +81,7 @@ function onInput(event) {
 </script>
 <template>
 	<div class="input-container">
-		<span>
+		<span :style="props.titleFont">
 			{{ props.title }}:
 			<span
 				v-if="props.showRedStar"
@@ -92,6 +102,7 @@ function onInput(event) {
 			></i>
 		</span>
 		<Textarea
+			style="height: 120px"
 			v-if="props.isTextarea"
 			:placeholder="props.placeholder"
 			:value="props.modelValue"
@@ -108,6 +119,7 @@ function onInput(event) {
 			@input.prevent="onInput"
 			:maxlength="props.maxlength"
 			:required="props.required"
+			:invalid="props.invalid"
 		></InputText>
 	</div>
 </template>
@@ -120,7 +132,6 @@ function onInput(event) {
 }
 
 .input-container span {
-	font-weight: bold;
 	padding: 3px;
 }
 </style>
