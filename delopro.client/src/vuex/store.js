@@ -799,7 +799,8 @@ const store = createStore({
 		},
 
 		// REGISTER
-		async registerUser({ state }, registerRequest) {
+		async registerUser({ commit, state }, registerRequest) {
+			commit('setPending', true)
 			return await axios
 				.post(`${state.serverUrl}/register/registeruser`, registerRequest, {
 					headers: {
@@ -817,6 +818,9 @@ const store = createStore({
 						toast.error(error.response.data.errorText)
 					}
 					return false
+				})
+				.finally(() => {
+					commit('setPending', false)
 				})
 		},
 		async checkUserExists({ state }, { nickname, email }) {
@@ -978,13 +982,32 @@ const store = createStore({
 					}
 				})
 		},
-		async recoverPassword({ state }, email) {
-			return axios.post(`${state.serverUrl}/account/recoverpassword`, null, {
-				headers: {
-					Content: 'application/json',
-					Email: `${email}`,
-				},
-			})
+		async recoverPassword({ commit, state }, email) {
+			commit('setPending', true)
+			return await axios
+				.post(`${state.serverUrl}/account/recoverpassword`, null, {
+					headers: {
+						Content: 'application/json',
+						Email: `${email}`,
+					},
+				})
+				.then((response) => {
+					if (response.status === 200) {
+						toast.success('Сообщение успешно отправлено')
+						router.push('/')
+						return true
+					}
+					return false
+				})
+				.catch((error) => {
+					if (error.response) {
+						toast.error(error.response.data.errorText)
+					}
+					return false
+				})
+				.finally(() => {
+					commit('setPending', false)
+				})
 		},
 		async checkPassword({ state }, password) {
 			return axios

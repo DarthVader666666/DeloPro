@@ -3,6 +3,7 @@ using Delopro.Data.Entities;
 using Delopro.Data.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 
 using PasswordGenerator;
 
@@ -45,7 +46,7 @@ namespace Delopro.Bll.Services
 
         public async Task<User?> GetUserByAsync(string? nickname = null, string? email = null)
         {
-            if (nickname == null)
+            if (nickname.IsNullOrEmpty())
             {
                 return await _userRepository.FindByAsync(_cryptoService.Encrypt(email));
             }

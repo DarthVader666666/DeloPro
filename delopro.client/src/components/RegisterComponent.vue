@@ -15,7 +15,7 @@ const props = defineProps({
 	},
 })
 
-const emit = defineEmits(['email-sent'])
+const emit = defineEmits(['register-user'])
 const store = useStore()
 const router = useRouter()
 
@@ -60,8 +60,8 @@ const showPasswordsError = computed(() => {
 	}
 })
 
-function handleSend() {
-	const accountForm = {
+function sendRegisterRequest() {
+	const registerRequest = {
 		nickname: registerModel.value.nickname,
 		email: registerModel.value.email,
 		firstName: registerModel.value.firstName,
@@ -69,8 +69,7 @@ function handleSend() {
 		registerDate: helper.getCurrentDateString(),
 	}
 
-	const promise = store.dispatch('registerUser', accountForm)
-	emit('email-sent', promise)
+	emit('register-user', registerRequest)
 }
 
 async function doesUserExist(nickname, email) {
@@ -98,7 +97,7 @@ function setCaptchaMatch(isMatch) {
 
 <template>
 	<div class="register-inputs">
-		<form @submit.prevent="handleSend">
+		<form @submit.prevent="sendRegisterRequest">
 			<InputComponent
 				title="Имя"
 				v-model="registerModel.firstName"

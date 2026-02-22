@@ -14,13 +14,19 @@ import { helper } from './helper/helper'
 axios.defaults.withCredentials = true
 
 async function bootstrap() {
-	if (!store.getters.getCurrentUser && (await helper.isAuthenticated())) {
-		await store.dispatch('downloadCurrentUser')
-	}
+	store.commit('setPending', true)
 
-	await store.dispatch('downloadChapters')
-	await store.dispatch('downloadDocumentNodes')
-	await store.dispatch('downloadImageNames')
+	try {
+		if (!store.getters.getCurrentUser && (await helper.isAuthenticated())) {
+			await store.dispatch('downloadCurrentUser')
+		}
+
+		await store.dispatch('downloadChapters')
+		await store.dispatch('downloadDocumentNodes')
+		await store.dispatch('downloadImageNames')
+	} finally {
+		store.commit('setPending', false)
+	}
 }
 
 createApp(App)

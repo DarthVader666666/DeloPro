@@ -1,32 +1,21 @@
 <script setup>
 import RegisterComponent from '@/components/RegisterComponent.vue'
 import SpinningCircle from '@/components/SpinningCircle.vue'
-import { ref } from 'vue'
-import { useToast } from 'vue-toastification'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import Button from 'primevue/button'
 
 const store = useStore()
-const toast = useToast()
 const router = useRouter()
+const pending = computed(() => store.getters.getPending)
 
-const pending = ref(false)
 const showEmailNotification = ref(false)
 
-const handlePending = async (promise) => {
-	if (promise) {
-		pending.value = true;
-		store.commit('setTitle', null);
-
-		showEmailNotification.value = await promise.catch((error) => {
-			if (error.response) {
-				toast.error(error.response.data.errorText)
-			}
-		})
-	}
-
-  pending.value = false
+async function registerUser(registerRequest) {
+	const result = await store.dispatch('registerUser', registerRequest)
+	store.commit('setTitle', null)
+	showEmailNotification.value = result
 }
 </script>
 
@@ -35,7 +24,7 @@ const handlePending = async (promise) => {
 		class="email-sent-notification"
 		v-if="showEmailNotification"
 	>
-		<h3>Письмо успешно отправлено</h3>
+		<h3>Пользователь успешно зарегестрирован</h3>
 
 		<h3>Проверьте свой Email</h3>
 
@@ -53,11 +42,11 @@ const handlePending = async (promise) => {
 	</div>
 	<SpinningCircle
 		v-else-if="pending"
-		title="Письмо отправляется..."
+		title="Пожалуйста, подождите..."
 	/>
 	<RegisterComponent
 		v-else
 		:pending="pending"
-		@email-sent="handlePending"
+		@register-user="registerUser"
 	/>
 </template>

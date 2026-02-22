@@ -2,46 +2,27 @@
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { useStore } from 'vuex'
-import { ref } from 'vue'
-import { useToast } from 'vue-toastification'
+import { computed, ref } from 'vue'
+
 import { useRouter } from 'vue-router'
 import SpinningCircle from '@/components/SpinningCircle.vue'
 import CaptchaComponent from '@/components/CaptchaComponent.vue'
 
 const store = useStore()
-const toast = useToast()
 const router = useRouter()
 
+const pending = computed(() => store.getters.getPending)
 const isCaptchaMatch = ref(false)
-const pending = ref(false)
 const email = ref(null)
 
-async function handleSendProcess(promise) {
-	if (promise) {
-		pending.value = true
+async function sendRecoverPasswordRequest() {
+	const result = store.dispatch('recoverPassword', email.value)
 
-		await promise
-			.then((response) => {
-				if (response.status === 200) {
-					toast.success('Сообщение успешно отправлено')
-					email.value = null
-					router.push('/')
-				}
-			})
-			.catch((error) => {
-				if (error.response) {
-					toast.error(error.response.data.errorText)
-					isCaptchaMatch.value = false
-				}
-			})
+	if (!result) {
+		email.value = null
 	}
 
-	pending.value = false
-}
-
-function sendRecoverPasswordRequest() {
-	const promise = store.dispatch('recoverPassword', email.value)
-	handleSendProcess(promise)
+	isCaptchaMatch.value = false
 }
 
 function setCaptchaMatch(isMatch) {
@@ -87,7 +68,7 @@ function setCaptchaMatch(isMatch) {
 		</div>
 		<SpinningCircle
 			v-else
-			title="Сообщение отправляется..."
+			title="Пожалуйста, подождите..."
 		></SpinningCircle>
 	</div>
 </template>

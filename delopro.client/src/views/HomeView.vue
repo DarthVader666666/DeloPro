@@ -1,107 +1,113 @@
 <script setup>
-import { useStore } from 'vuex';
-import { computed } from 'vue';
-import { RouterLink } from 'vue-router';
-import { helper } from '@/helper/helper';
-import SpinningCircle from '@/components/SpinningCircle.vue';
+import { useStore } from 'vuex'
+import { computed } from 'vue'
+import { RouterLink } from 'vue-router'
+import { helper } from '@/helper/helper'
 
-const store = useStore();
-const pending = computed(() => store.getters.getPending);
-const chapters = computed(() => store.getters.getChapters);
-
+const store = useStore()
+const chapters = computed(() => store.getters.getChapters)
 </script>
 
 <template>
-    <div class="chapters-container">
-        <div class="chapters-header">
-            <h1>Документационное обеспечение управления</h1>
-        </div>
-        <div class="chapter-links">
-        <div v-if="pending" style="display: flex; flex-direction: column; align-items: center;">
-            <h3>Загрузка...</h3>
-            <SpinningCircle></SpinningCircle>
-        </div>
-            <div v-else v-for="(chapter, index) in chapters" :key="index" class="chapter">
-                <RouterLink :to="`/chapters/${chapter.chapterId}`+`${chapter.themes.length > 0 ? '/' + chapter.themes[0].themeId : '' }`" >
-                    <img :src="helper.getImagePath() + chapter.imagePath" width="150px" height="auto">
-                    <p>{{ chapter.chapterTitle }}</p>
-                </RouterLink>
-            </div>
-        </div>
-    </div>
+	<div class="chapters-container">
+		<div class="chapters-header">
+			<h1>Документационное обеспечение управления</h1>
+		</div>
+		<div class="chapter-links">
+			<div
+				v-for="(chapter, index) in chapters"
+				:key="index"
+				class="chapter"
+			>
+				<RouterLink
+					:to="
+						`/chapters/${chapter.chapterId}` +
+						`${chapter.themes.length > 0 ? '/' + chapter.themes[0].themeId : ''}`
+					"
+				>
+					<img
+						:src="helper.getImagePath() + chapter.imagePath"
+						width="150px"
+						height="auto"
+					/>
+					<p>{{ chapter.chapterTitle }}</p>
+				</RouterLink>
+			</div>
+		</div>
+	</div>
 </template>
 
 <style scoped>
 .chapters-container h1 {
-    text-align: center;
-    margin: 15px;
-    filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.5));
-    color: var(--HOME-HEADER-COLOR);
+	text-align: center;
+	margin: 15px;
+	filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.5));
+	color: var(--HOME-HEADER-COLOR);
 }
 
 .chapters-header {
-    display: flex;
-    flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .chapter-links {
-    display: flex ;
-    flex-flow: row wrap;
-    justify-content: space-around;
-    padding: 15px;
-    gap: 30px;
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-around;
+	padding: 15px;
+	gap: 30px;
 }
 
 .chapter {
-    padding: 10px;
-    max-width: 130px;
-    max-height: 150px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
+	padding: 10px;
+	max-width: 130px;
+	max-height: 150px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-decoration: none;
 }
 
 .chapter a {
-    text-decoration: none;
-    color: var(--TEXT-COLOR);
+	text-decoration: none;
+	color: var(--TEXT-COLOR);
 }
 
 .chapter p {
-    font-size: medium;
-    text-align: center;
-    font-weight: bold;
+	font-size: medium;
+	text-align: center;
+	font-weight: bold;
 }
 
 .chapter img:hover {
-    -webkit-transform: scale(1.1);
-    -moz-transform: scale(1.1);
-    -o-transform: scale(1.1);
-    transform: scale(1.1);
+	-webkit-transform: scale(1.1);
+	-moz-transform: scale(1.1);
+	-o-transform: scale(1.1);
+	transform: scale(1.1);
 
-    cursor: pointer;
+	cursor: pointer;
 }
 
 .chapter img {
-    -webkit-transition: all 0.2s ease-in-out;
-    -moz-transition: all 0.2s ease-in-out;
-    -o-transition: all 0.2s ease-in-out;
-    transition: all 0.2s ease-in-out;
-    filter: drop-shadow(var(--PNG-IMAGE-SHADOW));
+	-webkit-transition: all 0.2s ease-in-out;
+	-moz-transition: all 0.2s ease-in-out;
+	-o-transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;
+	filter: drop-shadow(var(--PNG-IMAGE-SHADOW));
 }
 
-@media(max-width: 800px) {
-  .chapter img {
-    max-width: 120px;
-    max-height: auto;
-  }
+@media (max-width: 800px) {
+	.chapter img {
+		max-width: 120px;
+		max-height: auto;
+	}
 
-  .chapter p {
-    font-size: small;
-  }
+	.chapter p {
+		font-size: small;
+	}
 
-  h1 {
-    font-size: large;
-  }
+	h1 {
+		font-size: large;
+	}
 }
 </style>
