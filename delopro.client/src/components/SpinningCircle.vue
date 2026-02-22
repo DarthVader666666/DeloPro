@@ -2,13 +2,13 @@
 const props = defineProps({
 	text: {
 		typeof: String,
-		default: '',
+		default: 'Загрузка...',
 	},
 })
 </script>
 <template>
 	<div class="spinning-circle">
-		<h2>{{ props.title }}</h2>
+		<h2>{{ props.text }}</h2>
 		<div id="wrapper">
 			<div class="profile-main-loader">
 				<div class="loader">

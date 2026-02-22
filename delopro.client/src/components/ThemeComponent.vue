@@ -111,7 +111,6 @@ onMounted(() => {
 			v-if="pending"
 			style="display: flex; flex-direction: column; align-items: center"
 		>
-			<h3>Загрузка...</h3>
 			<SpinningCircle></SpinningCircle>
 		</div>
 		<div

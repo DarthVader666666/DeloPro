@@ -5,10 +5,8 @@ import Button from 'primevue/button'
 import { RouterView } from 'vue-router'
 import { useStore } from 'vuex'
 import { computed, onMounted, watch } from 'vue'
-import SpinningCircle from './SpinningCircle.vue'
 
 const store = useStore()
-const pending = computed(() => store.getters.getPending)
 const title = computed(() => store.getters.getTitle)
 const showRightColumn = computed(() => store.getters.getShowRightColumn)
 
@@ -63,11 +61,7 @@ function hideDocuments() {
 	</div>
 	<div class="main-container">
 		<LeftColumn />
-		<SpinningCircle v-if="pending"></SpinningCircle>
-		<RouterView
-			v-else
-			id="central-container"
-		/>
+		<RouterView id="central-container" />
 		<RightColumn />
 		<div class="document-button">
 			<Button

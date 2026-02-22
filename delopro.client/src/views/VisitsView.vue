@@ -4,8 +4,10 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import InputText from 'primevue/inputtext'
 import { helper } from '@/helper/helper'
+import SpinningCircle from '@/components/SpinningCircle.vue'
 
 const store = useStore()
+const pending = computed(() => store.getters.getPending)
 const visitResponse = computed(() => store.getters.getVisits)
 const currentDate = new Date()
 
@@ -86,7 +88,11 @@ const setChartOptions = () => {
 </script>
 
 <template>
-	<div class="chart-component">
+	<SpinningCircle v-if="pending"></SpinningCircle>
+	<div
+		v-else
+		class="chart-component"
+	>
 		<Chart
 			style="height: 60%"
 			type="line"

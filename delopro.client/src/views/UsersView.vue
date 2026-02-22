@@ -8,8 +8,10 @@ import InputText from 'primevue/inputtext'
 import Column from 'primevue/column'
 import Tag from 'primevue/tag'
 import UserComponent from '@/components/UserComponent.vue'
+import SpinningCircle from '@/components/SpinningCircle.vue'
 
 const store = useStore()
+const pending = computed(() => store.getters.getPending)
 const users = computed(() => store.getters.getUsers)
 
 const filters = ref({
@@ -39,7 +41,11 @@ function closeUserModal() {
 </script>
 
 <template>
-	<div class="users-container">
+	<SpinningCircle v-if="pending"></SpinningCircle>
+	<div
+		v-else
+		class="users-container"
+	>
 		<DataTable
 			:value="users"
 			paginator

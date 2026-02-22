@@ -24,8 +24,8 @@ namespace Delopro.Bll.Services
 
             var smtp = new SmtpClient
             {
-                Host = _configuration["SmtpEmailSender:Host"] ?? "", // Or your SMTP provider
-                Port = 587, // Typically 587 for TLS, 465 for SSL
+                Host = _configuration["SmtpEmailSender:Host"] ?? "",
+                Port = 587,
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
