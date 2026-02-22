@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { helper } from '@/helper/helper'
 import Button from 'primevue/button'
 import { useStore } from 'vuex'
@@ -12,7 +12,7 @@ import axios from 'axios'
 const store = useStore()
 const toast = useToast()
 
-const updatedUser = ref({
+const updatedUser = reactive({
 	userId: null,
 	deletionDate: null,
 	status: null,
@@ -29,29 +29,29 @@ const disableSave = ref(true)
 const emit = defineEmits(['user-shown'])
 
 function defineUpdatedUserFileds(user = null) {
-	updatedUser.value.userId = user.userId
-	updatedUser.value.deletionDate = user.deletionDate
-	updatedUser.value.status = user.status
-	updatedUser.value.roles = user.roles
+	updatedUser.userId = user.userId
+	updatedUser.deletionDate = user.deletionDate
+	updatedUser.status = user.status
+	updatedUser.roles = user.roles
 
 	selectedRoles.value = helper.roles.filter((x) => user.roles.includes(helper.roles.indexOf(x)))
 }
 
 function handleUpdateStatus(status) {
 	disableSave.value = false
-	updatedUser.value.status = helper.userStatuses.indexOf(status)
+	updatedUser.status = helper.userStatuses.indexOf(status)
 
 	if (status === 'Удален') {
 		let deletionDate = helper.getFutureDate(30)
-		updatedUser.value.deletionDate = deletionDate
+		updatedUser.deletionDate = deletionDate
 	} else {
-		updatedUser.value.deletionDate = null
+		updatedUser.deletionDate = null
 	}
 }
 
 async function handleUpdateRoles(roles) {
 	disableSave.value = false
-	updatedUser.value.roles = roles.map((x) => helper.roles.indexOf(x))
+	updatedUser.roles = roles.map((x) => helper.roles.indexOf(x))
 }
 
 function handleCancel() {
@@ -62,7 +62,7 @@ async function updateUser() {
 	const url = store.state.serverUrl
 
 	await axios
-		.put(`${url}/administration/updateuser`, updatedUser.value, {
+		.put(`${url}/administration/updateuser`, updatedUser, {
 			headers: {
 				Content: 'application/json',
 				Accept: '*/*',
@@ -163,7 +163,7 @@ async function updateUser() {
 				@update:model-value="handleUpdateStatus"
 				:options="helper.userStatuses"
 				class="selector"
-        appendTo="self"
+				appendTo="self"
 			>
 				<template #value>
 					<Tag

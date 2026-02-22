@@ -247,6 +247,8 @@ export const helper = {
 			.then((response) => response.data)
 	},
 	resetObject(obj) {
-		Object.keys(obj).forEach((key) => (obj[key] = null))
+		Object.keys(obj).forEach((key) =>
+			obj[key] === false || obj[key] === true ? (obj[key] = false) : (obj[key] = null),
+		)
 	},
 }

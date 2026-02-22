@@ -37,9 +37,9 @@ namespace Delopro.Bll.Services
             return httpContext.User?.Identity?.IsAuthenticated ?? false;
         }
 
-        public async Task<User?> GetCurrentUserAsync(HttpContext httpContext)
+        public async Task<User?> GetCurrentUserAsync(HttpContext? httpContext)
         {
-            var nickname = httpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;
+            var nickname = httpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;
 
             return await GetUserByAsync(nickname);
         }
@@ -116,12 +116,11 @@ namespace Delopro.Bll.Services
             var emailByteString = GetByteString(key2, user.Email);
 
             var url = 
-                $"<button type=\"button\" style=\"border: black; border-width: 1px\">" +
                 $"<a href='{serverUrl}confirmuser?{key1}={nicknameByteString}{and}{key2}={emailByteString}'" +
-                $"style=\"text-decoration: none; color: black\">" +
+                $"style='font-style: italic; color: darkslategrey; text-decoration: none; border-radius: 10px; background: lightskyblue; " +
+                $"padding: 10px; box-shadow: 2px 2px 8px -3px black;'>" +
                 $"Подтвердить регистрацию" +
-                $"</a>" +
-                $"</button>";
+                $"</a>";
 
             var result = await Task.Run(() => _emailSender.SendEmail(user.Email ?? string.Empty, "Пожалуйста, подтвердите регистрацию в DeloPro", url));
 

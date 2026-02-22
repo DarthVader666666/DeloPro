@@ -97,6 +97,7 @@ const setChartOptions = () => {
 			<div>
 				<label>с:</label>
 				<InputText
+					style="width: 80%"
 					v-model="dateRangeForm.fromDate"
 					type="date"
 					@change="handleDateChange"
@@ -105,6 +106,7 @@ const setChartOptions = () => {
 			<div>
 				<label>по:</label>
 				<InputText
+					style="width: 80%"
 					v-model="dateRangeForm.toDate"
 					type="date"
 					@change="handleDateChange"
@@ -123,8 +125,7 @@ const setChartOptions = () => {
 
 .from-to {
 	display: flex;
-	gap: 10px;
-	padding-top: 3%;
 	justify-content: center;
+	padding: 15px 0 0 15px;
 }
 </style>

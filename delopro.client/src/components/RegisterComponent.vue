@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { helper } from '@/helper/helper.js'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
@@ -7,13 +7,6 @@ import Button from 'primevue/button'
 import CaptchaComponent from '@/components/CaptchaComponent.vue'
 import ConfirmAgreement from './ConfirmAgreement.vue'
 import InputComponent from './InputComponent.vue'
-
-const props = defineProps({
-	pending: {
-		type: Boolean,
-		default: false,
-	},
-})
 
 const emit = defineEmits(['register-user'])
 const store = useStore()
@@ -24,7 +17,7 @@ const isAgreementChecked = ref(false)
 const showNicknameError = ref(false)
 const showEmailError = ref(false)
 const repeatPassword = ref(null)
-const registerModel = ref({
+const registerModel = reactive({
 	nickname: null,
 	email: null,
 	firstName: null,
@@ -34,22 +27,21 @@ const registerModel = ref({
 const isDisabledSendButton = computed(() => {
 	return (
 		!(
-			registerModel.value.nickname &&
-			registerModel.value.email &&
-			registerModel.value.password &&
+			registerModel.nickname &&
+			registerModel.email &&
+			registerModel.password &&
 			isMatchPassword.value &&
 			isCaptchaMatch.value &&
 			isAgreementChecked.value
 		) ||
 		showNicknameError.value ||
 		showEmailError.value ||
-		showPasswordsError.value ||
-		props.pending
+		showPasswordsError.value
 	)
 })
 
 const isMatchPassword = computed(() => {
-	return registerModel.value.password === repeatPassword.value
+	return registerModel.password === repeatPassword.value
 })
 
 const showPasswordsError = computed(() => {
@@ -62,10 +54,10 @@ const showPasswordsError = computed(() => {
 
 function sendRegisterRequest() {
 	const registerRequest = {
-		nickname: registerModel.value.nickname,
-		email: registerModel.value.email,
-		firstName: registerModel.value.firstName,
-		password: registerModel.value.password,
+		nickname: registerModel.nickname,
+		email: registerModel.email,
+		firstName: registerModel.firstName,
+		password: registerModel.password,
 		registerDate: helper.getCurrentDateString(),
 	}
 

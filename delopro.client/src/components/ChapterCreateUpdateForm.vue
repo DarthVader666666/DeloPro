@@ -43,19 +43,9 @@ const props = defineProps({
 
 const chapter = reactive(props.chapter)
 
-function clearChapter() {
-	;((chapter.chapterId = null),
-		(chapter.chapterTitle = null),
-		(chapter.imagePath = null),
-		(chapter.userId = null),
-		(chapter.dateCreated = null),
-		(chapter.dateDeleted = null),
-		(chapter.themes = []))
-}
-
 onMounted(() => {
 	if (props.doClearChapter) {
-		clearChapter()
+		helper.resetObject(chapter)
 	}
 })
 
@@ -114,7 +104,7 @@ async function handleDeleteChapter() {
 					@update:model-value="handleSelect"
 					:options="imageNames"
 					placeholder="Путь к картинке"
-          appendTo="self"
+					appendTo="self"
 				/>
 			</div>
 			<div class="buttons">

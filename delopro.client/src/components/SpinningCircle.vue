@@ -1,8 +1,8 @@
 <script setup>
 const props = defineProps({
-	title: {
+	text: {
 		typeof: String,
-		default: null,
+		default: '',
 	},
 })
 </script>

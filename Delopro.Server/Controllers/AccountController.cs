@@ -208,7 +208,14 @@ namespace Delopro.Server.Controllers
         [Route("[action]")]
         public async Task<IActionResult> ChangePassword()
         {
-            var password = HttpContext.Request.Headers["Password"].ToString();
+            var headers = HttpContext?.Request?.Headers;
+
+            if (headers is null)
+            {
+                return BadRequest("Новый пароль не указан");
+            }
+
+            var password = headers["Password"].ToString();
 
             try
             {

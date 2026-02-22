@@ -9,20 +9,19 @@ import Button from 'primevue/button'
 const store = useStore()
 const router = useRouter()
 const pending = computed(() => store.getters.getPending)
-
-const showEmailNotification = ref(false)
+const showNotification = ref(false)
 
 async function registerUser(registerRequest) {
 	const result = await store.dispatch('registerUser', registerRequest)
 	store.commit('setTitle', null)
-	showEmailNotification.value = result
+	showNotification.value = result
 }
 </script>
 
 <template>
 	<div
+		v-if="showNotification"
 		class="email-sent-notification"
-		v-if="showEmailNotification"
 	>
 		<h3>Пользователь успешно зарегестрирован</h3>
 
@@ -40,13 +39,14 @@ async function registerUser(registerRequest) {
 			Понятно
 		</Button>
 	</div>
-	<SpinningCircle
-		v-else-if="pending"
-		title="Пожалуйста, подождите..."
-	/>
-	<RegisterComponent
-		v-else
-		:pending="pending"
-		@register-user="registerUser"
-	/>
+	<div v-else>
+		<SpinningCircle
+			v-if="pending"
+			:text="'Пожалуйста, подождите...'"
+		></SpinningCircle>
+		<RegisterComponent
+			v-else
+			@register-user="registerUser"
+		></RegisterComponent>
+	</div>
 </template>

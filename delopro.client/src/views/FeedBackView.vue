@@ -9,8 +9,6 @@ import CaptchaComponent from '@/components/CaptchaComponent.vue'
 import ConfirmAgreement from '@/components/ConfirmAgreement.vue'
 import InputComponent from '@/components/InputComponent.vue'
 
-const placeholder = 'Должен быть указан Email и/или Номер телефона'
-
 const store = useStore()
 const router = useRouter()
 
@@ -18,7 +16,7 @@ const isCaptchaMatch = ref(false)
 const pending = computed(() => store.getters.getPending)
 const invalid = ref(false)
 const isAgreementChecked = ref(false)
-const messageForm = reactive({
+const feedbackForm = reactive({
 	name: null,
 	email: null,
 	phone: null,
@@ -26,41 +24,31 @@ const messageForm = reactive({
 	dateSent: null,
 })
 
-watch(messageForm, (oldValue, newValue) => {
+watch(feedbackForm, (oldValue, newValue) => {
 	if (newValue.email || newValue.phone) {
 		invalid.value = false
-		const email = document.getElementById('email')
-		const phone = document.getElementById('phone')
-		email.setAttribute('placeholder', '')
-		phone.setAttribute('placeholder', '')
 	}
 })
 
 async function sendFeedback() {
-	if (!(messageForm.email || messageForm.phone)) {
+	if (!(feedbackForm.email || feedbackForm.phone)) {
 		invalid.value = true
-		const email = document.getElementById('email')
-		const phone = document.getElementById('phone')
-
-		email.setAttribute('placeholder', placeholder)
-		phone.setAttribute('placeholder', placeholder)
-
 		return
 	}
 
-	if (!messageForm.email) {
-		messageForm.email = ''
+	if (!feedbackForm.email) {
+		feedbackForm.email = ''
 	}
 
-	if (!messageForm.phone) {
-		messageForm.phone = ''
+	if (!feedbackForm.phone) {
+		feedbackForm.phone = ''
 	}
 
 	var formData = new FormData()
-	formData.append('name', messageForm.name)
-	formData.append('email', messageForm.email)
-	formData.append('phone', messageForm.phone)
-	formData.append('text', messageForm.text)
+	formData.append('name', feedbackForm.name)
+	formData.append('email', feedbackForm.email)
+	formData.append('phone', feedbackForm.phone)
+	formData.append('text', feedbackForm.text)
 	formData.append('dateSent', helper.getCurrentDateString())
 
 	const result = await store.dispatch('sendFeedback', formData)
@@ -85,8 +73,9 @@ function setCaptchaMatch(isMatch) {
 		>
 			<InputComponent
 				title="Ваше имя"
+				placeholder="Ваше имя"
 				:required="true"
-				v-model="messageForm.name"
+				v-model="feedbackForm.name"
 				:titleFont="{ fontWeight: 'normal' }"
 			></InputComponent>
 
@@ -94,24 +83,26 @@ function setCaptchaMatch(isMatch) {
 
 			<InputComponent
 				title="Ваш Email"
-				:required="true"
+				placeholder="Ваш Email"
 				:invalid="invalid"
-				v-model="messageForm.email"
+				v-model="feedbackForm.email"
 				type="email"
 				:titleFont="{ fontWeight: 'normal' }"
 			></InputComponent>
 			<InputComponent
 				title="Ваш номер телефона"
+				placeholder="Ваш номер телефона"
 				type="tel"
 				:invalid="invalid"
-				v-model="messageForm.phone"
+				v-model="feedbackForm.phone"
 				:titleFont="{ fontWeight: 'normal' }"
 			></InputComponent>
 			<InputComponent
 				title="Ваше сообщение"
+				placeholder="Ваше сообщение"
 				:is-textarea="true"
 				:required="true"
-				v-model="messageForm.text"
+				v-model="feedbackForm.text"
 				:titleFont="{ fontWeight: 'normal' }"
 			></InputComponent>
 			<CaptchaComponent
@@ -125,7 +116,9 @@ function setCaptchaMatch(isMatch) {
 			<div style="padding-top: 10px; display: flex; gap: 10px">
 				<Button
 					severity="secondary"
-					:disabled="!(isCaptchaMatch && isAgreementChecked)"
+					:disabled="
+						!(isCaptchaMatch && isAgreementChecked && (feedbackForm.email || feedbackForm.phone))
+					"
 					type="submit"
 					raised
 				>
@@ -143,7 +136,7 @@ function setCaptchaMatch(isMatch) {
 	</div>
 	<SpinningCircle
 		v-else
-		title="Сообщение отправляется..."
+		:title="'Сообщение отправляется...'"
 	></SpinningCircle>
 </template>
 <style scoped>

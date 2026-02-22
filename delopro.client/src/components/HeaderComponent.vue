@@ -1,12 +1,12 @@
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, watch, nextTick, reactive } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { helper } from '@/helper/helper.js'
 import { useStore } from 'vuex'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 
-const loginRequestForm = ref({
+const loginRequestForm = reactive({
 	nicknameOrEmail: null,
 	password: null,
 	remember: false,
@@ -71,12 +71,8 @@ const handleScreenSizeChange = () => {
 }
 
 async function handleLogIn() {
-	await store.dispatch('logIn', loginRequestForm.value)
-
-	loginRequestForm.value.nicknameOrEmail = null
-	loginRequestForm.value.password = null
-	loginRequestForm.value.nicknameOrEmail = null
-	loginRequestForm.value.password = null
+	await store.dispatch('logIn', loginRequestForm)
+	helper.resetObject(loginRequestForm)
 	showLogin.value = false
 }
 
@@ -95,8 +91,8 @@ const showLogInForm = async () => {
 	showLogin.value = !showLogin.value
 
 	if (showLogin.value) {
-		loginRequestForm.value.nicknameOrEmail = null
-		loginRequestForm.value.password = null
+		loginRequestForm.nicknameOrEmail = null
+		loginRequestForm.password = null
 
 		await nextTick()
 		const loginInput = document.getElementById('login-input')
