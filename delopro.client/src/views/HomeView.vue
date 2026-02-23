@@ -3,17 +3,23 @@ import { useStore } from 'vuex'
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { helper } from '@/helper/helper'
+import SpinningCircle from '@/components/SpinningCircle.vue'
 
 const store = useStore()
 const chapters = computed(() => store.getters.getChapters)
+const pending = computed(() => store.getters.getPending)
 </script>
 
 <template>
-	<div class="chapters-container">
+	<div>
 		<div class="chapters-header">
 			<h1>Документационное обеспечение управления</h1>
 		</div>
-		<div class="chapter-links">
+		<SpinningCircle v-if="pending"></SpinningCircle>
+		<div
+			v-else
+			class="chapter-links"
+		>
 			<div
 				v-for="(chapter, index) in chapters"
 				:key="index"
@@ -38,16 +44,11 @@ const chapters = computed(() => store.getters.getChapters)
 </template>
 
 <style scoped>
-.chapters-container h1 {
+.chapters-header {
 	text-align: center;
 	margin: 15px;
 	filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.5));
 	color: var(--HOME-HEADER-COLOR);
-}
-
-.chapters-header {
-	display: flex;
-	flex-direction: column;
 }
 
 .chapter-links {

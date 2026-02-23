@@ -7,12 +7,6 @@ import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import { useRouter } from 'vue-router'
 
-const store = useStore()
-const router = useRouter()
-const emit = defineEmits(['cancel', 'updateChapter'])
-const imageNames = computed(() => store.getters.getImageNames)
-const imagePath = ref(null)
-
 const props = defineProps({
 	chapter: {
 		typeof: Object,
@@ -41,7 +35,12 @@ const props = defineProps({
 	},
 })
 
+const store = useStore()
+const router = useRouter()
+const emit = defineEmits(['cancel', 'updateChapter'])
 const chapter = reactive(props.chapter)
+const imageNames = computed(() => store.getters.getImageNames)
+const imagePath = ref(null)
 
 onMounted(() => {
 	if (props.doClearChapter) {
@@ -76,6 +75,14 @@ function handleSelect(value) {
 	handleInput()
 }
 
+function onMouseEnter(option) {
+	imagePath.value = helper.getImagePath() + option
+}
+
+function onMouseLeave() {
+	imagePath.value = helper.getImagePath() + chapter.imagePath
+}
+
 async function handleDeleteChapter() {
 	if (!window.confirm('Этот раздел и его темы будут удалены. Вы уверены?')) {
 		return
@@ -86,30 +93,47 @@ async function handleDeleteChapter() {
 </script>
 
 <template>
-	<div>
+	<div class="chapter-create-update">
 		<form
-			class="form-container"
 			@submit.prevent="handleSave(chapter)"
+			id="chapter-create-update-form"
 		>
-			<div class="inputs">
-				<InputText
-					v-model="chapter.chapterTitle"
-					@input="handleInput"
-					type="text"
-					required
-					placeholder="Заголовок раздела"
-				/>
-				<Select
-					v-model="chapter.imagePath"
-					@update:model-value="handleSelect"
-					:options="imageNames"
-					placeholder="Путь к картинке"
-					appendTo="self"
-				/>
-			</div>
-			<div class="buttons">
+			<InputText
+				v-model="chapter.chapterTitle"
+				@input="handleInput"
+				type="text"
+				required
+				placeholder="Заголовок раздела"
+			/>
+			<img
+				:src="imagePath ? imagePath : helper.getImagePath() + chapter.imagePath"
+				width="150px"
+				height="120px"
+			/>
+			<Select
+				class="select"
+				v-model="chapter.imagePath"
+				@update:model-value="handleSelect"
+				:options="imageNames"
+				placeholder="Путь к картинке"
+				appendTo="self"
+			>
+				<template #option="slotProps">
+					<div
+						@mouseenter="onMouseEnter(slotProps.option)"
+						@mouseleave="onMouseLeave()"
+						style="width: 100%; height: 100%; padding-left: 5px; align-content: center"
+					>
+						{{ slotProps.option }}
+					</div>
+				</template>
+			</Select>
+		</form>
+		<div class="chapter-buttons">
+			<div class="save-cancel-buttons">
 				<Button
 					type="submit"
+					form="chapter-create-update-form"
 					disabled
 					raised
 					severity="secondary"
@@ -124,55 +148,53 @@ async function handleDeleteChapter() {
 					label="Отменить"
 				/>
 			</div>
-		</form>
-		<div class="image">
-			<img
-				:src="imagePath ? imagePath : helper.getImagePath() + chapter.imagePath"
-				width="150px"
-				height="120px"
-			/>
-			<Button
-				v-if="chapter.chapterId"
-				severity="danger"
-				style="height: 30%; width: 100px; margin-right: 1.5%"
-				@click="handleDeleteChapter"
-			>
-				<i class="pi pi-trash"></i>
-				<span>Удалить</span>
-			</Button>
+			<div>
+				<Button
+					v-if="chapter.chapterId"
+					severity="danger"
+					@click="handleDeleteChapter"
+				>
+					<i class="pi pi-trash"></i>
+					<span>Удалить</span>
+				</Button>
+			</div>
 		</div>
 	</div>
 </template>
 
 <style scoped>
-.image {
+.select :deep(li) {
+	padding: 0;
+	height: 30px;
+}
+
+.chapter-create-update {
+	margin: 10px;
 	display: flex;
+	justify-content: space-between;
+}
+
+.chapter-create-update form {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	width: 60%;
+}
+
+.chapter-buttons {
+	display: flex;
+	flex-direction: column;
 	justify-content: space-between;
 	align-items: end;
 }
 
-.form-container {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	gap: 10px;
-}
-
-.inputs {
-	display: flex;
-	flex-direction: column;
-	min-width: 70%;
-	gap: 10px;
-}
-
-.buttons {
+.save-cancel-buttons {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 }
 
-.buttons button {
-	height: 35px;
+.chapter-buttons button {
 	width: 100px;
 }
 </style>

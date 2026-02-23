@@ -62,6 +62,13 @@ function sendRegisterRequest() {
 	}
 
 	emit('register-user', registerRequest)
+
+	registerModel.password = null
+	repeatPassword.value = null
+	store.dispatch('downloadCaptcha')
+	document.getElementById('captcha-input').value = null
+	isAgreementChecked.value = false
+	setCaptchaMatch(false)
 }
 
 async function doesUserExist(nickname, email) {
@@ -92,11 +99,13 @@ function setCaptchaMatch(isMatch) {
 		<form @submit.prevent="sendRegisterRequest">
 			<InputComponent
 				title="Имя"
+				placeholder="Имя"
 				v-model="registerModel.firstName"
 				:maxlength="30"
 			></InputComponent>
 			<InputComponent
 				title="Никнэйм"
+				placeholder="Никнэйм"
 				v-model="registerModel.nickname"
 				errorText="Никнэйм занят"
 				:showError="showNicknameError"
@@ -107,6 +116,7 @@ function setCaptchaMatch(isMatch) {
 			></InputComponent>
 			<InputComponent
 				title="Email"
+				placeholder="Email"
 				v-model="registerModel.email"
 				errorText="Email занят"
 				:showError="showEmailError"
@@ -117,6 +127,7 @@ function setCaptchaMatch(isMatch) {
 			></InputComponent>
 			<InputComponent
 				title="Пароль"
+				placeholder="Пароль"
 				v-model="registerModel.password"
 				type="password"
 				:maxLength="30"
@@ -125,6 +136,7 @@ function setCaptchaMatch(isMatch) {
 			></InputComponent>
 			<InputComponent
 				title="Повторите пароль"
+				placeholder="Повторите пароль"
 				v-model="repeatPassword"
 				errorText="Пароли не совпадают"
 				:showError="showPasswordsError"
@@ -192,5 +204,11 @@ function setCaptchaMatch(isMatch) {
 	color: red;
 	font-weight: lighter;
 	font-size: x-small;
+}
+
+@media (max-width: 1100px) {
+	.register-inputs {
+		width: 95%;
+	}
 }
 </style>

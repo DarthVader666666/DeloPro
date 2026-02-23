@@ -91,10 +91,10 @@ const setChartOptions = () => {
 	<SpinningCircle v-if="pending"></SpinningCircle>
 	<div
 		v-else
-		class="chart-component"
+		class="chart-container"
 	>
 		<Chart
-			style="height: 60%"
+			style="height: 55%"
 			type="line"
 			:data="chartData"
 			:options="chartOptions"
@@ -103,7 +103,7 @@ const setChartOptions = () => {
 			<div>
 				<label>с:</label>
 				<InputText
-					style="width: 80%"
+					style="padding: 5px"
 					v-model="dateRangeForm.fromDate"
 					type="date"
 					@change="handleDateChange"
@@ -112,7 +112,7 @@ const setChartOptions = () => {
 			<div>
 				<label>по:</label>
 				<InputText
-					style="width: 80%"
+					style="padding: 5px"
 					v-model="dateRangeForm.toDate"
 					type="date"
 					@change="handleDateChange"
@@ -123,7 +123,7 @@ const setChartOptions = () => {
 </template>
 
 <style>
-.chart-component {
+.chart-container {
 	display: flex;
 	flex-direction: column;
 	overflow-x: scroll;

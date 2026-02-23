@@ -68,7 +68,7 @@ function setCaptchaMatch(isMatch) {
 		</div>
 		<SpinningCircle
 			v-else
-			title="Пожалуйста, подождите..."
+			text="Пожалуйста, подождите..."
 		></SpinningCircle>
 	</div>
 </template>

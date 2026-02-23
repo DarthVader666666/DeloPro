@@ -41,12 +41,11 @@ async function registerUser(registerRequest) {
 	</div>
 	<div v-else>
 		<SpinningCircle
-			v-if="pending"
-			style="padding-left: 10%"
-			:text="'Пожалуйста, подождите...'"
+			v-show="pending"
+			text="Пожалуйста, подождите..."
 		></SpinningCircle>
 		<RegisterComponent
-			v-else
+			v-show="!pending"
 			@register-user="registerUser"
 		></RegisterComponent>
 	</div>

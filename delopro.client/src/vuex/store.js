@@ -290,6 +290,7 @@ const store = createStore({
 			const storedChapters = sessionStorage.getItem(state.sessionStorageKeys.chaptersKey)
 
 			if (!storedChapters) {
+				commit('setPending', true)
 				axios
 					.get(`${state.serverUrl}/chapters/getchapters`)
 					.then(async (response) => {
@@ -304,6 +305,7 @@ const store = createStore({
 							toast.error(error.response.data.errorText)
 						}
 					})
+					.finally(() => commit('setPending', false))
 			} else {
 				commit('setChapters', JSON.parse(storedChapters))
 				await dispatch('downloadChapterNodes')
@@ -313,6 +315,7 @@ const store = createStore({
 			const storedChapterNodes = sessionStorage.getItem(state.sessionStorageKeys.chapterNodesKey)
 
 			if (!storedChapterNodes) {
+				commit('setPending', true)
 				axios
 					.get(`${state.serverUrl}/chapters/getchapternodes`)
 					.then((response) => {
@@ -325,6 +328,7 @@ const store = createStore({
 							toast.error(error.response.data.errorText)
 						}
 					})
+					.finally(() => commit('setPending', false))
 			} else {
 				commit('setChapterNodes', JSON.parse(storedChapterNodes))
 			}

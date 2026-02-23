@@ -109,15 +109,6 @@ body {
 	width: fit-content;
 }
 
-.spinning-circle {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	width: var(--APP-COMPONENT-WIDTH);
-	padding: 10px;
-	background-color: var(--CENTRAL-BCKGND-CLR);
-}
-
 /* UserAccount */
 .account-properties {
 	position: relative;

@@ -33,6 +33,16 @@ const props = defineProps({
 </template>
 
 <style scoped>
+.spinning-circle {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: var(--APP-COMPONENT-WIDTH);
+	padding: 10px;
+	background-color: var(--CENTRAL-BCKGND-CLR);
+	width: 100%;
+}
+
 /** Spinning Wheel */
 #wrapper {
 	position: relative;

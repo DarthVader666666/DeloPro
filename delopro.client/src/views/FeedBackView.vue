@@ -136,7 +136,7 @@ function setCaptchaMatch(isMatch) {
 	</div>
 	<SpinningCircle
 		v-else
-		:title="'Сообщение отправляется...'"
+		text="Сообщение отправляется..."
 	></SpinningCircle>
 </template>
 <style scoped>
