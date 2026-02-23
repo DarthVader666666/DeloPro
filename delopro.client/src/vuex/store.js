@@ -1090,6 +1090,7 @@ const store = createStore({
 
 		// VISITS
 		async downloadVisits({ commit, state }, dateRangeForm) {
+			commit('setPending', true)
 			await axios
 				.get(`${state.serverUrl}/visits/getvisits`, {
 					params: {
@@ -1107,6 +1108,7 @@ const store = createStore({
 						toast.error(error.response.data.errorText)
 					}
 				})
+				.finally(() => commit('setPending', false))
 		},
 	},
 })
