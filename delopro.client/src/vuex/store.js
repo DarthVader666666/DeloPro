@@ -801,6 +801,21 @@ const store = createStore({
 					}
 				})
 		},
+		async deleteUser({ dispatch, state }, userId) {
+			await axios
+				.delete(`${state.serverUrl}/administration/deleteuser/${userId}`)
+				.then((response) => {
+					if (response.status === 200) {
+						toast.success(response.data.okText)
+						dispatch('downloadUsers')
+					}
+				})
+				.catch((error) => {
+					if (error.response) {
+						toast.error(error.response.data?.errorText)
+					}
+				})
+		},
 
 		// REGISTER
 		async registerUser({ commit, state }, registerRequest) {

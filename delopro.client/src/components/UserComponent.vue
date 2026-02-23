@@ -82,18 +82,18 @@ async function updateUser() {
 	await store.dispatch('downloadUsers')
 	emit('user-shown')
 }
+
+async function deleteUser() {
+	if (window.confirm('Пользователь будет полностью удалён! Вы уверены?')) {
+		await store.dispatch('deleteUser', user.value.userId)
+		emit('user-shown')
+	}
+}
 </script>
 
 <template>
 	<div class="user">
-		<div
-			style="
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				padding-bottom: 30px;
-			"
-		>
+		<div style="display: flex; justify-content: space-between; align-items: center">
 			<span style="color: red">
 				{{
 					updatedUser.deletionDate &&
@@ -141,7 +141,7 @@ async function updateUser() {
 				</div>
 				<div v-if="user.firstName || user.lastName">
 					<span style="font-weight: bold">Имя:</span>
-					<span>{{ user.firstName + ' ' + user.lastName }}</span>
+					<span>{{ user.firstName ?? '' + ' ' + user.lastName ?? '' }}</span>
 				</div>
 				<div v-if="user.birthDate">
 					<span style="font-weight: bold">Дата рождения:</span>
@@ -157,34 +157,64 @@ async function updateUser() {
 				</div>
 			</div>
 		</div>
-		<div style="display: flex; flex-direction: column; gap: 5px; align-items: center">
-			<span style="font-weight: bold">Статус:</span>
-			<Select
-				@update:model-value="handleUpdateStatus"
-				:options="helper.userStatuses"
-				class="selector"
-				appendTo="self"
+		<div style="display: flex; justify-content: space-around; gap: 10px">
+			<div
+				style="
+					display: flex;
+					flex-direction: column;
+					gap: 5px;
+					align-items: center;
+					text-align: center;
+				"
 			>
-				<template #value>
-					<Tag
-						:value="helper.userStatuses[updatedUser.status]"
-						:severity="helper.getUserTagSeverity(updatedUser.status)"
-					></Tag>
-				</template>
-				<template #option="slotProps">
-					<Tag
-						:value="slotProps.option"
-						:severity="helper.getUserTagSeverity(helper.userStatuses.indexOf(slotProps.option))"
-					></Tag>
-				</template>
-			</Select>
-			<span style="font-weight: bold">Роли:</span>
-			<MultiSelect
-				@update:model-value="handleUpdateRoles"
-				v-model:model-value="selectedRoles"
-				:options="helper.roles"
-				class="selector"
-			/>
+				<span style="font-weight: bold">Статус:</span>
+				<Select
+					@update:model-value="handleUpdateStatus"
+					:options="helper.userStatuses"
+					class="selector"
+					appendTo="self"
+				>
+					<template #value>
+						<Tag
+							:value="helper.userStatuses[updatedUser.status]"
+							:severity="helper.getUserTagSeverity(updatedUser.status)"
+						></Tag>
+					</template>
+					<template #option="slotProps">
+						<Tag
+							:value="slotProps.option"
+							:severity="helper.getUserTagSeverity(helper.userStatuses.indexOf(slotProps.option))"
+						></Tag>
+					</template>
+				</Select>
+				<span style="font-weight: bold">Роли:</span>
+				<MultiSelect
+					@update:model-value="handleUpdateRoles"
+					v-model:model-value="selectedRoles"
+					:options="helper.roles"
+					class="selector"
+				/>
+			</div>
+			<div
+				style="
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					justify-content: center;
+					background-color: lightgrey;
+					min-width: 40%;
+					align-content: center;
+					text-align: center;
+				"
+			>
+				<span style="font-weight: bold">Удалить пользователя</span>
+				<Button
+					style="margin: 10px"
+					severity="danger"
+					label="Удалить"
+					@click="deleteUser"
+				></Button>
+			</div>
 		</div>
 		<div class="buttons">
 			<Button
@@ -223,9 +253,9 @@ async function updateUser() {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	padding: 10px 20px 20px 40px;
+	padding: 20px;
 	background: white;
-	gap: 10px;
+	gap: 20px;
 }
 
 .user-fields {
@@ -272,13 +302,14 @@ ul li span {
 
 @media (max-width: 1100px) {
 	.user {
+		padding: 20px;
 		width: 70%;
 	}
 }
 
 @media (max-width: 800px) {
 	.user {
-		padding: 10px 10px 20px 10px;
+		padding: 10px;
 		width: 100%;
 	}
 

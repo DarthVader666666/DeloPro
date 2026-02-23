@@ -9,6 +9,7 @@ using Delopro.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Delopro.Bll.Services;
 
 namespace Delopro.Server.Controllers
 {
@@ -90,6 +91,30 @@ namespace Delopro.Server.Controllers
             await _userRepository.UpdateAsync(user);
 
             return Ok(new { okText = "Пользователь успешно обновлен" });
+        }
+
+        [HttpDelete]
+        [Route("[action]/{userId:int}")]
+        public async Task<IActionResult> DeleteUser([FromRoute] int userId)
+        {
+            try
+            {
+                var user = await _userRepository.GetAsync(userId);
+
+                if (user is null)
+                {
+                    return NotFound(new { errorText = "Пользователь не найден" });
+                }
+                else
+                {
+                    await _userRepository.DeleteAsync(userId);
+                    return Ok(new { okText = $"Пользователь {user.Nickname} успешно удалён" });
+                }
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
+            }            
         }
     }
 }
