@@ -113,20 +113,18 @@ async function handleCancel() {
 
 	showEmailError.value = false
 	showNicknameError.value = false
-	await helper.timeoutAsync(20)
+	await helper.timeoutAsync(10)
 	emit('switchToInfoMode')
-}
-
-async function doesUserExist(nickname, email) {
-	await helper.timeoutAsync(500)
-	return await store.dispatch('checkUserExists', { nickname: nickname, email: email })
 }
 
 async function doesNicknameExist(nickname) {
 	if (nickname === props.user.nickname) {
 		return
 	}
-	showNicknameError.value = await doesUserExist(nickname, null)
+	showNicknameError.value = await store.dispatch('doesUserExist', {
+		nickname: nickname,
+		email: null,
+	})
 }
 
 async function doesEmailExist(email) {
@@ -134,7 +132,7 @@ async function doesEmailExist(email) {
 		return
 	}
 	if (helper.validateEmail(email)) {
-		showEmailError.value = await doesUserExist(null, email)
+		showEmailError.value = await store.dispatch('doesUserExist', { nickname: null, email: email })
 	} else {
 		showEmailError.value = false
 	}

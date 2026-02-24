@@ -43,7 +43,6 @@ builder.Services.AddControllers().AddJsonOptions(x =>
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -196,8 +195,6 @@ app.UseCookiePolicy(
     {
         Secure = CookieSecurePolicy.Always
     });
-
-app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();

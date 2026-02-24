@@ -43,6 +43,7 @@ const store = createStore({
 			currentUserKey: 'currentUser',
 			usersKey: 'users',
 		},
+		debounceTimer: null,
 	},
 	getters: {
 		// CHAPTERS
@@ -271,6 +272,7 @@ const store = createStore({
 	actions: {
 		// CHAPTERS
 		async downloadChapter({ commit, state }, chapterId) {
+			commit('setPending', true)
 			await axios
 				.get(`${state.serverUrl}/chapters/getchapter/${chapterId}`)
 				.then(async (response) => {
@@ -284,6 +286,9 @@ const store = createStore({
 					if (error.response) {
 						toast.error(error.response.data.errorText)
 					}
+				})
+				.finally(() => {
+					commit('setPending', false)
 				})
 		},
 		async downloadChapters({ dispatch, commit, state }) {
@@ -415,20 +420,21 @@ const store = createStore({
 
 			commit('setPending', true)
 
-			try {
-				const theme = await axios
-					.get(url)
-					.then((response) => response.data)
-					.catch((error) => {
-						if (error.response) {
-							toast.error(error.response.data.errorText)
-						}
-					})
-
-				commit('setTheme', theme)
-			} finally {
-				commit('setPending', false)
-			}
+			await axios
+				.get(url)
+				.then((response) => {
+					if (response.status === 200) {
+						setTimeout(() => commit('setTheme', response.data), 10)
+					}
+				})
+				.catch((error) => {
+					if (error.response) {
+						toast.error(error.response.data.errorText)
+					}
+				})
+				.finally(() => {
+					commit('setPending', false)
+				})
 		},
 		async deleteTheme({ dispatch, state }, theme) {
 			axios
@@ -841,6 +847,16 @@ const store = createStore({
 				.finally(() => {
 					commit('setPending', false)
 				})
+		},
+		async doesUserExist({ dispatch, state }, nicknameEmail) {
+			return new Promise((resolve) => {
+				clearTimeout(state.debounceTimer)
+
+				state.debounceTimer = setTimeout(async () => {
+					const result = await dispatch('checkUserExists', nicknameEmail)
+					resolve(result)
+				}, 600)
+			})
 		},
 		async checkUserExists({ state }, { nickname, email }) {
 			return await axios

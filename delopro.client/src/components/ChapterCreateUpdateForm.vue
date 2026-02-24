@@ -168,6 +168,10 @@ async function handleDeleteChapter() {
 	height: 30px;
 }
 
+.select :deep(ul) {
+	border: 0;
+}
+
 .chapter-create-update {
 	margin: 10px;
 	display: flex;

@@ -11,7 +11,7 @@ export const helper = {
 		return result
 	},
 	timeoutAsync(ms) {
-		new Promise((resolve) => setTimeout(resolve, ms))
+		return new Promise((resolve) => setTimeout(resolve, ms))
 	},
 	getCurrentDateString(hmsFormat = false) {
 		const today = new Date()

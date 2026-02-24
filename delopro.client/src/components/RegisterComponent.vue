@@ -71,21 +71,22 @@ function sendRegisterRequest() {
 	setCaptchaMatch(false)
 }
 
-async function doesUserExist(nickname, email) {
-	await helper.timeoutAsync(500)
-	return await store.dispatch('checkUserExists', { nickname, email })
-}
-
 const handleNicknameMatch = async (event) => {
 	const nickname = event.target.value
-	showNicknameError.value = await doesUserExist(nickname, null)
+	showNicknameError.value = await store.dispatch('doesUserExist', {
+		nickname: nickname,
+		email: null,
+	})
 }
 
 const handleEmailMatch = async (event) => {
 	const email = event.target.value
 
 	if (helper.validateEmail(email)) {
-		showEmailError.value = await doesUserExist(null, email)
+		showEmailError.value = await store.dispatch('doesUserExist', {
+			nickname: null,
+			email: email,
+		})
 	}
 }
 

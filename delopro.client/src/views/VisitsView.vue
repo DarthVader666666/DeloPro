@@ -25,7 +25,7 @@ onMounted(async () => {
 
 	await store.dispatch('downloadVisits', dateRangeForm)
 	chartData.value = setChartData()
-	chartOptions.value = setChartOptions()
+	chartOptions.value = setVisitChartOptions()
 })
 
 async function handleDateChange() {
@@ -50,7 +50,7 @@ const setChartData = () => {
 		datasets: visitResponse.value.datasets,
 	}
 }
-const setChartOptions = () => {
+const setVisitChartOptions = () => {
 	const documentStyle = getComputedStyle(document.documentElement)
 	const textColor = documentStyle.getPropertyValue('--p-text-color')
 	const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color')
@@ -94,14 +94,14 @@ const setChartOptions = () => {
 		class="chart-container"
 	>
 		<Chart
-			style="height: 55%"
+			style="height: 55%; padding: 10px"
 			type="line"
 			:data="chartData"
 			:options="chartOptions"
 		></Chart>
 		<div class="from-to">
 			<div>
-				<label>с:</label>
+				<label style="padding: 5px">с:</label>
 				<InputText
 					style="padding: 5px"
 					v-model="dateRangeForm.fromDate"
@@ -110,7 +110,7 @@ const setChartOptions = () => {
 				></InputText>
 			</div>
 			<div>
-				<label>по:</label>
+				<label style="padding: 5px">по:</label>
 				<InputText
 					style="padding: 5px"
 					v-model="dateRangeForm.toDate"
