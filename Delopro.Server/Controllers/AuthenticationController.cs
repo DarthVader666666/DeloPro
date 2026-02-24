@@ -25,7 +25,7 @@ namespace Delopro.Server.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        [TrackIpAddress]
+        //[TrackIpAddress]
         public async Task<IActionResult> LogIn([FromBody] LogInRequest? logInRequest)
         {
             var user = await _userManager.GetUserByAsync(nickname: logInRequest?.Nickname, email: logInRequest?.Email);
@@ -55,7 +55,7 @@ namespace Delopro.Server.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        [TrackIpAddress]
+        //[TrackIpAddress]
         public async Task<IActionResult> LogOut()
         {
             try

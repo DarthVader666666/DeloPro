@@ -59,7 +59,7 @@ namespace Delopro.Server.Controllers
         [HttpPut]
         [Route("[action]")]
         [Authorize]
-        [TrackIpAddress]
+        //[TrackIpAddress]
         public async Task<IActionResult> UpdateCurrentUser([FromBody] AccountUpdateRequest? accountUpdateRequest)
         {
             var user = await _userManager.GetCurrentUserAsync(HttpContext);
@@ -96,7 +96,7 @@ namespace Delopro.Server.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize]
-        [TrackIpAddress]
+        //[TrackIpAddress]
         public async Task<IActionResult> UploadAvatar([FromForm] IFormFile? avatar) 
         {
             if (avatar is null)
@@ -130,7 +130,7 @@ namespace Delopro.Server.Controllers
         [HttpDelete]
         [Route("[action]")]
         [Authorize]
-        [TrackIpAddress]
+        //[TrackIpAddress]
         public async Task<IActionResult> DeleteAvatar()
         {
             var user = await _userManager.GetCurrentUserAsync(HttpContext);
@@ -152,7 +152,7 @@ namespace Delopro.Server.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        [TrackIpAddress]
+        //[TrackIpAddress]
         public async Task<IActionResult> RecoverPassword()
         {
             var headers = HttpContext.Request.Headers;
