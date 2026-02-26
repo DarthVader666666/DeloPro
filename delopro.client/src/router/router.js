@@ -14,11 +14,11 @@ import RecoverPasswordView from '@/views/RecoverPasswordView.vue'
 import UsersView from '@/views/UsersView.vue'
 import { computed, ref } from 'vue'
 import AccountView from '@/views/AccountView.vue'
-import { helper } from '@/helper/helper'
 import VisitsView from '@/views/VisitsView.vue'
 
 const doScrollUp = ref(true)
 const currentUser = computed(() => store.getters.getCurrentUser)
+const isAuthenticated = computed(() => store.getters.isAuthenticated)
 
 const router = createRouter({
 	history: createWebHistory(),
@@ -107,14 +107,38 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
 	if (to.meta.roles) {
-		if (!store.getters.getCurrentUser) {
-			if (await helper.isAuthenticated()) {
-				await store.dispatch('downloadCurrentUser')
-			}
-		}
-
 		if (!to.meta.roles.some((r) => currentUser?.value?.roles?.includes(r) ?? false)) {
 			return next('/')
+		}
+	} else {
+		if (to.name === 'register') {
+			if (isAuthenticated.value) {
+				return next('/')
+			}
+
+			store.commit('setTitle', 'Заполните форму регистрации')
+			const captchaInput = document.getElementById('captcha-input')
+
+			if (captchaInput) {
+				captchaInput.value = null
+			}
+
+			await store.dispatch('downloadCaptcha')
+		}
+
+		if (to.name === 'feedback') {
+			if (isAuthenticated.value) {
+				return next('/')
+			}
+
+			store.commit('setTitle', 'Напишите ваше сообщение')
+			const captchaInput = document.getElementById('captcha-input')
+
+			if (captchaInput) {
+				captchaInput.value = null
+			}
+
+			await store.dispatch('downloadCaptcha')
 		}
 	}
 
@@ -157,38 +181,8 @@ router.afterEach(async (to) => {
 		store.commit('setTitle', 'Создание нового раздела')
 	}
 
-	if (to.name === 'register') {
-		if (currentUser.value) {
-			router.push('/')
-		}
-
-		store.commit('setTitle', 'Заполните форму регистрации')
-		const captchaInput = document.getElementById('captcha-input')
-
-		if (captchaInput) {
-			captchaInput.value = null
-		}
-
-		await store.dispatch('downloadCaptcha')
-	}
-
 	if (to.name === 'home') {
 		store.commit('renderSearchBar')
-	}
-
-	if (to.name === 'feedback') {
-		if (currentUser.value) {
-			router.push('/')
-		}
-
-		store.commit('setTitle', 'Напишите ваше сообщение')
-		const captchaInput = document.getElementById('captcha-input')
-
-		if (captchaInput) {
-			captchaInput.value = null
-		}
-
-		await store.dispatch('downloadCaptcha')
 	}
 
 	if (to.name === 'messages') {

@@ -56,10 +56,14 @@ function hideDocuments() {
 	<div
 		v-if="title"
 		class="title"
+		id="title"
 	>
 		<h2 style="margin: 0">{{ title }}</h2>
 	</div>
-	<div class="main-container">
+	<div
+		class="main-container"
+		id="main-container"
+	>
 		<LeftColumn />
 		<RouterView id="central-container" />
 		<RightColumn />

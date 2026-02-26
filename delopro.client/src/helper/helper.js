@@ -168,6 +168,13 @@ export const helper = {
 			for (let item of items) {
 				item.style.removeProperty('opacity')
 				item.style.removeProperty('filter')
+
+				let children = item.children
+
+				for (let item of children) {
+					item.style.removeProperty('opacity')
+					item.style.removeProperty('filter')
+				}
 			}
 		})
 	},
@@ -234,12 +241,13 @@ export const helper = {
 		})
 	},
 	clearSession() {
-		store.commit('setCurrentUser', null)
 		const keys = store.state.sessionStorageKeys
 
 		for (const key in keys) {
 			sessionStorage.removeItem(keys[key])
 		}
+
+		// store.commit('setCurrentUser', null)
 	},
 	async isAuthenticated() {
 		return await axios
