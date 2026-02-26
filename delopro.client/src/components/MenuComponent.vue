@@ -3,8 +3,8 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import Button from 'primevue/button'
-import AuthenticatedMenu from './AuthenticatedMenu.vue'
-import InitialMenu from './InitialMenu.vue'
+import MenuAuthenticated from './MenuAuthenticated.vue'
+import MenuInitial from './MenuInitial.vue'
 import { helper } from '@/helper/helper'
 
 const router = useRouter()
@@ -27,9 +27,11 @@ watch(showMenu, (newValue) => {
 	if (newValue) {
 		menu.classList.remove('menu')
 		menu.classList.add('slide-container')
+		helper.darkenBackground()
 	} else {
 		menu.classList.remove('slide-container')
 		menu.classList.add('menu')
+		helper.lightenBackground()
 	}
 })
 
@@ -39,8 +41,12 @@ const handleScreenSizeChange = () => {
 	}
 }
 
-function handleBurgerClick() {
-	showMenu.value = !showMenu.value
+function setShowMenu(value) {
+	if (value === undefined) {
+		showMenu.value = !showMenu.value
+	} else {
+		showMenu.value = value
+	}
 }
 </script>
 
@@ -53,7 +59,7 @@ function handleBurgerClick() {
 			{{ currentUser.nickname }}
 		</span>
 		<Button
-			@click="handleBurgerClick"
+			@click="setShowMenu"
 			security="contrast"
 			rounded
 			text
@@ -66,22 +72,23 @@ function handleBurgerClick() {
 		class="menu"
 		id="menu"
 	>
-		<div>
-			<Button
-				@click="
-					() => {
-						showMenu = false
-						router.push('/')
-					}
-				"
-				severity="contrast"
-				text
-				label="Главная"
-				id="home-button"
-			></Button>
-			<AuthenticatedMenu v-if="isAuthenticated"></AuthenticatedMenu>
-			<InitialMenu v-else></InitialMenu>
-		</div>
+		<Button
+			@click="
+				() => {
+					showMenu = false
+					router.push('/')
+				}
+			"
+			severity="contrast"
+			text
+			label="Главная"
+			id="home-button"
+		></Button>
+		<MenuAuthenticated v-if="isAuthenticated"></MenuAuthenticated>
+		<MenuInitial
+			:setShowMenu="setShowMenu"
+			v-else
+		></MenuInitial>
 	</div>
 </template>
 
@@ -123,13 +130,13 @@ function handleBurgerClick() {
 }
 
 .slide-container {
+	display: flex;
+	flex-direction: column;
 	position: fixed;
 	top: var(--HEADER-HEIGHT);
 	right: 0;
 	z-index: 1;
 	background-color: var(--MENU-BCKGND-CLR);
-	display: flex;
-	flex-direction: column;
 	padding: 15px;
 	border-radius: 3px;
 	box-shadow: var(--MENU-BOX-SHADOW);
@@ -139,10 +146,19 @@ function handleBurgerClick() {
 	min-width: 220px;
 }
 
-.slide-container button:not(.account button) {
-	width: 100%;
+.slide-container button span {
+	font-weight: bold;
+	color: var(--TEXT-COLOR);
 	border-radius: 0;
 }
+
+.slide-container button {
+	border-radius: 0;
+}
+/* .slide-container button:not(.account button) {
+	width: 100%;
+	border-radius: 0;
+} */
 
 @media (max-width: 800px) {
 	.menu {
@@ -154,8 +170,8 @@ function handleBurgerClick() {
 		align-items: center;
 	}
 
-	.slide-container {
-		flex-direction: row-reverse;
-	}
+	/* .slide-container {
+		flex-direction: column-reverse;
+	} */
 }
 </style>

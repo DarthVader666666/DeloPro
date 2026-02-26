@@ -9,17 +9,23 @@ import { helper } from '@/helper/helper'
 const router = useRouter()
 const store = useStore()
 
-const showLogin = ref(false)
+const showLogIn = ref(false)
+
+const props = defineProps({
+	setShowMenu: {
+		type: Function,
+	},
+})
 
 onMounted(async () => {
 	window.addEventListener('click', (event) => {
 		if (!helper.closeMenu(event, ['login-form', 'login-button'])) {
-			showLogin.value = false
+			showLogIn.value = false
 		}
 	})
 })
 
-watch(showLogin, (newValue) => {
+watch(showLogIn, (newValue) => {
 	if (newValue) {
 		helper.darkenBackground()
 	} else {
@@ -27,9 +33,14 @@ watch(showLogin, (newValue) => {
 	}
 })
 
+function setShowLogIn() {
+	props.setShowMenu(false)
+	showLogIn.value = !showLogIn.value
+}
+
 async function handleLogIn(loginRequestForm) {
 	await store.dispatch('logIn', loginRequestForm)
-	showLogin.value = false
+	showLogIn.value = false
 }
 </script>
 
@@ -37,7 +48,7 @@ async function handleLogIn(loginRequestForm) {
 	<Button
 		@click="
 			() => {
-				showMenu = false
+				setShowLogIn()
 				router.push('/feedback')
 			}
 		"
@@ -49,8 +60,7 @@ async function handleLogIn(loginRequestForm) {
 	<Button
 		@click="
 			() => {
-				showMenu = false
-				showLogin = false
+				setShowLogIn()
 				router.push('/register')
 			}
 		"
@@ -61,7 +71,7 @@ async function handleLogIn(loginRequestForm) {
 	></Button>
 
 	<Button
-		@click="() => (showLogin = !showLogin)"
+		@click="setShowLogIn()"
 		severity="contrast"
 		text
 		label="Войти"
@@ -69,7 +79,8 @@ async function handleLogIn(loginRequestForm) {
 		id="login-button"
 	></Button>
 	<LoginForm
-		v-if="showLogin"
+		v-if="showLogIn"
+		:setShowLogIn="setShowLogIn"
 		:handleLogIn="handleLogIn"
 	></LoginForm>
 </template>

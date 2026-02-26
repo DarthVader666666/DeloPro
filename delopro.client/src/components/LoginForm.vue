@@ -4,6 +4,9 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 
 const props = defineProps({
+	setShowLogIn: {
+		type: Function,
+	},
 	handleLogIn: {
 		type: Function,
 		required: true,
@@ -68,12 +71,7 @@ onMounted(() => {
 		</div>
 		<RouterLink
 			to="/recover-password"
-			@click="
-				() => {
-					showMenu = false
-					showLogin = !showLogin
-				}
-			"
+			@click="props.setShowLogIn()"
 		>
 			Забыли пароль?
 		</RouterLink>
