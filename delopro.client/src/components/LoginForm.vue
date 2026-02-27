@@ -6,13 +6,6 @@ import { helper } from '@/helper/helper'
 import { useStore } from 'vuex'
 
 const store = useStore()
-
-const props = defineProps({
-	showLogIn: {
-		type: Boolean,
-	},
-})
-
 const emit = defineEmits(['setShowLogIn'])
 
 const loginRequestForm = reactive({
@@ -83,7 +76,7 @@ onUnmounted(() => {
 		</div>
 		<RouterLink
 			to="/recover-password"
-			@click="props.setShowLogIn()"
+			@click="() => emit('setShowLogIn', false)"
 		>
 			Забыли пароль?
 		</RouterLink>

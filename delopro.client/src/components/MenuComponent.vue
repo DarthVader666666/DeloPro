@@ -156,7 +156,6 @@ function setShowMenu(value) {
 	</div>
 	<LoginForm
 		v-if="showLogIn"
-		:showLogIn="showLogIn"
 		@setShowLogIn="setShowLogIn"
 	></LoginForm>
 </template>
