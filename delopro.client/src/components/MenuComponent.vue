@@ -1,21 +1,86 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import Button from 'primevue/button'
-import MenuAuthenticated from './MenuAuthenticated.vue'
-import MenuInitial from './MenuInitial.vue'
 import { helper } from '@/helper/helper'
+import MenuOption from './MenuOption.vue'
+import LoginForm from './LoginForm.vue'
 
-const router = useRouter()
 const store = useStore()
+
 const isAuthenticated = computed(() => store.getters.isAuthenticated)
 const currentUser = computed(() => store.getters.getCurrentUser)
 const showMenu = ref(false)
+const showLogIn = ref(false)
+
+const options = [
+	{
+		path: 'home',
+		label: 'Главная',
+		icon: null,
+		clickHandler: null,
+		roles: ['Any'],
+	},
+	{
+		path: 'feedback',
+		label: 'Обратная связь',
+		icon: null,
+		clickHandler: null,
+		roles: [],
+	},
+	{
+		path: 'register',
+		label: 'Регистрация',
+		icon: null,
+		clickHandler: null,
+		roles: [],
+	},
+	{
+		path: null,
+		label: 'Войти',
+		icon: 'pi pi-sign-in',
+		clickHandler: () => setShowLogIn(),
+		roles: [],
+	},
+	{
+		path: 'create-chapter',
+		label: 'Cоздать раздел',
+		icon: null,
+		clickHandler: null,
+		roles: ['Owner', 'Admin'],
+	},
+	{
+		path: 'users',
+		label: 'Пользователи',
+		icon: null,
+		clickHandler: null,
+		roles: ['Owner', 'Admin'],
+	},
+	{
+		path: 'visits',
+		label: 'Статистика посещений',
+		icon: null,
+		clickHandler: null,
+		roles: ['Owner', 'Admin'],
+	},
+	{
+		path: 'messages',
+		label: 'Сообщения',
+		icon: null,
+		clickHandler: null,
+		roles: ['Owner'],
+	},
+]
 
 onMounted(async () => {
+	// window.addEventListener('click', (event) => {
+	// 	if (!helper.closeMenu(event, ['menu', 'burger-button'])) showMenu.value = false
+	// })
+
 	window.addEventListener('click', (event) => {
-		if (!helper.closeMenu(event, ['menu', 'burger-button'])) showMenu.value = false
+		if (!helper.closeMenu(event, ['log-in-form', 'sign-in_menu_button'])) {
+			showLogIn.value = false
+		}
 	})
 
 	window.addEventListener('resize', handleScreenSizeChange)
@@ -27,26 +92,24 @@ watch(showMenu, (newValue) => {
 	if (newValue) {
 		menu.classList.remove('menu')
 		menu.classList.add('slide-container')
-		helper.darkenBackground()
 	} else {
 		menu.classList.remove('slide-container')
 		menu.classList.add('menu')
-		helper.lightenBackground()
 	}
 })
 
-const handleScreenSizeChange = () => {
+function handleScreenSizeChange() {
 	if (document.documentElement.clientWidth > 800) {
 		showMenu.value = false
 	}
 }
 
+function setShowLogIn(value) {
+	showLogIn.value = value !== undefined ? value : !showLogIn.value
+}
+
 function setShowMenu(value) {
-	if (value === undefined) {
-		showMenu.value = !showMenu.value
-	} else {
-		showMenu.value = value
-	}
+	showMenu.value = value = value !== undefined ? value : !showMenu.value
 }
 </script>
 
@@ -72,24 +135,30 @@ function setShowMenu(value) {
 		class="menu"
 		id="menu"
 	>
-		<Button
-			@click="
-				() => {
-					showMenu = false
-					router.push('/')
-				}
-			"
-			severity="contrast"
-			text
-			label="Главная"
-			id="home-button"
-		></Button>
-		<MenuAuthenticated v-if="isAuthenticated"></MenuAuthenticated>
-		<MenuInitial
-			:setShowMenu="setShowMenu"
-			v-else
-		></MenuInitial>
+		<div
+			v-for="(option, index) in options"
+			:key="index"
+		>
+			<MenuOption
+				v-if="
+					option.roles.includes('Any') ||
+					(isAuthenticated
+						? option.roles.some((role) => currentUser?.roles?.includes(role))
+						: option.roles.length === 0)
+				"
+				:path="option.path"
+				:label="option.label"
+				:icon="option.icon"
+				:clickHandler="option.clickHandler"
+				:id="option.path ?? 'sign-in' + '_menu_button'"
+			></MenuOption>
+		</div>
 	</div>
+	<LoginForm
+		v-if="showLogIn"
+		:showLogIn="showLogIn"
+		@setShowLogIn="setShowLogIn"
+	></LoginForm>
 </template>
 
 <style>
@@ -129,32 +198,6 @@ function setShowMenu(value) {
 	font-size: x-large;
 }
 
-.slide-container {
-	display: flex;
-	flex-direction: column;
-	position: fixed;
-	top: var(--HEADER-HEIGHT);
-	right: 0;
-	z-index: 1;
-	background-color: var(--MENU-BCKGND-CLR);
-	padding: 15px;
-	border-radius: 3px;
-	box-shadow: var(--MENU-BOX-SHADOW);
-	animation-name: slide;
-	animation-duration: 0.2s;
-	transform: translateX(0%);
-	min-width: 220px;
-}
-
-.slide-container button span {
-	font-weight: bold;
-	color: var(--TEXT-COLOR);
-	border-radius: 0;
-}
-
-.slide-container button {
-	border-radius: 0;
-}
 /* .slide-container button:not(.account button) {
 	width: 100%;
 	border-radius: 0;

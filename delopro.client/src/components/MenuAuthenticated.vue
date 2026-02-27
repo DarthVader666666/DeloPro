@@ -4,15 +4,21 @@ import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import Button from 'primevue/button'
 import { helper } from '@/helper/helper'
+import MenuOption from './MenuOption.vue'
 
 const router = useRouter()
 const store = useStore()
 
-const currentUser = computed(() => store.getters.getCurrentUser)
-const isAdmin = computed(() => store.getters.isAdmin)
-const isOwner = computed(() => store.getters.isOwner)
+const props = defineProps({
+	options: {
+		type: Array,
+		default: () => [],
+	},
+})
 
-const unreadMessagesCount = computed(() => store.getters.getUnreadMessagesCount)
+const currentUser = computed(() => store.getters.getCurrentUser)
+
+// const unreadMessagesCount = computed(() => store.getters.getUnreadMessagesCount)
 
 const showMenu = ref(false)
 const showUserAccountSettings = ref(false)
@@ -62,63 +68,14 @@ function handleLogout() {
 		</Button>
 		<span>{{ currentUser.nickname }}</span>
 	</div>
-	<div v-if="isOwner">
-		<Button
-			@click="
-				() => {
-					showMenu = false
-					router.push('/messages')
-				}
-			"
-			severity="contrast"
-			text
-			id="messages-button"
-		>
-			<span>Сообщения</span>
-			<span
-				class="unread-messages-count"
-				:style="unreadMessagesCount ? '' : 'display: none;'"
-			>
-				{{ unreadMessagesCount }}
-			</span>
-		</Button>
-	</div>
-	<div v-if="isOwner || isAdmin">
-		<Button
-			@click="
-				() => {
-					showMenu = false
-					router.push('/create-chapter')
-				}
-			"
-			severity="contrast"
-			text
-			label="Создать раздел"
-			id="create-chapter-button"
-		></Button>
-		<Button
-			@click="
-				() => {
-					showMenu = false
-					router.push('/users')
-				}
-			"
-			severity="contrast"
-			text
-			label="Пользователи"
-		></Button>
-		<Button
-			@click="
-				() => {
-					showMenu = false
-					router.push('/visits')
-				}
-			"
-			severity="contrast"
-			text
-			label="Статистика посещений"
-		></Button>
-	</div>
+	<MenuOption
+		v-for="(option, index) in props.options"
+		:key="index"
+		:path="option.path"
+		:label="option.label"
+		:icon="option.icon"
+		:clickHandler="option.clickHandler"
+	></MenuOption>
 	<div
 		v-if="showUserAccountSettings"
 		class="slide-container"

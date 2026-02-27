@@ -1,17 +1,19 @@
 <script setup>
-import { onMounted, reactive } from 'vue'
+import { onMounted, onUnmounted, reactive } from 'vue'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+import { helper } from '@/helper/helper'
+import { useStore } from 'vuex'
+
+const store = useStore()
 
 const props = defineProps({
-	setShowLogIn: {
-		type: Function,
-	},
-	handleLogIn: {
-		type: Function,
-		required: true,
+	showLogIn: {
+		type: Boolean,
 	},
 })
+
+const emit = defineEmits(['setShowLogIn'])
 
 const loginRequestForm = reactive({
 	nicknameOrEmail: null,
@@ -19,30 +21,40 @@ const loginRequestForm = reactive({
 	remember: false,
 })
 
+async function handleLogIn(loginRequestForm) {
+	await store.dispatch('logIn', loginRequestForm)
+	emit('setShowLogIn', false)
+}
+
 onMounted(() => {
-	const loginInput = document.getElementById('login-input')
+	helper.darkenBackground()
+	const loginInput = document.getElementById('log-in-input')
 	loginInput.focus()
+})
+
+onUnmounted(() => {
+	helper.lightenBackground()
 })
 </script>
 
 <template>
 	<form
 		class="slide-container"
-		@submit.prevent="() => props.handleLogIn(loginRequestForm)"
-		@keydown.enter.prevent="() => props.handleLogIn(loginRequestForm)"
-		id="login-form"
+		@submit.prevent="() => handleLogIn(loginRequestForm)"
+		@keydown.enter.prevent="() => handleLogIn(loginRequestForm)"
+		id="log-in-form"
 	>
-		<div class="login-input">
+		<div class="log-in-input">
 			<label>Логин:</label>
 			<InputText
 				v-model="loginRequestForm.nicknameOrEmail"
 				type="text"
 				placeholder="Почта или никнэйм"
 				required
-				id="login-input"
+				id="log-in-input"
 			/>
 		</div>
-		<div class="login-input">
+		<div class="log-in-input">
 			<label>Пароль:</label>
 			<InputText
 				v-model="loginRequestForm.password"
@@ -79,17 +91,17 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.login-input {
+.log-in-input {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
 }
 
-.login-input input {
+.log-in-input input {
 	border-radius: 4px;
 }
 
-.login-input:hover:deep(input) {
+.log-in-input:hover:deep(input) {
 	cursor: text;
 }
 

@@ -153,6 +153,33 @@ body {
 	width: 60%;
 }
 
+.slide-container {
+	display: flex;
+	flex-direction: column;
+	position: fixed;
+	top: var(--HEADER-HEIGHT);
+	right: 0;
+	z-index: 1;
+	background-color: var(--MENU-BCKGND-CLR);
+	padding: 15px;
+	border-radius: 3px;
+	box-shadow: var(--MENU-BOX-SHADOW);
+	animation-name: slide;
+	animation-duration: 0.2s;
+	transform: translateX(0%);
+	min-width: 220px;
+}
+
+.slide-container button span {
+	font-weight: bold;
+	color: var(--TEXT-COLOR);
+	border-radius: 0;
+}
+
+.slide-container button {
+	border-radius: 0;
+}
+
 @media (max-width: 1500px) {
 	#app {
 		width: 100%;
