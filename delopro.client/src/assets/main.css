@@ -178,6 +178,7 @@ body {
 
 .slide-container button {
 	border-radius: 0;
+	width: 100%;
 }
 
 @media (max-width: 1500px) {

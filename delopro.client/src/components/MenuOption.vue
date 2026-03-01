@@ -20,15 +20,25 @@ const props = defineProps({
 		type: String,
 		default: null,
 	},
+	warning: {
+		type: String,
+		default: null,
+	},
 })
 
 function clicked() {
+	if (props.warning) {
+		if (!window.confirm(props.warning)) {
+			return
+		}
+	}
+
 	if (props.path) {
 		router.push(props.path)
 	}
 
 	if (props.clickHandler) {
-		props.clickHandler(true)
+		props.clickHandler()
 	}
 }
 </script>
