@@ -1,8 +1,7 @@
 <script setup>
-import { onMounted, onUnmounted, reactive } from 'vue'
+import { onMounted, reactive } from 'vue'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-import { helper } from '@/helper/helper'
 import { useStore } from 'vuex'
 
 const store = useStore()
@@ -20,14 +19,14 @@ async function handleLogIn(loginRequestForm) {
 }
 
 onMounted(() => {
-	helper.darkenBackground()
+	//helper.darkenBackground()
 	const loginInput = document.getElementById('log-in-input')
 	loginInput.focus()
 })
 
-onUnmounted(() => {
-	helper.lightenBackground()
-})
+// onUnmounted(() => {
+// 	helper.lightenBackground()
+// })
 </script>
 
 <template>

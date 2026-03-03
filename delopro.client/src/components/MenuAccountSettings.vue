@@ -1,7 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
 import MenuOption from './MenuOption.vue'
-import { helper } from '@/helper/helper'
 
 const props = defineProps({
 	options: {
@@ -10,13 +8,13 @@ const props = defineProps({
 	},
 })
 
-onMounted(() => {
-	helper.darkenBackground()
-})
+// onMounted(() => {
+// 	helper.darkenBackground()
+// })
 
-onUnmounted(() => {
-	helper.lightenBackground()
-})
+// onUnmounted(() => {
+// 	helper.lightenBackground()
+// })
 </script>
 
 <template>

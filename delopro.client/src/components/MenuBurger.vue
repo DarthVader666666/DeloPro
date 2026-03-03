@@ -8,7 +8,7 @@ const props = defineProps({
 	},
 })
 
-const emit = defineEmits(['setShowMenu'])
+const emit = defineEmits(['setShowSlideMenu'])
 </script>
 <template>
 	<div class="burger">
@@ -16,7 +16,7 @@ const emit = defineEmits(['setShowMenu'])
 			{{ props.nickname ?? '' }}
 		</span>
 		<Button
-			@click="emit('setShowMenu', true)"
+			@click="emit('setShowSlideMenu', true)"
 			security="contrast"
 			rounded
 			text
@@ -45,7 +45,7 @@ const emit = defineEmits(['setShowMenu'])
 	font-size: x-large;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1100px) {
 	.burger {
 		display: flex;
 		align-items: center;

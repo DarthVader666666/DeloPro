@@ -106,7 +106,7 @@ export const helper = {
 		ids.forEach((id) => {
 			const element = document.getElementById(id)
 
-			if (element.contains(event.target)) {
+			if (element?.contains(event.target)) {
 				isValidClick = true
 			}
 			// if (anyChildren(event, document.getElementById(id))) {
