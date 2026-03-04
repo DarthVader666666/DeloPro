@@ -15,7 +15,7 @@ const store = useStore()
 const isAuthenticated = computed(() => store.getters.isAuthenticated)
 const currentUser = computed(() => store.getters.getCurrentUser)
 
-const isSlideMenu = ref(false)
+const isSlideMenu = ref(document.documentElement.clientWidth > 1100 ? false : true)
 const showSlideMenu = ref(false)
 const showLogIn = ref(false)
 const showAccountSettings = ref(false)
@@ -35,18 +35,20 @@ const options = [
 	{
 		path: 'home',
 		label: 'Главная',
-
 		roles: ['Any'],
+		clickHandler: () => setShowSlideMenu(),
 	},
 	{
 		path: 'feedback',
 		label: 'Обратная связь',
 		roles: [],
+		clickHandler: () => setShowSlideMenu(),
 	},
 	{
 		path: 'register',
 		label: 'Регистрация',
 		roles: [],
+		clickHandler: () => setShowSlideMenu(),
 	},
 	{
 		label: 'Войти',
@@ -58,21 +60,25 @@ const options = [
 		path: 'create-chapter',
 		label: 'Cоздать раздел',
 		roles: ['Owner', 'Admin'],
+		clickHandler: () => setShowSlideMenu(),
 	},
 	{
 		path: 'users',
 		label: 'Пользователи',
 		roles: ['Owner', 'Admin'],
+		clickHandler: () => setShowSlideMenu(),
 	},
 	{
 		path: 'visits',
 		label: 'Статистика посещений',
 		roles: ['Owner', 'Admin'],
+		clickHandler: () => setShowSlideMenu(),
 	},
 	{
 		path: 'messages',
 		label: 'Сообщения',
 		roles: ['Owner'],
+		clickHandler: () => setShowSlideMenu(),
 	},
 ]
 
@@ -130,6 +136,7 @@ async function setShowLogIn(value) {
 	const logInModal = document.getElementById('log-in-form')
 
 	if (showLogIn.value) {
+		showSlideMenu.value = false
 		outsideClickHandler = (e) => {
 			const clickedInside = logInModal.contains(e.target)
 			if (!clickedInside) {
@@ -188,12 +195,12 @@ async function setShowAccountSettings(value) {
 	}
 }
 
-function handleLogout() {
+async function handleLogout() {
 	if (!window.confirm('Вы уверены, что хотите выйти?')) {
 		return
 	}
 
-	store.dispatch('logOut')
+	await store.dispatch('logOut')
 	showAccountSettings.value = false
 }
 </script>
@@ -206,6 +213,7 @@ function handleLogout() {
 		<MenuSlider
 			v-if="isSlideMenu && showSlideMenu"
 			:options="options"
+			@setShowSlideMenu="setShowSlideMenu"
 		></MenuSlider>
 		<MenuComponent
 			v-else
