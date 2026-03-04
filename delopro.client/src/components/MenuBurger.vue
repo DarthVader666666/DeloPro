@@ -16,7 +16,7 @@ const emit = defineEmits(['setShowSlideMenu'])
 			{{ props.nickname ?? '' }}
 		</span>
 		<Button
-			@click="emit('setShowSlideMenu', true)"
+			@click="emit('setShowSlideMenu')"
 			security="contrast"
 			rounded
 			text

@@ -9,8 +9,6 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['setShowAccountSettings'])
-
-// const unreadMessagesCount = computed(() => store.getters.getUnreadMessagesCount)
 </script>
 
 <template>
@@ -41,11 +39,12 @@ const emit = defineEmits(['setShowAccountSettings'])
 .account {
 	position: absolute;
 	right: 20px;
+	top: 15px;
 	padding-bottom: 8px;
 	display: flex;
 	flex-direction: column;
 	font-size: medium;
-	align-items: end;
+	align-items: center;
 }
 
 .account button {
@@ -66,7 +65,7 @@ const emit = defineEmits(['setShowAccountSettings'])
 	width: 20px;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1100px) {
 	.account {
 		position: relative;
 		padding: 0 0 15px 0;

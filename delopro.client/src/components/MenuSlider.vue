@@ -16,7 +16,10 @@ const props = defineProps({
 </script>
 
 <template>
-	<div class="menu">
+	<div
+		class="slide-container"
+		id="slide-menu"
+	>
 		<div
 			v-for="(option, index) in props.options"
 			:key="index"
@@ -37,27 +40,3 @@ const props = defineProps({
 		</div>
 	</div>
 </template>
-
-<style>
-.menu {
-	display: flex;
-	flex-direction: row;
-	align-items: end;
-	gap: 0px;
-}
-
-.menu button {
-	border-radius: 0;
-}
-
-.menu span {
-	font-weight: bold;
-	color: var(--TEXT-COLOR);
-}
-
-@media (max-width: 1100px) {
-	.menu {
-		display: none;
-	}
-}
-</style>

@@ -3,11 +3,12 @@ import { RouterLink } from 'vue-router'
 import MenuComponent from './MenuComponent.vue'
 import MenuBurger from './MenuBurger.vue'
 import MenuLoginForm from './MenuLoginForm.vue'
-import MenuAccountOption from './MenuAccountOption.vue'
+import MenuAccount from './MenuAccount.vue'
 import MenuAccountSettings from './MenuAccountSettings.vue'
 import { useStore } from 'vuex'
 import { computed, onMounted, ref, watch } from 'vue'
 import { helper } from '@/helper/helper'
+import MenuSlider from './MenuSlider.vue'
 
 const store = useStore()
 
@@ -15,15 +16,14 @@ const isAuthenticated = computed(() => store.getters.isAuthenticated)
 const currentUser = computed(() => store.getters.getCurrentUser)
 
 const isSlideMenu = ref(false)
-const showSlideMenu = ref(true)
+const showSlideMenu = ref(false)
 const showLogIn = ref(false)
 const showAccountSettings = ref(false)
 const changeBackground = computed(
-	() => showSlideMenu.value || showLogIn.value || showAccountSettings.value,
+	() => showLogIn.value || showAccountSettings.value || showSlideMenu.value,
 )
 
 watch(changeBackground, (newValue) => {
-	console.log(newValue)
 	if (newValue) {
 		helper.darkenBackground()
 	} else {
@@ -94,7 +94,7 @@ const accountOptions = [
 
 onMounted(async () => {
 	window.addEventListener('click', (event) => {
-		if (!helper.closeMenu(event, ['menu', 'burger-button'])) {
+		if (!helper.closeMenu(event, ['slide-menu', 'burger-button'])) {
 			showSlideMenu.value = false
 		}
 	})
@@ -114,16 +114,10 @@ onMounted(async () => {
 })
 
 function handleScreenSizeChange() {
-	const menu = document.getElementById('menu')
-
 	if (document.documentElement.clientWidth > 1100) {
 		isSlideMenu.value = false
-		menu.classList.remove('slide-container')
-		menu.classList.add('menu')
 	} else {
 		isSlideMenu.value = true
-		menu.classList.remove('menu')
-		menu.classList.add('slide-container')
 	}
 }
 
@@ -136,7 +130,6 @@ async function setShowLogIn(value) {
 	const logInModal = document.getElementById('log-in-form')
 
 	if (showLogIn.value) {
-		showSlideMenu.value = false
 		outsideClickHandler = (e) => {
 			const clickedInside = logInModal.contains(e.target)
 			if (!clickedInside) {
@@ -154,7 +147,6 @@ async function setShowLogIn(value) {
 
 async function setShowSlideMenu(value) {
 	showSlideMenu.value = value = value !== undefined ? value : !showSlideMenu.value
-	console.log(showSlideMenu.value)
 	// await helper.timeoutAsync(10)
 	// const menuModal = document.getElementById('menu')
 
@@ -211,8 +203,12 @@ function handleLogout() {
 		<div class="logo">
 			<RouterLink to="/"><h1>DeloPro</h1></RouterLink>
 		</div>
+		<MenuSlider
+			v-if="isSlideMenu && showSlideMenu"
+			:options="options"
+		></MenuSlider>
 		<MenuComponent
-			v-show="showSlideMenu || isSlideMenu"
+			v-else
 			:options="options"
 		></MenuComponent>
 		<MenuBurger
@@ -223,11 +219,11 @@ function handleLogout() {
 			v-if="showLogIn"
 			@setShowLogIn="setShowLogIn"
 		></MenuLoginForm>
-		<MenuAccountOption
-			v-if="isAuthenticated"
+		<MenuAccount
+			v-if="isAuthenticated && !isSlideMenu"
 			:currentUser="currentUser"
 			@setShowAccountSettings="setShowAccountSettings"
-		></MenuAccountOption>
+		></MenuAccount>
 		<MenuAccountSettings
 			v-if="showAccountSettings"
 			:options="accountOptions"
