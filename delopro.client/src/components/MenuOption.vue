@@ -33,7 +33,7 @@ function clicked() {
 		}
 	}
 
-	if (props.path) {
+	if (props.path && props.path != 'sign-in') {
 		router.push(props.path)
 	}
 

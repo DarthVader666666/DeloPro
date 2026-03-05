@@ -97,44 +97,43 @@ export const helper = {
 		if (hasSelect) {
 			let select = document.getElementsByClassName('p-select-list-container')[0]
 
-			if (select.contains(event.target)) {
-				isValidClick = true
-			}
-			//if (anyChildren(event, select)) isValidClick = true
+			// if (select.contains(event.target)) {
+			// 	isValidClick = true
+			// }
+			if (anyChildren(event, select)) isValidClick = true
 		}
 
 		ids.forEach((id) => {
-			const element = document.getElementById(id)
-
-			if (element?.contains(event.target)) {
-				isValidClick = true
-			}
-			// if (anyChildren(event, document.getElementById(id))) {
+			// const element = document.getElementById(id)
+			// if (element?.contains(event.target)) {
 			// 	isValidClick = true
 			// }
+			if (anyChildren(event, document.getElementById(id))) {
+				isValidClick = true
+			}
 		})
 
 		return isValidClick
 
-		// function anyChildren(event, element) {
-		// 	if (element && element.children.length) {
-		// 		if (event.target === element) {
-		// 			return true
-		// 		}
+		function anyChildren(event, element) {
+			if (element && element.children.length) {
+				if (event.target === element) {
+					return true
+				}
 
-		// 		for (let i = 0; i < element.children.length; i++) {
-		// 			if (event.target === element.children[i]) {
-		// 				return true
-		// 			} else {
-		// 				if (anyChildren(event, element.children[i])) {
-		// 					return true
-		// 				}
-		// 			}
-		// 		}
-		// 	}
+				for (let i = 0; i < element.children.length; i++) {
+					if (event.target === element.children[i]) {
+						return true
+					} else {
+						if (anyChildren(event, element.children[i])) {
+							return true
+						}
+					}
+				}
+			}
 
-		// 	return false
-		// }
+			return false
+		}
 	},
 	userStatuses: ['Подтвержден', 'Не подтвержден', 'Удален'],
 	getUserTagSeverity(status) {

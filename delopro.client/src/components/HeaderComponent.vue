@@ -15,7 +15,6 @@ const store = useStore()
 const isAuthenticated = computed(() => store.getters.isAuthenticated)
 const currentUser = computed(() => store.getters.getCurrentUser)
 
-const isSlideMenu = ref(document.documentElement.clientWidth > 1100 ? false : true)
 const showSlideMenu = ref(false)
 const showLogIn = ref(false)
 const showAccountSettings = ref(false)
@@ -51,6 +50,7 @@ const options = [
 		clickHandler: () => setShowSlideMenu(),
 	},
 	{
+		path: 'sign-in',
 		label: 'Войти',
 		icon: 'pi pi-sign-in',
 		clickHandler: () => setShowLogIn(),
@@ -100,47 +100,34 @@ const accountOptions = [
 
 onMounted(async () => {
 	window.addEventListener('click', (event) => {
+		if (!helper.closeMenu(event, ['log-in-form', 'sign-in_menu_button'])) {
+			showLogIn.value = false
+		}
+	})
+	window.addEventListener('click', (event) => {
 		if (!helper.closeMenu(event, ['slide-menu', 'burger-button'])) {
 			showSlideMenu.value = false
 		}
 	})
-
-	// window.addEventListener('click', (event) => {
-	// 	if (!helper.closeMenu(event, ['log-in-form', 'sign-in_menu_button'])) {
-	// 		showLogIn.value = false
-	// 	}
-	// })
-
 	window.addEventListener('click', (event) => {
 		if (!helper.closeMenu(event, ['account-settings', 'account-button']))
 			showAccountSettings.value = false
 	})
-
-	window.addEventListener('resize', handleScreenSizeChange)
 })
 
-function handleScreenSizeChange() {
-	if (document.documentElement.clientWidth > 1100) {
-		isSlideMenu.value = false
-	} else {
-		isSlideMenu.value = true
-	}
-}
+let outsideLogInClickHandler = null
+let outsideSlideMenuClickHandler = null
+let outsideAccountSettingsClickHandler = null
 
-let outsideClickHandler = null
+async function addOnClickEventListener(showValue, id, setShowFunction, outsideClickHandler) {
+	await helper.timeoutAsync(250)
+	const element = document.getElementById(id)
 
-async function setShowLogIn(value) {
-	showLogIn.value = value !== undefined ? value : !showLogIn.value
-
-	await helper.timeoutAsync(10)
-	const logInModal = document.getElementById('log-in-form')
-
-	if (showLogIn.value) {
-		showSlideMenu.value = false
+	if (showValue) {
 		outsideClickHandler = (e) => {
-			const clickedInside = logInModal.contains(e.target)
+			const clickedInside = element?.contains(e.target) ?? false
 			if (!clickedInside) {
-				setShowLogIn(false)
+				setShowFunction()
 			}
 		}
 		document.addEventListener('click', outsideClickHandler)
@@ -152,16 +139,30 @@ async function setShowLogIn(value) {
 	}
 }
 
-async function setShowSlideMenu(value) {
-	showSlideMenu.value = value = value !== undefined ? value : !showSlideMenu.value
+function closeAll() {
+	showLogIn.value = false
+	showSlideMenu.value = false
+	showAccountSettings.value = false
+}
+
+async function setShowLogIn(value) {
+	showLogIn.value = value !== undefined ? value : !showLogIn.value
+	// await addOnClickEventListener(
+	// 	showLogIn.value,
+	// 	'log-in-form',
+	// 	setShowLogIn,
+	// 	outsideLogInClickHandler,
+	// )
+
 	// await helper.timeoutAsync(10)
-	// const menuModal = document.getElementById('menu')
+	// const logInModal = document.getElementById('log-in-form')
 
 	// if (showLogIn.value) {
+	// 	showSlideMenu.value = false
 	// 	outsideClickHandler = (e) => {
-	// 		const clickedInside = menuModal.contains(e.target)
+	// 		const clickedInside = logInModal.contains(e.target)
 	// 		if (!clickedInside) {
-	// 			setShowMenu(false)
+	// 			setShowLogIn(false)
 	// 		}
 	// 	}
 	// 	document.addEventListener('click', outsideClickHandler)
@@ -173,26 +174,42 @@ async function setShowSlideMenu(value) {
 	// }
 }
 
+async function setShowSlideMenu(value) {
+	showSlideMenu.value = value = value !== undefined ? value : !showSlideMenu.value
+	// await addOnClickEventListener(
+	// 	showSlideMenu.value,
+	// 	'slide-menu',
+	// 	setShowSlideMenu,
+	// 	outsideSlideMenuClickHandler,
+	// )
+}
+
 async function setShowAccountSettings(value) {
 	showAccountSettings.value = value = value !== undefined ? value : !showAccountSettings.value
+	// await addOnClickEventListener(
+	// 	showSlideMenu.value,
+	// 	'account-settings',
+	// 	setShowAccountSettings,
+	// 	outsideAccountSettingsClickHandler,
+	// )
 
-	await helper.timeoutAsync(10)
-	const accountSettingsModal = document.getElementById('account-settings')
+	// await helper.timeoutAsync(10)
+	// const accountSettingsModal = document.getElementById('account-settings')
 
-	if (showLogIn.value) {
-		outsideClickHandler = (e) => {
-			const clickedInside = accountSettingsModal.contains(e.target)
-			if (!clickedInside) {
-				setShowAccountSettings(false)
-			}
-		}
-		document.addEventListener('click', outsideClickHandler)
-	} else {
-		if (outsideClickHandler) {
-			document.removeEventListener('click', outsideClickHandler)
-			outsideClickHandler = null
-		}
-	}
+	// if (showLogIn.value) {
+	// 	outsideClickHandler = (e) => {
+	// 		const clickedInside = accountSettingsModal.contains(e.target)
+	// 		if (!clickedInside) {
+	// 			setShowAccountSettings(false)
+	// 		}
+	// 	}
+	// 	document.addEventListener('click', outsideClickHandler)
+	// } else {
+	// 	if (outsideClickHandler) {
+	// 		document.removeEventListener('click', outsideClickHandler)
+	// 		outsideClickHandler = null
+	// 	}
+	// }
 }
 
 async function handleLogout() {
@@ -211,7 +228,7 @@ async function handleLogout() {
 			<RouterLink to="/"><h1>DeloPro</h1></RouterLink>
 		</div>
 		<MenuSlider
-			v-if="isSlideMenu && showSlideMenu"
+			v-if="showSlideMenu"
 			:options="options"
 			@setShowSlideMenu="setShowSlideMenu"
 		></MenuSlider>
@@ -228,7 +245,7 @@ async function handleLogout() {
 			@setShowLogIn="setShowLogIn"
 		></MenuLoginForm>
 		<MenuAccount
-			v-if="isAuthenticated && !isSlideMenu"
+			v-if="isAuthenticated"
 			:currentUser="currentUser"
 			@setShowAccountSettings="setShowAccountSettings"
 		></MenuAccount>
@@ -239,21 +256,6 @@ async function handleLogout() {
 	</div>
 </template>
 <style>
-/* .slide-container button:not(.account button) {
-	width: 100%;
-	border-radius: 0;
-} */
-
-/* @media (max-width: 800px) {
-	.menu {
-		display: none;
-	}
-
-	.slide-container {
-		flex-direction: column-reverse;
-	}
-} */
-
 .header-container {
 	display: flex;
 	flex-direction: row;

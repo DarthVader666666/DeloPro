@@ -14,7 +14,7 @@ const emit = defineEmits(['setShowAccountSettings'])
 <template>
 	<div class="account">
 		<Button
-			@click="() => emit('setShowAccountSettings', true)"
+			@click="() => emit('setShowAccountSettings')"
 			severity="secondary"
 			rounded
 			id="account-button"
@@ -67,10 +67,7 @@ const emit = defineEmits(['setShowAccountSettings'])
 
 @media (max-width: 1100px) {
 	.account {
-		position: relative;
-		padding: 0 0 15px 0;
-		right: 0;
-		margin: auto;
+		display: none;
 	}
 }
 </style>

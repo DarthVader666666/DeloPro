@@ -19,14 +19,9 @@ async function handleLogIn(loginRequestForm) {
 }
 
 onMounted(() => {
-	//helper.darkenBackground()
 	const loginInput = document.getElementById('log-in-input')
 	loginInput.focus()
 })
-
-// onUnmounted(() => {
-// 	helper.lightenBackground()
-// })
 </script>
 
 <template>
