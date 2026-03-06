@@ -2,6 +2,7 @@
 import { useStore } from 'vuex'
 import MenuOption from './MenuOption.vue'
 import { computed } from 'vue'
+import MenuAccount from './MenuAccount.vue'
 
 const store = useStore()
 const isAuthenticated = computed(() => store.getters.isAuthenticated)
@@ -12,6 +13,9 @@ const props = defineProps({
 		type: Array,
 		default: () => [],
 	},
+	setShowAccountSettings: {
+		type: Function,
+	},
 })
 </script>
 
@@ -20,6 +24,14 @@ const props = defineProps({
 		class="slide-container"
 		id="slide-menu"
 	>
+		<div v-if="isAuthenticated">
+			<MenuAccount
+				:currentUser="currentUser"
+				@setShowAccountSettings="props.setShowAccountSettings"
+			></MenuAccount>
+			<hr style="width: 100%" />
+		</div>
+
 		<div
 			v-for="(option, index) in props.options"
 			:key="index"

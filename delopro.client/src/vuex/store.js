@@ -944,7 +944,7 @@ const store = createStore({
 				.then(async (response) => {
 					if (response.status === 200) {
 						helper.clearSession()
-						router.push('/')
+						location.reload()
 					}
 				})
 				.catch((error) => {

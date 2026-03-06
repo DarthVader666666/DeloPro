@@ -12,8 +12,9 @@ const emit = defineEmits(['setShowAccountSettings'])
 </script>
 
 <template>
-	<div class="account">
+	<div style="display: flex; flex-direction: column; font-size: medium; align-items: center">
 		<Button
+			style="height: 50px; width: 50px; border-radius: 50%"
 			@click="() => emit('setShowAccountSettings')"
 			severity="secondary"
 			rounded
@@ -36,23 +37,6 @@ const emit = defineEmits(['setShowAccountSettings'])
 </template>
 
 <style scoped>
-.account {
-	position: absolute;
-	right: 20px;
-	top: 15px;
-	padding-bottom: 8px;
-	display: flex;
-	flex-direction: column;
-	font-size: medium;
-	align-items: center;
-}
-
-.account button {
-	height: 50px;
-	width: 50px;
-	border-radius: 50%;
-}
-
 .unread-messages-count {
 	right: 0;
 	background: red;
@@ -63,11 +47,5 @@ const emit = defineEmits(['setShowAccountSettings'])
 	border-radius: 50%;
 	height: 20px;
 	width: 20px;
-}
-
-@media (max-width: 1100px) {
-	.account {
-		display: none;
-	}
 }
 </style>

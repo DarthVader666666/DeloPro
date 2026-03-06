@@ -115,101 +115,16 @@ onMounted(async () => {
 	})
 })
 
-let outsideLogInClickHandler = null
-let outsideSlideMenuClickHandler = null
-let outsideAccountSettingsClickHandler = null
-
-async function addOnClickEventListener(showValue, id, setShowFunction, outsideClickHandler) {
-	await helper.timeoutAsync(250)
-	const element = document.getElementById(id)
-
-	if (showValue) {
-		outsideClickHandler = (e) => {
-			const clickedInside = element?.contains(e.target) ?? false
-			if (!clickedInside) {
-				setShowFunction()
-			}
-		}
-		document.addEventListener('click', outsideClickHandler)
-	} else {
-		if (outsideClickHandler) {
-			document.removeEventListener('click', outsideClickHandler)
-			outsideClickHandler = null
-		}
-	}
-}
-
-function closeAll() {
-	showLogIn.value = false
-	showSlideMenu.value = false
-	showAccountSettings.value = false
-}
-
 async function setShowLogIn(value) {
 	showLogIn.value = value !== undefined ? value : !showLogIn.value
-	// await addOnClickEventListener(
-	// 	showLogIn.value,
-	// 	'log-in-form',
-	// 	setShowLogIn,
-	// 	outsideLogInClickHandler,
-	// )
-
-	// await helper.timeoutAsync(10)
-	// const logInModal = document.getElementById('log-in-form')
-
-	// if (showLogIn.value) {
-	// 	showSlideMenu.value = false
-	// 	outsideClickHandler = (e) => {
-	// 		const clickedInside = logInModal.contains(e.target)
-	// 		if (!clickedInside) {
-	// 			setShowLogIn(false)
-	// 		}
-	// 	}
-	// 	document.addEventListener('click', outsideClickHandler)
-	// } else {
-	// 	if (outsideClickHandler) {
-	// 		document.removeEventListener('click', outsideClickHandler)
-	// 		outsideClickHandler = null
-	// 	}
-	// }
 }
 
 async function setShowSlideMenu(value) {
 	showSlideMenu.value = value = value !== undefined ? value : !showSlideMenu.value
-	// await addOnClickEventListener(
-	// 	showSlideMenu.value,
-	// 	'slide-menu',
-	// 	setShowSlideMenu,
-	// 	outsideSlideMenuClickHandler,
-	// )
 }
 
 async function setShowAccountSettings(value) {
 	showAccountSettings.value = value = value !== undefined ? value : !showAccountSettings.value
-	// await addOnClickEventListener(
-	// 	showSlideMenu.value,
-	// 	'account-settings',
-	// 	setShowAccountSettings,
-	// 	outsideAccountSettingsClickHandler,
-	// )
-
-	// await helper.timeoutAsync(10)
-	// const accountSettingsModal = document.getElementById('account-settings')
-
-	// if (showLogIn.value) {
-	// 	outsideClickHandler = (e) => {
-	// 		const clickedInside = accountSettingsModal.contains(e.target)
-	// 		if (!clickedInside) {
-	// 			setShowAccountSettings(false)
-	// 		}
-	// 	}
-	// 	document.addEventListener('click', outsideClickHandler)
-	// } else {
-	// 	if (outsideClickHandler) {
-	// 		document.removeEventListener('click', outsideClickHandler)
-	// 		outsideClickHandler = null
-	// 	}
-	// }
 }
 
 async function handleLogout() {
@@ -218,7 +133,6 @@ async function handleLogout() {
 	}
 
 	await store.dispatch('logOut')
-	showAccountSettings.value = false
 }
 </script>
 
@@ -231,6 +145,7 @@ async function handleLogout() {
 			v-if="showSlideMenu"
 			:options="options"
 			@setShowSlideMenu="setShowSlideMenu"
+			:setShowAccountSettings="setShowAccountSettings"
 		></MenuSlider>
 		<MenuComponent
 			v-else
@@ -244,14 +159,19 @@ async function handleLogout() {
 			v-if="showLogIn"
 			@setShowLogIn="setShowLogIn"
 		></MenuLoginForm>
-		<MenuAccount
+		<div
 			v-if="isAuthenticated"
-			:currentUser="currentUser"
-			@setShowAccountSettings="setShowAccountSettings"
-		></MenuAccount>
+			class="account"
+		>
+			<MenuAccount
+				:currentUser="currentUser"
+				@setShowAccountSettings="setShowAccountSettings"
+			></MenuAccount>
+		</div>
 		<MenuAccountSettings
 			v-if="showAccountSettings"
 			:options="accountOptions"
+			@setShowAccountSettings="setShowAccountSettings"
 		></MenuAccountSettings>
 	</div>
 </template>
@@ -287,6 +207,19 @@ async function handleLogout() {
 
 label {
 	font-weight: bold;
+}
+
+.account {
+	position: absolute;
+	right: 20px;
+	top: 15px;
+	padding-bottom: 8px;
+}
+
+@media (max-width: 1100px) {
+	.account {
+		display: none;
+	}
 }
 
 @media (max-width: 1100px) {
