@@ -1,22 +1,29 @@
 <script setup>
 import { useStore } from 'vuex'
 import MenuOption from './MenuOption.vue'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import MenuAccount from './MenuAccount.vue'
+import MenuAccountSettings from './MenuAccountSettings.vue'
 
 const store = useStore()
 const isAuthenticated = computed(() => store.getters.isAuthenticated)
 const currentUser = computed(() => store.getters.getCurrentUser)
+const showAccountSettings = ref(false)
 
 const props = defineProps({
 	options: {
 		type: Array,
 		default: () => [],
 	},
-	setShowAccountSettings: {
-		type: Function,
+	accountOptions: {
+		type: Array,
+		default: () => [],
 	},
 })
+
+function setShowAccountSettings(value) {
+	showAccountSettings.value = value !== undefined ? value : !showAccountSettings.value
+}
 </script>
 
 <template>
@@ -27,7 +34,7 @@ const props = defineProps({
 		<div v-if="isAuthenticated">
 			<MenuAccount
 				:currentUser="currentUser"
-				@setShowAccountSettings="props.setShowAccountSettings"
+				@setShowAccountSettings="setShowAccountSettings"
 			></MenuAccount>
 			<hr style="width: 100%" />
 		</div>
@@ -51,4 +58,8 @@ const props = defineProps({
 			></MenuOption>
 		</div>
 	</div>
+	<MenuAccountSettings
+		v-if="showAccountSettings"
+		:accountOptions="props.accountOptions"
+	></MenuAccountSettings>
 </template>

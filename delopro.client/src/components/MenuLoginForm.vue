@@ -27,7 +27,7 @@ onMounted(() => {
 <template>
 	<form
 		class="slide-container"
-		@submit.prevent="() => handleLogIn(loginRequestForm)"
+		@submit="handleLogIn(loginRequestForm)"
 		@keydown.enter.prevent="() => handleLogIn(loginRequestForm)"
 		id="log-in-form"
 	>
@@ -65,7 +65,6 @@ onMounted(() => {
 				icon="pi pi-sign-in"
 				label="Войти"
 				raised
-				form="login-form"
 			></Button>
 		</div>
 		<RouterLink

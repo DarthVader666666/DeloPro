@@ -98,7 +98,7 @@ const accountOptions = [
 	},
 ]
 
-onMounted(async () => {
+onMounted(() => {
 	window.addEventListener('click', (event) => {
 		if (!helper.closeMenu(event, ['log-in-form', 'sign-in_menu_button'])) {
 			showLogIn.value = false
@@ -115,16 +115,16 @@ onMounted(async () => {
 	})
 })
 
-async function setShowLogIn(value) {
+function setShowLogIn(value) {
 	showLogIn.value = value !== undefined ? value : !showLogIn.value
 }
 
-async function setShowSlideMenu(value) {
-	showSlideMenu.value = value = value !== undefined ? value : !showSlideMenu.value
+function setShowSlideMenu(value) {
+	showSlideMenu.value = value !== undefined ? value : !showSlideMenu.value
 }
 
-async function setShowAccountSettings(value) {
-	showAccountSettings.value = value = value !== undefined ? value : !showAccountSettings.value
+function setShowAccountSettings(value) {
+	showAccountSettings.value = value !== undefined ? value : !showAccountSettings.value
 }
 
 async function handleLogout() {
@@ -144,8 +144,7 @@ async function handleLogout() {
 		<MenuSlider
 			v-if="showSlideMenu"
 			:options="options"
-			@setShowSlideMenu="setShowSlideMenu"
-			:setShowAccountSettings="setShowAccountSettings"
+			:accountOptions="accountOptions"
 		></MenuSlider>
 		<MenuComponent
 			v-else
@@ -169,8 +168,8 @@ async function handleLogout() {
 			></MenuAccount>
 		</div>
 		<MenuAccountSettings
-			v-if="showAccountSettings"
-			:options="accountOptions"
+			v-if="isAuthenticated && showAccountSettings"
+			:accountOptions="accountOptions"
 			@setShowAccountSettings="setShowAccountSettings"
 		></MenuAccountSettings>
 	</div>

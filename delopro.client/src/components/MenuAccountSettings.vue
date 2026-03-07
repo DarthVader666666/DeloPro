@@ -3,7 +3,7 @@ import MenuOption from './MenuOption.vue'
 import Button from 'primevue/button'
 
 const props = defineProps({
-	options: {
+	accountOptions: {
 		type: Array,
 		default: () => [],
 	},
@@ -26,7 +26,7 @@ const emit = defineEmits(['setShowAccountSettings'])
 		></Button>
 		<div style="padding-top: 25px">
 			<MenuOption
-				v-for="(option, index) in props.options"
+				v-for="(option, index) in props.accountOptions"
 				:key="index"
 				:path="option.path"
 				:label="option.label"
