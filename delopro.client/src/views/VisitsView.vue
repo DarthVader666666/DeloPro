@@ -19,6 +19,8 @@ const dateRangeForm = reactive({
 })
 
 onMounted(async () => {
+	await helper.timeoutAsync(10)
+
 	const dateNow = new Date()
 	dateRangeForm.fromDate = helper.getDateStringForInput(dateNow.setDate(dateNow.getDate() - 30))
 	dateRangeForm.toDate = helper.getDateStringForInput(currentDate)

@@ -97,11 +97,20 @@ export const helper = {
 		if (hasSelect) {
 			let select = document.getElementsByClassName('p-select-list-container')[0]
 
+			// if (select.contains(event.target)) {
+			// 	isValidClick = true
+			// }
 			if (anyChildren(event, select)) isValidClick = true
 		}
 
 		ids.forEach((id) => {
-			if (anyChildren(event, document.getElementById(id))) isValidClick = true
+			// const element = document.getElementById(id)
+			// if (element?.contains(event.target)) {
+			// 	isValidClick = true
+			// }
+			if (anyChildren(event, document.getElementById(id))) {
+				isValidClick = true
+			}
 		})
 
 		return isValidClick
@@ -168,6 +177,13 @@ export const helper = {
 			for (let item of items) {
 				item.style.removeProperty('opacity')
 				item.style.removeProperty('filter')
+
+				let children = item.children
+
+				for (let item of children) {
+					item.style.removeProperty('opacity')
+					item.style.removeProperty('filter')
+				}
 			}
 		})
 	},
@@ -234,12 +250,13 @@ export const helper = {
 		})
 	},
 	clearSession() {
-		store.commit('setCurrentUser', null)
 		const keys = store.state.sessionStorageKeys
 
 		for (const key in keys) {
 			sessionStorage.removeItem(keys[key])
 		}
+
+		// store.commit('setCurrentUser', null)
 	},
 	async isAuthenticated() {
 		return await axios

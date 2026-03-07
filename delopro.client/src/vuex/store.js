@@ -78,7 +78,10 @@ const store = createStore({
 
 		// ACCOUNT
 		getCurrentUser(state) {
-			return state.currentUser
+			return (
+				state.currentUser ??
+				JSON.parse(sessionStorage.getItem(state.sessionStorageKeys.currentUserKey))
+			)
 		},
 		getRoles(state) {
 			return state.currentUser?.roles ?? []
@@ -96,7 +99,10 @@ const store = createStore({
 			return state.currentUser?.roles?.includes('User')
 		},
 		isAuthenticated(state) {
-			return state.currentUser != null
+			return (
+				store.getters.getCurrentUser != null &&
+				sessionStorage.getItem(state.sessionStorageKeys.currentUserKey) != null
+			)
 		},
 
 		// DOCUMENTS
@@ -935,10 +941,10 @@ const store = createStore({
 						'Content-Type': 'application/json',
 					},
 				})
-				.then((response) => {
+				.then(async (response) => {
 					if (response.status === 200) {
 						helper.clearSession()
-						router.push('/')
+						location.reload()
 					}
 				})
 				.catch((error) => {

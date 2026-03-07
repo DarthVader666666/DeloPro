@@ -1,380 +1,181 @@
 <script setup>
-import { ref, computed, onMounted, watch, nextTick, reactive } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
-import { helper } from '@/helper/helper.js'
+import { RouterLink } from 'vue-router'
+import MenuComponent from './MenuComponent.vue'
+import MenuBurger from './MenuBurger.vue'
+import MenuLoginForm from './MenuLoginForm.vue'
+import MenuAccount from './MenuAccount.vue'
+import MenuAccountSettings from './MenuAccountSettings.vue'
 import { useStore } from 'vuex'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-
-const loginRequestForm = reactive({
-	nicknameOrEmail: null,
-	password: null,
-	remember: false,
-})
+import { computed, onMounted, ref, watch } from 'vue'
+import { helper } from '@/helper/helper'
+import MenuSlider from './MenuSlider.vue'
 
 const store = useStore()
-const router = useRouter()
 
-const nickname = computed(() => store.getters.getNickname)
 const isAuthenticated = computed(() => store.getters.isAuthenticated)
-const isAdmin = computed(() => store.getters.isAdmin)
-const isOwner = computed(() => store.getters.isOwner)
-const isUser = computed(() => store.getters.isUser)
-const unreadMessagesCount = computed(() => store.getters.getUnreadMessagesCount)
-const darkenBackground = computed(
-	() => showLogin.value || showMenu.value || showUserAccountSettings.value,
+const currentUser = computed(() => store.getters.getCurrentUser)
+
+const showSlideMenu = ref(false)
+const showLogIn = ref(false)
+const showAccountSettings = ref(false)
+const changeBackground = computed(
+	() => showLogIn.value || showAccountSettings.value || showSlideMenu.value,
 )
-const user = computed(() => store.getters.getCurrentUser)
 
-const showLogin = ref(false)
-const showMenu = ref(false)
-const showUserAccountSettings = ref(false)
-
-onMounted(async () => {
-	window.addEventListener('click', (event) => {
-		if (!helper.closeMenu(event, ['login-form', 'login-button'])) showLogin.value = false
-	})
-	window.addEventListener('click', (event) => {
-		if (!helper.closeMenu(event, ['menu', 'burger-button'])) showMenu.value = false
-	})
-	window.addEventListener('click', (event) => {
-		if (!helper.closeMenu(event, ['account-settings', 'account-button']))
-			showUserAccountSettings.value = false
-	})
-	window.addEventListener('resize', handleScreenSizeChange)
-})
-
-watch(showMenu, (oldValue, newValue) => {
-	const menu = document.getElementById('menu')
-
+watch(changeBackground, (newValue) => {
 	if (newValue) {
-		menu.classList.remove('slide-container')
-		menu.classList.add('menu')
-	} else {
-		menu.classList.remove('menu')
-		menu.classList.add('slide-container')
-	}
-})
-
-watch(darkenBackground, (oldValue, newValue) => {
-	if (!newValue) {
 		helper.darkenBackground()
 	} else {
 		helper.lightenBackground()
 	}
 })
 
-const handleScreenSizeChange = () => {
-	if (document.documentElement.clientWidth > 800) {
-		showMenu.value = false
-	}
+const options = [
+	{
+		path: 'home',
+		label: 'Главная',
+		roles: ['Any'],
+		clickHandler: () => setShowSlideMenu(),
+	},
+	{
+		path: 'feedback',
+		label: 'Обратная связь',
+		roles: [],
+		clickHandler: () => setShowSlideMenu(),
+	},
+	{
+		path: 'register',
+		label: 'Регистрация',
+		roles: [],
+		clickHandler: () => setShowSlideMenu(),
+	},
+	{
+		path: 'sign-in',
+		label: 'Войти',
+		icon: 'pi pi-sign-in',
+		clickHandler: () => setShowLogIn(),
+		roles: [],
+	},
+	{
+		path: 'create-chapter',
+		label: 'Cоздать раздел',
+		roles: ['Owner', 'Admin'],
+		clickHandler: () => setShowSlideMenu(),
+	},
+	{
+		path: 'users',
+		label: 'Пользователи',
+		roles: ['Owner', 'Admin'],
+		clickHandler: () => setShowSlideMenu(),
+	},
+	{
+		path: 'visits',
+		label: 'Статистика посещений',
+		roles: ['Owner', 'Admin'],
+		clickHandler: () => setShowSlideMenu(),
+	},
+	{
+		path: 'messages',
+		label: 'Сообщения',
+		roles: ['Owner'],
+		clickHandler: () => setShowSlideMenu(),
+	},
+]
+
+const accountOptions = [
+	{
+		path: 'account',
+		label: 'Личный кабинет',
+		clickHandler: () => setShowAccountSettings(false),
+		roles: ['Owner', 'Admin', 'User'],
+	},
+	{
+		path: null,
+		label: 'Выйти',
+		icon: 'pi pi-sign-out',
+		clickHandler: () => handleLogout(),
+		roles: ['Owner', 'Admin', 'User'],
+	},
+]
+
+onMounted(() => {
+	window.addEventListener('click', (event) => {
+		if (!helper.closeMenu(event, ['log-in-form', 'sign-in_menu_button'])) {
+			showLogIn.value = false
+		}
+	})
+	window.addEventListener('click', (event) => {
+		if (!helper.closeMenu(event, ['slide-menu', 'burger-button'])) {
+			showSlideMenu.value = false
+		}
+	})
+	window.addEventListener('click', (event) => {
+		if (!helper.closeMenu(event, ['account-settings', 'account-button']))
+			showAccountSettings.value = false
+	})
+})
+
+function setShowLogIn(value) {
+	showLogIn.value = value !== undefined ? value : !showLogIn.value
 }
 
-async function handleLogIn() {
-	await store.dispatch('logIn', loginRequestForm)
-	helper.resetObject(loginRequestForm)
-	showLogin.value = false
+function setShowSlideMenu(value) {
+	showSlideMenu.value = value !== undefined ? value : !showSlideMenu.value
 }
 
-function handleLogout() {
+function setShowAccountSettings(value) {
+	showAccountSettings.value = value !== undefined ? value : !showAccountSettings.value
+	setShowSlideMenu()
+}
+
+async function handleLogout() {
 	if (!window.confirm('Вы уверены, что хотите выйти?')) {
 		return
 	}
 
-	store.dispatch('logOut')
-
-	showUserAccountSettings.value = false
-}
-
-const showLogInForm = async () => {
-	showMenu.value = false
-	showLogin.value = !showLogin.value
-
-	if (showLogin.value) {
-		loginRequestForm.nicknameOrEmail = null
-		loginRequestForm.password = null
-
-		await nextTick()
-		const loginInput = document.getElementById('login-input')
-		loginInput.focus()
-	}
-}
-
-function handleBurgerClick() {
-	showMenu.value = !showMenu.value
+	await store.dispatch('logOut')
 }
 </script>
 
 <template>
-	<div
-		class="header-container"
-		ref="header"
-	>
+	<div class="header-container">
 		<div class="logo">
 			<RouterLink to="/"><h1>DeloPro</h1></RouterLink>
 		</div>
-		<div class="account-and-menu">
-			<div class="menu-burger">
-				<span
-					v-if="nickname"
-					style="font-weight: bold"
-				>
-					{{ nickname }}
-				</span>
-				<Button
-					@click="handleBurgerClick"
-					security="contrast"
-					rounded
-					text
-					id="burger-button"
-				>
-					<i class="pi pi-bars"></i>
-				</Button>
-			</div>
-			<div
-				class="menu"
-				id="menu"
-			>
-				<div
-					v-if="nickname"
-					class="account"
-				>
-					<Button
-						@click="
-							() => {
-								showUserAccountSettings = !showUserAccountSettings
-								showMenu = false
-							}
-						"
-						severity="secondary"
-						rounded
-						id="account-button"
-					>
-						<img
-							v-if="user && user.avatarPath"
-							:src="user.avatarPath"
-							width="50px"
-							height="50px"
-						/>
-						<i
-							v-else
-							class="pi pi-user"
-							style="font-size: x-large"
-						></i>
-					</Button>
-					<span>{{ nickname }}</span>
-				</div>
-				<Button
-					@click="
-						() => {
-							showMenu = false
-							router.push('/')
-						}
-					"
-					severity="contrast"
-					text
-					label="Главная"
-					id="home-button"
-				></Button>
-				<div v-if="isOwner">
-					<Button
-						@click="
-							() => {
-								showMenu = false
-								router.push('/messages')
-							}
-						"
-						severity="contrast"
-						text
-						id="messages-button"
-					>
-						<span>Сообщения</span>
-						<span
-							class="unread-messages-count"
-							:style="unreadMessagesCount ? '' : 'display: none;'"
-						>
-							{{ unreadMessagesCount }}
-						</span>
-					</Button>
-				</div>
-				<div v-if="isAdmin"></div>
-				<div v-if="isOwner || isAdmin">
-					<Button
-						@click="
-							() => {
-								showMenu = false
-								router.push('/create-chapter')
-							}
-						"
-						severity="contrast"
-						text
-						label="Создать раздел"
-						id="create-chapter-button"
-					></Button>
-					<Button
-						@click="
-							() => {
-								showMenu = false
-								router.push('/users')
-							}
-						"
-						severity="contrast"
-						text
-						label="Пользователи"
-					></Button>
-					<Button
-						@click="
-							() => {
-								showMenu = false
-								router.push('/visits')
-							}
-						"
-						severity="contrast"
-						text
-						label="Статистика посещений"
-					></Button>
-				</div>
-				<div v-if="!isAuthenticated">
-					<Button
-						v-if="!isAuthenticated || isUser"
-						@click="
-							() => {
-								showMenu = false
-								router.push('/feedback')
-							}
-						"
-						severity="contrast"
-						text
-						label="Обратная связь"
-						id="feedback-button"
-					></Button>
-					<Button
-						v-if="!isAuthenticated || isUser"
-						@click="
-							() => {
-								showMenu = false
-								showLogin = false
-								router.push('/register')
-							}
-						"
-						severity="contrast"
-						text
-						label="Регистрация"
-						id="register-button"
-					></Button>
-				</div>
-				<Button
-					v-if="!isAuthenticated"
-					@click="showLogInForm"
-					severity="contrast"
-					text
-					label="Войти"
-					icon="pi pi-sign-in"
-					id="login-button"
-				></Button>
-			</div>
-			<div
-				v-if="nickname && showUserAccountSettings"
-				class="slide-container"
-				id="account-settings"
-			>
-				<div style="text-align: center">
-					<span style="font-size: large">
-						{{ nickname }}
-					</span>
-					<Button
-						@click="showUserAccountSettings = false"
-						severity="contrast"
-						rounded
-						text
-						icon="pi pi-times"
-						style="position: absolute; right: 5px; top: 5px; height: 25px; width: 25px"
-					></Button>
-				</div>
-				<div style="padding-top: 20px">
-					<Button
-						@click="
-							() => {
-								showUserAccountSettings = false
-								router.push(`/account`)
-							}
-						"
-						text
-						label="Личный кабинет"
-						style="padding: 12px"
-					></Button>
-					<Button
-						@click="handleLogout"
-						text
-						label="Выйти"
-						icon="pi pi-sign-out"
-						id="logout-button"
-						style="padding: 12px"
-					></Button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<form
-		v-show="showLogin"
-		class="slide-container"
-		@submit.prevent="handleLogIn"
-		@keydown.enter.prevent="handleLogIn"
-		id="login-form"
-	>
-		<div class="login-input">
-			<label>Логин:</label>
-			<InputText
-				v-model="loginRequestForm.nicknameOrEmail"
-				type="text"
-				placeholder="Почта или никнэйм"
-				required
-				id="login-input"
-			/>
-		</div>
-		<div class="login-input">
-			<label>Пароль:</label>
-			<InputText
-				v-model="loginRequestForm.password"
-				type="password"
-				placeholder="Пароль"
-				required
-			/>
-		</div>
-		<div class="bottom-part">
-			<div class="remember">
-				<label for="remember-checkbox">Запомнить</label>
-				<input
-					v-model="loginRequestForm.remember"
-					type="checkbox"
-					id="remember-checkbox"
-				/>
-			</div>
-			<Button
-				type="submit"
-				severity="secondary"
-				icon="pi pi-sign-in"
-				label="Войти"
-				raised
-				form="login-form"
-			></Button>
-		</div>
-		<RouterLink
-			to="/recover-password"
-			@click="
-				() => {
-					showMenu = false
-					showLogin = !showLogin
-				}
-			"
+		<MenuSlider
+			v-if="showSlideMenu"
+			:options="options"
+			:accountOptions="accountOptions"
+		></MenuSlider>
+		<MenuComponent
+			v-else
+			:options="options"
+		></MenuComponent>
+		<MenuBurger
+			:nickname="currentUser?.nickname"
+			@setShowSlideMenu="setShowSlideMenu"
+		></MenuBurger>
+		<MenuLoginForm
+			v-if="showLogIn"
+			@setShowLogIn="setShowLogIn"
+		></MenuLoginForm>
+		<div
+			v-if="isAuthenticated"
+			class="account"
 		>
-			Забыли пароль?
-		</RouterLink>
-	</form>
+			<MenuAccount
+				:currentUser="currentUser"
+				@setShowAccountSettings="setShowAccountSettings"
+			></MenuAccount>
+		</div>
+		<MenuAccountSettings
+			v-if="isAuthenticated && showAccountSettings"
+			:accountOptions="accountOptions"
+			@setShowAccountSettings="setShowAccountSettings"
+		></MenuAccountSettings>
+	</div>
 </template>
-
-<style scoped>
+<style>
 .header-container {
 	display: flex;
 	flex-direction: row;
@@ -383,148 +184,6 @@ function handleBurgerClick() {
 	box-shadow: var(--COMPONENT-BOX-SHADOW);
 	border-radius: 0 0 5px 5px;
 	height: var(--HEADER-HEIGHT);
-}
-
-.account-and-menu {
-	display: flex;
-	flex-direction: row;
-}
-
-.account {
-	position: absolute;
-	right: 20px;
-	padding-bottom: 8px;
-	display: flex;
-	flex-direction: column;
-	font-size: medium;
-	align-items: center;
-}
-
-.account button {
-	height: 50px;
-	width: 50px;
-}
-
-.slide-container {
-	position: fixed;
-	top: var(--HEADER-HEIGHT);
-	right: 0;
-	z-index: 1;
-	background-color: var(--MENU-BCKGND-CLR);
-	display: flex;
-	flex-direction: column;
-	padding: 15px;
-	border-radius: 3px;
-	box-shadow: var(--MENU-BOX-SHADOW);
-	animation-name: slide;
-	animation-duration: 0.2s;
-	transform: translateX(0%);
-	min-width: 220px;
-}
-
-.slide-container:deep(button):not(.account button) {
-	width: 100%;
-	border-radius: 0;
-}
-
-.slide-container button:deep(span) {
-	font-weight: bold;
-	color: var(--TEXT-COLOR);
-}
-
-.slide-container input[type='text'],
-input[type='password'] {
-	font-size: medium;
-	height: 30px;
-}
-
-.menu {
-	display: flex;
-	flex-direction: row;
-	align-items: end;
-	gap: 0px;
-}
-
-.menu button:not(.account button) {
-	border-radius: 0;
-}
-
-.menu button:deep(span) {
-	font-weight: bold;
-	color: var(--TEXT-COLOR);
-}
-
-.menu-burger {
-	display: none;
-	align-content: center;
-}
-
-.menu-burger button {
-	margin: 0 10px 0 10px;
-	padding: 12px;
-}
-
-.menu-burger button {
-	border-width: 1px;
-	border-color: rgba(0, 0, 0, 0.332);
-}
-
-.menu-burger i {
-	color: var(--TEXT-COLOR);
-	font-size: x-large;
-}
-
-.login-input {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-}
-
-.login-input input {
-	border-radius: 4px;
-}
-
-.login-input:hover:deep(input) {
-	cursor: text;
-}
-
-.bottom-part {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	margin-top: 8px;
-}
-
-.bottom-part button {
-	font-size: medium;
-	height: 30px;
-	padding: 8px;
-	margin-left: 22px;
-	border-radius: 4px;
-}
-
-.unread-messages-count {
-	right: 0;
-	background: red;
-	color: white !important;
-	font-size: small;
-	font-weight: normal !important;
-	padding: 3px 0 0 0;
-	border-radius: 50%;
-	height: 20px;
-	width: 20px;
-}
-
-.remember {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 5px;
-}
-
-.remember label:hover,
-input:hover {
-	cursor: pointer;
 }
 
 .logo {
@@ -550,29 +209,22 @@ label {
 	font-weight: bold;
 }
 
-@media (max-width: 800px) {
-	.header-container {
-		justify-content: end;
-	}
+.account {
+	position: absolute;
+	right: 20px;
+	top: 15px;
+	padding-bottom: 8px;
+}
 
-	.menu {
+@media (max-width: 1100px) {
+	.account {
 		display: none;
 	}
+}
 
-	.menu-burger {
-		display: flex;
-		align-items: center;
-	}
-
-	.account {
-		position: relative;
-		padding: 0 0 15px 0;
-		right: 0;
-		margin: auto;
-	}
-
-	.account-and-menu {
-		flex-direction: row-reverse;
+@media (max-width: 1100px) {
+	.header-container {
+		justify-content: end;
 	}
 }
 </style>

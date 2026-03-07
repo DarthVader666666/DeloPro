@@ -46,8 +46,7 @@ namespace Delopro.Server.Controllers
             var user = await _userManager.GetCurrentUserAsync(HttpContext);
 
             if (user == null)
-            {
-                _memoryCache.Remove(CacheKeys.CurrentUserKey);
+            {                
                 return Ok();
             }
 
@@ -83,7 +82,7 @@ namespace Delopro.Server.Controllers
                 user.Phone = _cryptoService.Encrypt(accountUpdateRequest.Phone);
 
                 await _userRepository.UpdateAsync(user);
-                _memoryCache.Remove(CacheKeys.CurrentUserKey);
+                
             }
             catch
             {
@@ -122,7 +121,7 @@ namespace Delopro.Server.Controllers
             user.AvatarPath = fileName;                
 
             await _userRepository.UpdateAsync(user);
-            _memoryCache.Remove(CacheKeys.CurrentUserKey);
+            
 
             return Ok(new { okText = $"Данные пользователя {user.Nickname} успешно обговлены" });
         }
@@ -145,7 +144,7 @@ namespace Delopro.Server.Controllers
             user.AvatarPath = null;
 
             await _userRepository.UpdateAsync(user);
-            _memoryCache.Remove(CacheKeys.CurrentUserKey);
+            
 
             return Ok(new { okText = $"Данные пользователя {user.Nickname} успешно обговлены" });
         }
