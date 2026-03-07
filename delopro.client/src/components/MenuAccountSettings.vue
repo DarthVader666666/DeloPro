@@ -22,7 +22,7 @@ const emit = defineEmits(['setShowAccountSettings'])
 			icon="pi pi-times"
 			rounded
 			style="width: 25px; height: 25px; position: absolute; right: 5%"
-			@click="() => emit('setShowAccountSettings')"
+			@click="emit('setShowAccountSettings')"
 		></Button>
 		<div style="padding-top: 25px">
 			<MenuOption

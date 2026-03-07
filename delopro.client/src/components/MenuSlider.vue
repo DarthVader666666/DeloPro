@@ -57,9 +57,11 @@ function setShowAccountSettings(value) {
 				:id="(option.path ?? index) + '_menu_button'"
 			></MenuOption>
 		</div>
+		<MenuAccountSettings
+			v-show="showAccountSettings"
+			style="top: 0"
+			@setShowAccountSettings="setShowAccountSettings"
+			:accountOptions="props.accountOptions"
+		></MenuAccountSettings>
 	</div>
-	<MenuAccountSettings
-		v-if="showAccountSettings"
-		:accountOptions="props.accountOptions"
-	></MenuAccountSettings>
 </template>

@@ -86,7 +86,7 @@ const accountOptions = [
 	{
 		path: 'account',
 		label: 'Личный кабинет',
-		clickHandler: () => setShowAccountSettings(),
+		clickHandler: () => setShowAccountSettings(false),
 		roles: ['Owner', 'Admin', 'User'],
 	},
 	{
@@ -125,6 +125,7 @@ function setShowSlideMenu(value) {
 
 function setShowAccountSettings(value) {
 	showAccountSettings.value = value !== undefined ? value : !showAccountSettings.value
+	setShowSlideMenu()
 }
 
 async function handleLogout() {
