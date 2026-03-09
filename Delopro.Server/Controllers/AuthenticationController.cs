@@ -72,7 +72,7 @@ namespace Delopro.Server.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<bool> CheckAuthentication()
+        public bool CheckAuthentication()
         {
             return UserManager.IsAuthenticated(HttpContext);
         }

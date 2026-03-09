@@ -110,7 +110,7 @@ body {
 }
 
 /* UserAccount */
-.account-properties {
+.account-info {
 	position: relative;
 	background-color: white;
 	padding: 25px;
@@ -126,7 +126,7 @@ body {
 	margin-bottom: 20px;
 }
 
-.account-avatar {
+.avatar {
 	width: 150px;
 	height: 150px;
 	border-radius: 50%;
@@ -216,7 +216,7 @@ body {
 		width: 100%;
 	}
 
-	.account-properties {
+	.account-info {
 		margin: 0;
 	}
 

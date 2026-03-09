@@ -73,7 +73,7 @@ function closeUserModal() {
 						/>
 						<i
 							v-else
-							class="pi pi-user account-avatar"
+							class="pi pi-user avatar"
 							style="height: 50px; width: 50px; font-size: 1.5rem"
 						></i>
 						<span>{{ data.nickname }}</span>

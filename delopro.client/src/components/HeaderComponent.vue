@@ -1,14 +1,14 @@
 <script setup>
 import { RouterLink } from 'vue-router'
-import MenuComponent from './MenuComponent.vue'
-import MenuBurger from './MenuBurger.vue'
-import MenuLoginForm from './MenuLoginForm.vue'
-import MenuAccount from './MenuAccount.vue'
-import MenuAccountSettings from './MenuAccountSettings.vue'
+import MenuComponent from './Menu/MenuComponent.vue'
+import MenuBurger from './Menu/MenuBurger.vue'
+import MenuLoginForm from './Menu/MenuLoginForm.vue'
+import MenuAccount from './Menu/MenuAccount.vue'
+import MenuAccountSettings from './Menu/MenuAccountSettings.vue'
 import { useStore } from 'vuex'
 import { computed, onMounted, ref, watch } from 'vue'
 import { helper } from '@/helper/helper'
-import MenuSlider from './MenuSlider.vue'
+import MenuSlider from './Menu/MenuSlider.vue'
 
 const store = useStore()
 

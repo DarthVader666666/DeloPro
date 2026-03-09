@@ -37,5 +37,3 @@ const emit = defineEmits(['setShowAccountSettings'])
 		</div>
 	</div>
 </template>
-
-<style scoped></style>

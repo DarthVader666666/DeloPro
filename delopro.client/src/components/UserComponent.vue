@@ -122,7 +122,7 @@ async function deleteUser() {
 				/>
 				<i
 					v-else
-					class="pi pi-user account-avatar"
+					class="pi pi-user avatar"
 					style="height: 120px; width: 120px; font-size: 3.5rem"
 				></i>
 			</div>

@@ -6,13 +6,11 @@ using Delopro.Bll.Services;
 using Delopro.Data.Entities;
 using Delopro.Data.Interfaces;
 using Delopro.Server.Attributes;
-using Delopro.Server.Configuration;
 using Delopro.Server.Models;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace Delopro.Server.Controllers
 {
@@ -24,16 +22,14 @@ namespace Delopro.Server.Controllers
         private readonly IRepository<User> _userRepository;
         private readonly CryptoService _cryptoService;
         private readonly IMapper _mapper;
-        private readonly IMemoryCache _memoryCache;
         private readonly IEmailSender _emailSender;
 
-        public AccountController(UserManager userManager, IRepository<User> userRepository, CryptoService cryptoService, IMapper mapper, IMemoryCache memoryCache, IEmailSender emailSender)
+        public AccountController(UserManager userManager, IRepository<User> userRepository, CryptoService cryptoService, IMapper mapper, IEmailSender emailSender)
         {
             _userManager = userManager;
             _userRepository = userRepository;
             _cryptoService = cryptoService;
             _mapper = mapper;
-            _memoryCache = memoryCache;
             _emailSender = emailSender;
         }
 

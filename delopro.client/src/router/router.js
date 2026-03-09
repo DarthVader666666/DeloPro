@@ -15,6 +15,8 @@ import UsersView from '@/views/UsersView.vue'
 import { computed, ref } from 'vue'
 import AccountView from '@/views/AccountView.vue'
 import VisitsView from '@/views/VisitsView.vue'
+import CommentsView from '@/views/CommentsView.vue'
+import { helper } from '@/helper/helper'
 
 const doScrollUp = ref(true)
 const currentUser = computed(() => store.getters.getCurrentUser)
@@ -101,6 +103,11 @@ const router = createRouter({
 			name: 'visits',
 			meta: { requiresAuth: true, roles: ['Owner', 'Admin'] },
 			component: VisitsView,
+		},
+		{
+			path: '/comments/:themeId',
+			name: 'comments',
+			component: CommentsView,
 		},
 	],
 })
@@ -219,7 +226,16 @@ router.afterEach(async (to) => {
 		store.commit('setTitle', 'Статистика посещений')
 	}
 
-	if (store.getters.isOwner) await store.dispatch('downloadUnreadMessagesCount')
+	if (to.name === 'comments') {
+		await store.dispatch('downloadTheme', to.params['themeId'])
+		await helper.timeoutAsync(10)
+		const theme = store.getters.getTheme
+		store.commit('setTitle', `Комментарии к "${theme?.themeTitle}"`)
+	}
+
+	if (store.getters.isOwner) {
+		await store.dispatch('downloadUnreadMessagesCount')
+	}
 
 	if (doScrollUp.value) {
 		window.scrollTo(0, 0)

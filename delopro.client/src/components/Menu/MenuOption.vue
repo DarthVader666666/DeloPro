@@ -1,8 +1,9 @@
 <script setup>
 import Button from 'primevue/button'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 
 const props = defineProps({
 	label: {
@@ -34,7 +35,7 @@ function clicked() {
 	}
 
 	if (props.path && props.path != 'sign-in') {
-		router.push(props.path)
+		router.push('/' + props.path)
 	}
 
 	if (props.clickHandler) {
@@ -46,6 +47,7 @@ function clicked() {
 <template>
 	<Button
 		class="menu-button"
+		:style="route.path.includes(props.path) ? { backgroundColor: '#f8fafc' } : {}"
 		@click="clicked"
 		:label="props.label"
 		:icon="props.icon"

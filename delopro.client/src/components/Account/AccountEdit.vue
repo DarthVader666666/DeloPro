@@ -3,7 +3,7 @@ import Button from 'primevue/button'
 import { computed, reactive, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { helper } from '@/helper/helper'
-import InputComponent from './InputComponent.vue'
+import InputComponent from '../InputComponent.vue'
 import AvatarComponent from './AvatarComponent.vue'
 
 const store = useStore()
@@ -152,7 +152,7 @@ async function deleteAccount() {
 </script>
 
 <template>
-	<div class="account-properties">
+	<div class="account-info">
 		<div class="account-header">
 			<AvatarComponent
 				:avatarPath="props.user?.avatarPath"

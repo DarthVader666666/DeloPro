@@ -90,12 +90,21 @@ onMounted(() => {
 					@click="router.push(`/edit-theme/${theme.themeId}`)"
 				/>
 			</div>
-			<span
-				v-if="!useShortMode"
-				class="date"
-			>
-				{{ helper.getDateStringForUI(props.theme.dateCreated) }}
-			</span>
+			<div style="display: flex; align-items: center">
+				<Button
+					text
+					severity="contrast"
+					rounded
+					icon="pi pi-comment"
+					style="margin-right: 20px; font-size: small"
+					label=""
+					title="Комментарии"
+					@click="() => router.push(`/comments/${theme.themeId}`)"
+				></Button>
+				<span class="date">
+					{{ helper.getDateStringForUI(props.theme.dateCreated) }}
+				</span>
+			</div>
 
 			<Button
 				v-if="useDeleteButtons && (store.getters.isAdmin || store.getters.isOwner)"

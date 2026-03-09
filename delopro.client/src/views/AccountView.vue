@@ -1,7 +1,7 @@
 <script setup>
-import AvatarCropper from '@/components/AvatarCropper.vue'
-import AccountEdit from '@/components/AccountEdit.vue'
-import AccountInfo from '@/components/AccountInfo.vue'
+import AvatarCropper from '@/components/Account/AvatarCropper.vue'
+import AccountEdit from '@/components/Account/AccountEdit.vue'
+import AccountInfo from '@/components/Account/AccountInfo.vue'
 import { helper } from '@/helper/helper'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'

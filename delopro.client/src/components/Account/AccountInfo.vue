@@ -1,6 +1,6 @@
 <script setup>
 import Button from 'primevue/button'
-import PropertyComponent from './PropertyComponent.vue'
+import PropertyComponent from '../PropertyComponent.vue'
 import AvatarImage from './AvatarImage.vue'
 import { useRouter } from 'vue-router'
 import { helper } from '@/helper/helper'
@@ -21,7 +21,7 @@ const emit = defineEmits(['switchToEditMode'])
 </script>
 
 <template>
-	<div class="account-properties">
+	<div class="account-info">
 		<div class="account-header">
 			<AvatarImage
 				:avatarPath="props.user.avatarPath"

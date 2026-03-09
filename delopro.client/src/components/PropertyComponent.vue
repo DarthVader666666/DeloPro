@@ -13,11 +13,11 @@ const props = defineProps({
 
 <template>
 	<div>
-		<span class="account-property-name">{{ props.propName }}:</span>
+		<span class="property-name">{{ props.propName }}:</span>
 		<span v-if="props.propValue">{{ props.propValue }}</span>
 		<span
 			v-else
-			class="account-property-undefined"
+			class="property-undefined"
 		>
 			не указано
 		</span>
@@ -25,11 +25,11 @@ const props = defineProps({
 </template>
 
 <style>
-.account-property-name {
+.property-name {
 	font-weight: bold;
 	padding-right: 10px;
 }
-.account-property-undefined {
+.property-undefined {
 	font-size: 0.9rem;
 	font-style: italic;
 	color: gray;
