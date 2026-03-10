@@ -12,6 +12,7 @@ const emit = defineEmits(['removeTheme'])
 
 const isAdmin = computed(() => store.getters.isAdmin)
 const isOwner = computed(() => store.getters.isOwner)
+const isAuthenticated = computed(() => store.getters.isAuthenticated)
 const pending = computed(() => store.getters.getPending)
 
 const themeContent = ref(null)
@@ -72,9 +73,9 @@ onMounted(() => {
 		:ref="`theme_${props.theme.themeId}`"
 	>
 		<div class="theme-header">
-			<div>
+			<div class="theme-title">
 				<RouterLink
-					:class="!useShortMode && `disabled`"
+					:class="!props.useShortMode && `disabled`"
 					:to="`/chapters/${store.state.chapter.chapterId}/${props.theme.themeId}`"
 					:disabled="true"
 				>
@@ -90,16 +91,38 @@ onMounted(() => {
 					@click="router.push(`/edit-theme/${theme.themeId}`)"
 				/>
 			</div>
-			<div style="display: flex; align-items: center">
+			<div
+				v-if="!props.useShortMode"
+				style="display: flex; align-items: center"
+			>
+				<Button
+					v-if="isAuthenticated"
+					label="Комментировать"
+					text
+					severity="contrast"
+					@click="
+						router.push({
+							name: 'add-comment',
+							query: { themeId: props.theme.themeId },
+						})
+					"
+					class="comment-button"
+				></Button>
 				<Button
 					text
 					severity="contrast"
 					rounded
-					icon="pi pi-comment"
-					style="margin-right: 20px; font-size: small"
+					icon="pi pi-comments"
+					class="comments-button"
 					label=""
 					title="Комментарии"
-					@click="() => router.push(`/comments/${theme.themeId}`)"
+					@click="
+						() =>
+							router.push({
+								name: 'comments',
+								query: { themeId: theme.themeId },
+							})
+					"
 				></Button>
 				<span class="date">
 					{{ helper.getDateStringForUI(props.theme.dateCreated) }}
@@ -152,6 +175,10 @@ onMounted(() => {
 	text-decoration: underline;
 }
 
+.theme-title {
+	width: 70%;
+}
+
 .disabled {
 	pointer-events: none;
 }
@@ -179,6 +206,26 @@ onMounted(() => {
 	background-color: yellow;
 }
 
+.comment-button {
+	padding-left: 15px;
+	margin: 5px;
+}
+
+.comment-button :deep(span) {
+	font-size: small;
+	font-weight: bold;
+	color: var(--TEXT-COLOR);
+}
+
+.comments-button {
+	margin-right: 20px;
+}
+
+.comments-button :deep(.p-button-icon) {
+	font-size: 1.5rem;
+	color: var(--TEXT-COLOR);
+}
+
 @media (max-width: 1500px) {
 	.theme-content:deep(img) {
 		max-width: 500px;
@@ -193,6 +240,14 @@ onMounted(() => {
 	}
 
 	.theme-header span {
+		display: none;
+	}
+
+	.theme-title {
+		width: 90%;
+	}
+
+	.comment-button {
 		display: none;
 	}
 }

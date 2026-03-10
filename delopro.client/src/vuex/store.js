@@ -89,20 +89,17 @@ const store = createStore({
 		getNickname(state) {
 			return state.currentUser?.nickname ?? null
 		},
-		isAdmin(state) {
-			return state.currentUser?.roles?.includes('Admin')
+		isAdmin(state, getters) {
+			return getters.getCurrentUser?.roles?.includes('Admin')
 		},
-		isOwner(state) {
-			return state.currentUser?.roles?.includes('Owner')
+		isOwner(state, getters) {
+			return getters.currentUser?.roles?.includes('Owner')
 		},
-		isUser(state) {
-			return state.currentUser?.roles?.includes('User')
+		isUser(state, getters) {
+			return getters.currentUser?.roles?.includes('User')
 		},
-		isAuthenticated(state) {
-			return (
-				store.getters.getCurrentUser != null &&
-				sessionStorage.getItem(state.sessionStorageKeys.currentUserKey) != null
-			)
+		isAuthenticated(state, getters) {
+			return getters.getCurrentUser != null
 		},
 
 		// DOCUMENTS

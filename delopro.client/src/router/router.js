@@ -17,6 +17,7 @@ import AccountView from '@/views/AccountView.vue'
 import VisitsView from '@/views/VisitsView.vue'
 import CommentsView from '@/views/CommentsView.vue'
 import { helper } from '@/helper/helper'
+import CommentAddView from '@/views/CommentAddView.vue'
 
 const doScrollUp = ref(true)
 const currentUser = computed(() => store.getters.getCurrentUser)
@@ -105,9 +106,15 @@ const router = createRouter({
 			component: VisitsView,
 		},
 		{
-			path: '/comments/:themeId',
+			path: '/comments',
 			name: 'comments',
 			component: CommentsView,
+		},
+		{
+			path: '/add-comment',
+			name: 'add-comment',
+			meta: { requiresAuth: true, roles: ['Owner', 'Admin', 'User'] },
+			component: CommentAddView,
 		},
 	],
 })
@@ -230,7 +237,11 @@ router.afterEach(async (to) => {
 		await store.dispatch('downloadTheme', to.params['themeId'])
 		await helper.timeoutAsync(10)
 		const theme = store.getters.getTheme
-		store.commit('setTitle', `Комментарии к "${theme?.themeTitle}"`)
+		store.commit('setTitle', `${theme?.themeTitle}`)
+	}
+
+	if (to.name === 'add-comment') {
+		store.commit('setTitle', 'Ваш комментарий')
 	}
 
 	if (store.getters.isOwner) {
