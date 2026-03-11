@@ -19,7 +19,7 @@ onMounted(async () => {
 })
 
 function addEmoji(emoji) {
-	comment.text += emoji
+	comment.text += emoji ?? ''
 }
 
 function handleTextChange() {}

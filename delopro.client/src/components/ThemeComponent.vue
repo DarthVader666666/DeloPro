@@ -5,6 +5,7 @@ import { RouterLink, useRouter } from 'vue-router'
 import { helper } from '@/helper/helper'
 import { computed, onMounted, ref } from 'vue'
 import SpinningCircle from './SpinningCircle.vue'
+import CommentModal from './CommentModal.vue'
 
 const store = useStore()
 const router = useRouter()
@@ -14,7 +15,7 @@ const isAdmin = computed(() => store.getters.isAdmin)
 const isOwner = computed(() => store.getters.isOwner)
 const isAuthenticated = computed(() => store.getters.isAuthenticated)
 const pending = computed(() => store.getters.getPending)
-
+const showCommentModal = ref(false)
 const themeContent = ref(null)
 const highlightingStyles = { color: 'black', backgroundColor: 'yellow' }
 
@@ -65,6 +66,10 @@ onMounted(() => {
 		}
 	}
 })
+
+function setShowCommentModal(value) {
+	showCommentModal.value = value
+}
 </script>
 
 <template>
@@ -81,39 +86,34 @@ onMounted(() => {
 				>
 					{{ props.theme.themeTitle }}
 				</RouterLink>
+			</div>
+			<div
+				v-if="!props.useShortMode"
+				class="theme-buttons"
+			>
 				<Button
-					v-if="!props.useShortMode && (isAdmin || isOwner)"
+					v-if="isAdmin || isOwner"
 					rounded
 					text
 					icon="pi pi-pencil"
 					severity="contrast"
 					title="Редактировать"
 					@click="router.push(`/edit-theme/${theme.themeId}`)"
-				/>
-			</div>
-			<div
-				v-if="!props.useShortMode"
-				style="display: flex; align-items: center"
-			>
+				></Button>
 				<Button
 					v-if="isAuthenticated"
-					label="Комментировать"
+					title="Комментировать"
 					text
 					severity="contrast"
-					@click="
-						router.push({
-							name: 'add-comment',
-							query: { themeId: props.theme.themeId },
-						})
-					"
-					class="comment-button"
+					rounded
+					icon="pi pi-comment"
+					@click="setShowCommentModal(true)"
 				></Button>
 				<Button
 					text
 					severity="contrast"
 					rounded
 					icon="pi pi-comments"
-					class="comments-button"
 					label=""
 					title="Комментарии"
 					@click="
@@ -124,10 +124,10 @@ onMounted(() => {
 							})
 					"
 				></Button>
-				<span class="date">
-					{{ helper.getDateStringForUI(props.theme.dateCreated) }}
-				</span>
 			</div>
+			<span class="date">
+				{{ helper.getDateStringForUI(props.theme.dateCreated) }}
+			</span>
 
 			<Button
 				v-if="useDeleteButtons && (store.getters.isAdmin || store.getters.isOwner)"
@@ -152,6 +152,11 @@ onMounted(() => {
 			ref="themeContent"
 		></div>
 	</div>
+	<CommentModal
+		v-model:visible="showCommentModal"
+		:themeId="theme.themeId"
+		@setShowCommentModal="setShowCommentModal"
+	></CommentModal>
 </template>
 <style scoped>
 .theme-header {
@@ -179,14 +184,6 @@ onMounted(() => {
 	width: 70%;
 }
 
-.disabled {
-	pointer-events: none;
-}
-
-.disabled:hover {
-	text-decoration: none;
-}
-
 .theme-content {
 	padding: 18px 20px 20px 20px;
 	background: white;
@@ -198,32 +195,30 @@ onMounted(() => {
 	height: auto;
 }
 
+.theme-buttons {
+	display: flex;
+}
+
+.theme-buttons :deep(.p-button-icon) {
+	font-size: 1.3rem;
+	opacity: 0.7;
+	color: var(--TEXT-COLOR);
+}
+
+.disabled {
+	pointer-events: none;
+}
+
+.disabled:hover {
+	text-decoration: none;
+}
+
 .date {
 	font-size: small;
 }
 
 .highlighted {
 	background-color: yellow;
-}
-
-.comment-button {
-	padding-left: 15px;
-	margin: 5px;
-}
-
-.comment-button :deep(span) {
-	font-size: small;
-	font-weight: bold;
-	color: var(--TEXT-COLOR);
-}
-
-.comments-button {
-	margin-right: 20px;
-}
-
-.comments-button :deep(.p-button-icon) {
-	font-size: 1.5rem;
-	color: var(--TEXT-COLOR);
 }
 
 @media (max-width: 1500px) {
