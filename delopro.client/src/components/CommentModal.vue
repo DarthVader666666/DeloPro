@@ -3,11 +3,18 @@ import Dialog from 'primevue/dialog'
 import Avatar from 'primevue/avatar'
 import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
-import { computed, reactive } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
+
+const props = defineProps({
+	themeId: {
+		type: Number,
+	},
+})
 
 const store = useStore()
 const currentUser = computed(() => store.getters.getCurrentUser)
+const showEmojiPicker = ref(true)
 const emojis = [
 	'🙂',
 	'😊',
@@ -16,26 +23,33 @@ const emojis = [
 	'😉',
 	'😍',
 	'😎',
-	'😡',
-	'☹️',
-	'😞',
 	'😐',
 	'🤔',
-	'💩',
-	'🤡',
+	'☹️',
+	'😞',
 	'🤢',
 	'🤮',
+	'😡',
+	'💩',
+	'🤡',
 	'💀',
-	'☠️',
 	'🔥',
 	'❤️',
+	'👋',
+	'👌',
+	'✌️',
+	'🤘',
+	'🫵',
+	'👈',
+	'👉',
+	'👆',
+	'👇',
+	'👍',
+	'👎',
+	'✊',
+	'🤝',
+	'👏',
 ]
-
-const props = defineProps({
-	themeId: {
-		type: Number,
-	},
-})
 
 const comment = reactive({
 	themeId: props.themeId,
@@ -81,22 +95,41 @@ const emit = defineEmits(['setShowCommentModal'])
 				</div>
 			</div>
 		</template>
-		<Textarea
-			v-model="comment.text"
-			style="width: 100%; height: 200px; resize: none"
-			placeholder="Ваш комментарий"
-			required
-		></Textarea>
-		<div class="emoji-picker">
-			<span
-				v-for="(emoji, index) in emojis"
-				:key="index"
-				style="padding: 4px"
-				@click="addEmoji(emoji)"
-			>
-				{{ emoji }}
-			</span>
+		<div>
+			<Textarea
+				v-model="comment.text"
+				style="width: 100%; height: 200px; resize: none"
+				placeholder="Ваш комментарий"
+				required
+			></Textarea>
+			<div style="display: flex">
+				<!-- <Button
+					rounded
+					text
+					severity="contrast"
+					@click="() => (showEmojiPicker = !showEmojiPicker)"
+				>
+					<i
+						class="pi pi-face-smile"
+						style="font-size: 1.5rem; opacity: 0.6"
+					></i>
+				</Button> -->
+				<div
+					v-if="showEmojiPicker"
+					class="emoji-picker"
+				>
+					<span
+						v-for="(emoji, index) in emojis"
+						:key="index"
+						style="padding: 4px; font-size: 1.5rem"
+						@click="addEmoji(emoji)"
+					>
+						{{ emoji }}
+					</span>
+				</div>
+			</div>
 		</div>
+
 		<template #footer>
 			<Button
 				label="Сохранить"
@@ -114,6 +147,15 @@ const emit = defineEmits(['setShowCommentModal'])
 	</Dialog>
 </template>
 <style scoped>
+.emoji-picker {
+	overflow-y: scroll;
+	height: 40px;
+	width: 90%;
+	border-radius: 10px;
+	padding: 3px;
+	background: var(--TEXT-BCKGND-CLR);
+}
+
 .emoji-picker :hover {
 	cursor: pointer;
 }

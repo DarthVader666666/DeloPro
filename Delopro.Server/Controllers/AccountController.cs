@@ -36,7 +36,7 @@ namespace Delopro.Server.Controllers
         [HttpGet]
         [Route("[action]")]
         [Authorize]
-        [TrackIpAddress]
+        //[TrackIpAddress]
         public async Task<IActionResult> GetCurrentUser()
         {
             var user = await _userManager.GetCurrentUserAsync(HttpContext);
