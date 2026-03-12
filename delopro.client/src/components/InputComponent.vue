@@ -109,6 +109,7 @@ function onInput(event) {
 			:disabled="props.disabled"
 			@input.prevent="onInput"
 			:required="props.required"
+			:maxlength="props.maxlength"
 		></Textarea>
 		<InputText
 			v-else

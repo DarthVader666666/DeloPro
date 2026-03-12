@@ -103,6 +103,7 @@ function setCaptchaMatch(isMatch) {
 				:is-textarea="true"
 				:required="true"
 				v-model="feedbackForm.text"
+				:maxlength="1500"
 				:titleFont="{ fontWeight: 'normal' }"
 			></InputComponent>
 			<CaptchaComponent

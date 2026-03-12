@@ -78,7 +78,7 @@ function clicked() {
 
 <style scoped>
 .menu-button {
-	border-radius: 0;
+	border-radius: 5px 5px 0 0;
 	font-weight: bold;
 	color: var(--TEXT-COLOR);
 }
@@ -89,15 +89,23 @@ function clicked() {
 
 .count {
 	position: absolute;
-	background: red;
-	color: white;
+	background: rgb(240, 0, 0);
+	color: rgb(240, 240, 240);
 	border-radius: 50%;
-	font-size: 0.6rem;
-	width: 20px;
+	font-size: 0.55rem;
+	width: 17px;
 	height: 17px;
 	text-align: center;
 	align-content: center;
 	top: 50%;
 	right: -12%;
+	padding-right: 1%;
+	border: solid 1px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 1000px) {
+	.menu-button {
+		border-radius: 0;
+	}
 }
 </style>

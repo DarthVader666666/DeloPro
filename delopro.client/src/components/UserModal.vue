@@ -208,7 +208,7 @@ async function deleteUser() {
 						align-content: center;
 						text-align: center;
 						padding: 15px;
-						border-radius: 15px;
+						border-radius: 10px;
 					"
 				>
 					<span style="font-weight: bold">Удалить пользователя</span>

@@ -258,6 +258,7 @@ async function deleteAccount() {
 					:title="'О себе'"
 					:placeholder="'Напишите о себе'"
 					v-model="updatedUser.info"
+					:maxlength="1000"
 					:isTextarea="true"
 				></InputComponent>
 			</form>

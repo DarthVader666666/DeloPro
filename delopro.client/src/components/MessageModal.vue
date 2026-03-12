@@ -28,12 +28,44 @@ const emit = defineEmits(['setShowMessageModal'])
 		<div style="word-break: break-word; overflow-wrap: break-word; text-align: justify">
 			{{ props.message.text }}
 		</div>
-		<div style="display: flex; justify-content: space-between; padding: 20px 20px 0 20px">
-			<span>{{ props.message.name }}</span>
-			<span>{{ helper.getDateStringForUI(props.message.dateSent) }}</span>
-		</div>
-		<div style="white-space: pre-wrap; padding: 20px 0 0 20px">
-			{{ props.message.contacts }}
-		</div>
+		<template #footer>
+			<div class="footer-wrapper">
+				<div class="footer-top">
+					<span class="footer-name">{{ props.message.name }}</span>
+					<span class="footer-date">{{ helper.getDateStringForUI(props.message.dateSent) }}</span>
+				</div>
+				<div class="footer-contacts">
+					{{ props.message.contacts }}
+				</div>
+			</div>
+		</template>
 	</Dialog>
 </template>
+<style scoped>
+.footer-wrapper {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 12px 20px;
+}
+
+.footer-top {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.footer-name {
+	font-weight: bold;
+}
+
+.footer-date {
+	font-style: italic;
+}
+
+.footer-contacts {
+	white-space: pre-wrap;
+	opacity: 0.8;
+}
+</style>
