@@ -7,14 +7,14 @@ import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import Column from 'primevue/column'
 import ToggleSwitch from 'primevue/toggleswitch'
-import MessageComponent from '@/components/MessageComponent.vue'
+import MessageModal from '@/components/MessageModal.vue'
 
 const store = useStore()
 const messages = computed(() => store.getters.getMessages)
 const message = computed(() => store.getters.getMessage)
 
 const isRead = ref(false)
-const showMessage = ref(false)
+const showMessageModal = ref(false)
 
 const filters = ref({
 	text: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -24,7 +24,7 @@ const filters = ref({
 })
 
 onBeforeUnmount(() => {
-	showMessage.value = false
+	showMessageModal.value = false
 	store.commit('setMessages', [])
 	store.commit('setMessage', null)
 })
@@ -37,14 +37,14 @@ async function onRowSelect(event) {
 	if (message.value) {
 		await store.dispatch('updateMessage', messageId)
 		await store.dispatch('downloadMessages', isRead.value)
-		showMessage.value = true
+		showMessageModal.value = true
 	}
 
 	await store.dispatch('downloadUnreadMessagesCount')
 }
 
-function closeMessageModal() {
-	showMessage.value = false
+function setShowMessageModal() {
+	showMessageModal.value = false
 	store.commit('setMessage', null)
 }
 </script>
@@ -174,11 +174,11 @@ function closeMessageModal() {
 				</Column>
 			</DataTable>
 		</div>
-		<MessageComponent
-			v-if="showMessage"
+		<MessageModal
+			v-model:visible="showMessageModal"
 			:message="message"
-			@message-shown="closeMessageModal"
-		></MessageComponent>
+			@setShowMessageModal="setShowMessageModal"
+		></MessageModal>
 	</div>
 </template>
 

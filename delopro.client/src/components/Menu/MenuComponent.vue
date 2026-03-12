@@ -32,7 +32,7 @@ const props = defineProps({
 				:label="option.label"
 				:icon="option.icon"
 				:clickHandler="option.clickHandler"
-				:id="(option.path ?? index) + '_menu_button'"
+				:id="option.id"
 			></MenuOption>
 		</div>
 	</div>

@@ -93,10 +93,10 @@ const store = createStore({
 			return getters.getCurrentUser?.roles?.includes('Admin')
 		},
 		isOwner(state, getters) {
-			return getters.currentUser?.roles?.includes('Owner')
+			return getters.getCurrentUser?.roles?.includes('Owner')
 		},
 		isUser(state, getters) {
-			return getters.currentUser?.roles?.includes('User')
+			return getters.getCurrentUser?.roles?.includes('User')
 		},
 		isAuthenticated(state, getters) {
 			return getters.getCurrentUser != null
@@ -822,6 +822,26 @@ const store = createStore({
 				.catch((error) => {
 					if (error.response) {
 						toast.error(error.response.data?.errorText)
+					}
+				})
+		},
+		async updateUser({ dispatch, state }, updatedUser) {
+			await axios
+				.put(`${state.serverUrl}/administration/updateuser`, updatedUser, {
+					headers: {
+						Content: 'application/json',
+						Accept: '*/*',
+					},
+				})
+				.then(async (response) => {
+					if (response.status === 200) {
+						toast.success(response.data.okText)
+						await dispatch('downloadUsers')
+					}
+				})
+				.catch((error) => {
+					if (error.response) {
+						toast.error(error.response.data.errorText)
 					}
 				})
 		},

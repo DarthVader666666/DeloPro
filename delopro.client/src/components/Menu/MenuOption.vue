@@ -1,9 +1,13 @@
 <script setup>
 import Button from 'primevue/button'
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 const router = useRouter()
 const route = useRoute()
+const store = useStore()
+const unreadMessagesCount = computed(() => store.getters.getUnreadMessagesCount)
 
 const props = defineProps({
 	label: {
@@ -16,6 +20,9 @@ const props = defineProps({
 	path: {
 		type: String,
 		default: null,
+	},
+	id: {
+		type: String,
 	},
 	icon: {
 		type: String,
@@ -47,13 +54,26 @@ function clicked() {
 <template>
 	<Button
 		class="menu-button"
+		:id="props.id"
 		:style="route.path.includes(props.path) ? { backgroundColor: '#f8fafc' } : {}"
 		@click="clicked"
-		:label="props.label"
-		:icon="props.icon"
 		severity="contrast"
 		text
-	></Button>
+	>
+		<i
+			v-if="props.icon"
+			:class="props.icon"
+		></i>
+		<span style="position: relative">
+			{{ props.label }}
+			<span
+				v-if="props.path === 'messages' && unreadMessagesCount"
+				class="count"
+			>
+				{{ unreadMessagesCount > 99 ? '99+' : unreadMessagesCount }}
+			</span>
+		</span>
+	</Button>
 </template>
 
 <style scoped>
@@ -61,5 +81,23 @@ function clicked() {
 	border-radius: 0;
 	font-weight: bold;
 	color: var(--TEXT-COLOR);
+}
+
+.menu-button i {
+	font-weight: bold;
+}
+
+.count {
+	position: absolute;
+	background: red;
+	color: white;
+	border-radius: 50%;
+	font-size: 0.6rem;
+	width: 20px;
+	height: 17px;
+	text-align: center;
+	align-content: center;
+	top: 50%;
+	right: -12%;
 }
 </style>

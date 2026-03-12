@@ -33,24 +33,28 @@ watch(changeBackground, (newValue) => {
 const options = [
 	{
 		path: 'home',
+		id: 'home_menu_button',
 		label: 'Главная',
 		roles: ['Any'],
 		clickHandler: () => setShowSlideMenu(),
 	},
 	{
 		path: 'feedback',
+		id: 'feedback_menu_button',
 		label: 'Обратная связь',
 		roles: [],
 		clickHandler: () => setShowSlideMenu(),
 	},
 	{
 		path: 'register',
+		id: 'register_menu_button',
 		label: 'Регистрация',
 		roles: [],
 		clickHandler: () => setShowSlideMenu(),
 	},
 	{
 		path: 'sign-in',
+		id: 'sign-in_menu_button',
 		label: 'Войти',
 		icon: 'pi pi-sign-in',
 		clickHandler: () => setShowLogIn(),
@@ -58,24 +62,28 @@ const options = [
 	},
 	{
 		path: 'create-chapter',
+		id: 'create-chapter_menu_button',
 		label: 'Cоздать раздел',
 		roles: ['Owner', 'Admin'],
 		clickHandler: () => setShowSlideMenu(),
 	},
 	{
 		path: 'users',
+		id: 'users_menu_button',
 		label: 'Пользователи',
 		roles: ['Owner', 'Admin'],
 		clickHandler: () => setShowSlideMenu(),
 	},
 	{
 		path: 'visits',
+		id: 'visits_menu_button',
 		label: 'Статистика посещений',
 		roles: ['Owner', 'Admin'],
 		clickHandler: () => setShowSlideMenu(),
 	},
 	{
 		path: 'messages',
+		id: 'messages_menu_button',
 		label: 'Сообщения',
 		roles: ['Owner'],
 		clickHandler: () => setShowSlideMenu(),
@@ -85,12 +93,14 @@ const options = [
 const accountOptions = [
 	{
 		path: 'account',
+		id: 'account_acc_button',
 		label: 'Личный кабинет',
 		clickHandler: () => setShowAccountSettings(false),
 		roles: ['Owner', 'Admin', 'User'],
 	},
 	{
 		path: null,
+		id: 'sign-out_acc_button',
 		label: 'Выйти',
 		icon: 'pi pi-sign-out',
 		clickHandler: () => handleLogout(),

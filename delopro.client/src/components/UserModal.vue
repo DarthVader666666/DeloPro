@@ -4,15 +4,12 @@ import { computed, reactive, ref } from 'vue'
 import { helper } from '@/helper/helper'
 import Button from 'primevue/button'
 import { useStore } from 'vuex'
-import { useToast } from 'vue-toastification'
 import Tag from 'primevue/tag'
 import Select from 'primevue/select'
 import MultiSelect from 'primevue/multiselect'
-import axios from 'axios'
 
 const emit = defineEmits(['setShowUserModal'])
 const store = useStore()
-const toast = useToast()
 
 const updatedUser = reactive({
 	userId: null,
@@ -57,38 +54,21 @@ async function handleUpdateRoles(roles) {
 }
 
 function handleCancel() {
+	disableSave.value = true
 	emit('setShowUserModal')
 }
 
 async function updateUser() {
-	const url = store.state.serverUrl
-
-	await axios
-		.put(`${url}/administration/updateuser`, updatedUser, {
-			headers: {
-				Content: 'application/json',
-				Accept: '*/*',
-			},
-		})
-		.then((response) => {
-			if (response.status === 200) {
-				toast.success(response.data.okText)
-			}
-		})
-		.catch((error) => {
-			if (error.response) {
-				toast.error(error.response.data.errorText)
-			}
-		})
-
-	await store.dispatch('downloadUsers')
+	await store.dispatch('updateUser', updatedUser)
+	disableSave.value = true
 	emit('setShowUserModal')
 }
 
 async function deleteUser() {
 	if (window.confirm('Пользователь будет полностью удалён! Вы уверены?')) {
 		await store.dispatch('deleteUser', user.value.userId)
-		emit('user-shown')
+		disableSave.value = true
+		emit('setShowUserModal')
 	}
 }
 </script>
@@ -224,7 +204,7 @@ async function deleteUser() {
 						flex-direction: column;
 						align-items: center;
 						justify-content: center;
-						background-color: lightgrey;
+						background-color: var(--COLUMNS-BCKGND-CLR);
 						align-content: center;
 						text-align: center;
 						padding: 15px;
