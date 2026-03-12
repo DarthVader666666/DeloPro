@@ -17,7 +17,6 @@ import AccountView from '@/views/AccountView.vue'
 import VisitsView from '@/views/VisitsView.vue'
 import CommentsView from '@/views/CommentsView.vue'
 import { helper } from '@/helper/helper'
-import CommentAddView from '@/views/CommentAddView.vue'
 
 const doScrollUp = ref(true)
 const currentUser = computed(() => store.getters.getCurrentUser)
@@ -109,12 +108,6 @@ const router = createRouter({
 			path: '/comments',
 			name: 'comments',
 			component: CommentsView,
-		},
-		{
-			path: '/add-comment',
-			name: 'add-comment',
-			meta: { requiresAuth: true, roles: ['Owner', 'Admin', 'User'] },
-			component: CommentAddView,
 		},
 	],
 })
