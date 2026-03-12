@@ -7,8 +7,8 @@ import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import Column from 'primevue/column'
 import Tag from 'primevue/tag'
-import UserComponent from '@/components/UserComponent.vue'
 import SpinningCircle from '@/components/SpinningCircle.vue'
+import UserModal from '@/components/UserModal.vue'
 
 const store = useStore()
 const pending = computed(() => store.getters.getPending)
@@ -21,21 +21,21 @@ const filters = ref({
 	registerDate: { value: null, matchMode: FilterMatchMode.CONTAINS },
 })
 
-const showUser = ref(false)
+const showUserModal = ref(false)
 
 onMounted(() => {
-	showUser.value = false
+	showUserModal.value = false
 	store.commit('setUser', null)
 })
 
 async function onRowSelect(event) {
 	const userId = event.data.userId
 	await store.dispatch('downloadUser', userId)
-	showUser.value = true
+	showUserModal.value = true
 }
 
-function closeUserModal() {
-	showUser.value = false
+function setShowUserModal() {
+	showUserModal.value = false
 	store.commit('setUser', null)
 }
 </script>
@@ -169,10 +169,10 @@ function closeUserModal() {
 				</template>
 			</Column>
 		</DataTable>
-		<UserComponent
-			v-if="showUser"
-			@user-shown="closeUserModal"
-		></UserComponent>
+		<UserModal
+			v-model:visible="showUserModal"
+			@set-show-user-modal="setShowUserModal"
+		></UserModal>
 	</div>
 </template>
 
