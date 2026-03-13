@@ -1,6 +1,7 @@
 <script setup>
+import CommentModal from '@/components/CommentModal.vue'
 import Button from 'primevue/button'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
@@ -8,6 +9,11 @@ const store = useStore()
 const router = useRouter()
 const route = useRoute()
 const isAuthenticated = computed(() => store.getters.isAuthenticated)
+const showCommentModal = ref(false)
+
+function setShowCommentModal(value) {
+	showCommentModal.value = value
+}
 </script>
 <template>
 	<div class="comments">
@@ -24,15 +30,16 @@ const isAuthenticated = computed(() => store.getters.isAuthenticated)
 				v-if="isAuthenticated"
 				severity="secondary"
 				raised
+				icon="pi pi-comment"
 				label="Комментировать"
-				@click="
-					router.push({
-						name: 'add-comment',
-						query: route.query['themeId'],
-					})
-				"
+				@click="setShowCommentModal(true)"
 			></Button>
 		</div>
+		<CommentModal
+			v-model:visible="showCommentModal"
+			:themeId="route.query['themeId']"
+			@setShowCommentModal="setShowCommentModal"
+		></CommentModal>
 	</div>
 </template>
 

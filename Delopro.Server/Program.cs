@@ -102,6 +102,7 @@ if (!usePostgres)
     builder.Services.AddScoped<IRepository<UserRole>, UserRoleRepository>(ConfigureRepository<MssqlDeloproDbContext, UserRoleRepository>);
     builder.Services.AddScoped<IRepository<Visit>, VisitRepository>(ConfigureRepository<MssqlDeloproDbContext, VisitRepository>);
     builder.Services.AddScoped<IRepository<Visitor>, VisitorRepository>(ConfigureRepository<MssqlDeloproDbContext, VisitorRepository>);
+    builder.Services.AddScoped<IRepository<Comment>, CommentRepository>(ConfigureRepository<MssqlDeloproDbContext, CommentRepository>);
 }
 else
 {
@@ -114,6 +115,7 @@ else
     builder.Services.AddScoped<IRepository<UserRole>, UserRoleRepository>(ConfigureRepository<PostgresDeloproDbContext, UserRoleRepository>);
     builder.Services.AddScoped<IRepository<Visit>, VisitRepository>(ConfigureRepository<PostgresDeloproDbContext, VisitRepository>);
     builder.Services.AddScoped<IRepository<Visitor>, VisitorRepository>(ConfigureRepository<PostgresDeloproDbContext, VisitorRepository>);
+    builder.Services.AddScoped<IRepository<Comment>, CommentRepository>(ConfigureRepository<PostgresDeloproDbContext, CommentRepository>);
 }
 
 if (builder.Environment.IsDevelopment() || usePostgres)

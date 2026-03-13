@@ -3,7 +3,7 @@ import { useStore } from 'vuex'
 import Button from 'primevue/button'
 import { RouterLink, useRouter } from 'vue-router'
 import { helper } from '@/helper/helper'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import SpinningCircle from './SpinningCircle.vue'
 import CommentModal from './CommentModal.vue'
 
@@ -15,9 +15,12 @@ const isAdmin = computed(() => store.getters.isAdmin)
 const isOwner = computed(() => store.getters.isOwner)
 const isAuthenticated = computed(() => store.getters.isAuthenticated)
 const pending = computed(() => store.getters.getPending)
-const showCommentModal = ref(false)
 const themeContent = ref(null)
-const highlightingStyles = { color: 'black', backgroundColor: 'yellow' }
+const comments = computed(() => store.getters.getComments)
+const commentsCount = computed(() => store.getters.getCommentsCount)
+
+const showCommentModal = ref(false)
+const showComments = ref(false)
 
 const props = defineProps({
 	theme: {
@@ -39,36 +42,25 @@ const props = defineProps({
 })
 
 onMounted(() => {
-	if (props.searchResult) {
-		const content = themeContent.value
-		const elements = content.querySelectorAll('*')
-		let index = 0
-
-		for (let el of elements) {
-			if (
-				el.textContent.includes(props.searchResult.searchFragment) &&
-				index == props.searchResult.index
-			) {
-				Object.assign(el.style, highlightingStyles)
-
-				el.querySelectorAll('*').forEach((child) => {
-					Object.assign(child.style, highlightingStyles)
-				})
-
-				el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-				break
-			} else if (
-				el.textContent.includes(props.searchResult.searchFragment) &&
-				index != props.searchResult.index
-			) {
-				index++
-			}
+	setTimeout(() => {
+		if (themeContent.value) {
+			helper.highlightSearchResult(themeContent.value, props.searchResult)
 		}
-	}
+	}, 20)
+})
+
+watch(pending, () => {
+	showComments.value = false
 })
 
 function setShowCommentModal(value) {
 	showCommentModal.value = value
+}
+
+function setShowComments() {
+	if (commentsCount.value) {
+		showComments.value = !showComments.value
+	}
 }
 </script>
 
@@ -98,7 +90,7 @@ function setShowCommentModal(value) {
 					icon="pi pi-pencil"
 					severity="contrast"
 					title="Редактировать"
-					@click="router.push(`/edit-theme/${theme.themeId}`)"
+					@click="router.push(`/edit-theme/${props.theme.themeId}`)"
 				></Button>
 				<Button
 					v-if="isAuthenticated"
@@ -109,20 +101,17 @@ function setShowCommentModal(value) {
 					icon="pi pi-comment"
 					@click="setShowCommentModal(true)"
 				></Button>
+
 				<Button
 					text
 					severity="contrast"
 					rounded
+					:label="commentsCount ? `${commentsCount}` : ''"
 					icon="pi pi-comments"
-					label=""
 					title="Комментарии"
-					@click="
-						() =>
-							router.push({
-								name: 'comments',
-								query: { themeId: theme.themeId },
-							})
-					"
+					id="comments-button"
+					:class="{ active: showComments }"
+					@click="setShowComments"
 				></Button>
 			</div>
 			<span class="date">
@@ -145,20 +134,35 @@ function setShowCommentModal(value) {
 		>
 			<SpinningCircle></SpinningCircle>
 		</div>
-		<div
-			v-else-if="!props.useShortMode"
-			v-html="theme.content"
-			class="theme-content"
-			ref="themeContent"
-		></div>
+		<div v-else-if="!props.useShortMode">
+			<div
+				v-if="!showComments"
+				v-html="props.theme.content"
+				class="theme-content"
+				ref="themeContent"
+			></div>
+			<div
+				v-else
+				style="display: flex; flex-direction: column; gap: 10px"
+			>
+				<div
+					v-for="(comment, index) in comments"
+					:key="index"
+					style="background-color: white"
+				>
+					<span>{{ comment.text }}</span>
+				</div>
+			</div>
+		</div>
 	</div>
 	<CommentModal
 		v-model:visible="showCommentModal"
-		:themeId="theme.themeId"
+		:themeId="props.theme.themeId"
 		@setShowCommentModal="setShowCommentModal"
 	></CommentModal>
 </template>
-<style scoped>
+
+<style lang="scss" scoped>
 .theme-header {
 	display: flex;
 	flex: row;
@@ -174,10 +178,10 @@ function setShowCommentModal(value) {
 	text-decoration: none;
 	margin-left: 5px;
 	color: var(--TEXT-COLOR);
-}
 
-.theme-header a:hover {
-	text-decoration: underline;
+	&:hover {
+		text-decoration: underline;
+	}
 }
 
 .theme-title {
@@ -203,6 +207,24 @@ function setShowCommentModal(value) {
 	font-size: 1.3rem;
 	opacity: 0.7;
 	color: var(--TEXT-COLOR);
+}
+
+.theme-buttons :deep(.p-button-label) {
+	font-size: 0.6rem;
+	color: var(--TEXT-COLOR);
+	border: solid 1px rgba(128, 128, 128, 0.562);
+	border-radius: 50%;
+	background: var(--COLUMNS-BCKGND-CLR);
+	width: 17px;
+	height: 17px;
+	align-content: center;
+	position: absolute;
+	left: 55%;
+	top: 10%;
+}
+
+:deep(#comments-button.active) {
+	background-color: rgba(255, 255, 255, 0.9);
 }
 
 .disabled {

@@ -24,7 +24,7 @@ const feedbackForm = reactive({
 	dateSent: null,
 })
 
-watch(feedbackForm, (oldValue, newValue) => {
+watch(feedbackForm, (newValue) => {
 	if (newValue.email || newValue.phone) {
 		invalid.value = false
 	}

@@ -227,7 +227,7 @@ router.afterEach(async (to) => {
 	}
 
 	if (to.name === 'comments') {
-		await store.dispatch('downloadTheme', to.params['themeId'])
+		await store.dispatch('downloadTheme', to.query.themeId)
 		await helper.timeoutAsync(10)
 		const theme = store.getters.getTheme
 		store.commit('setTitle', `${theme?.themeTitle}`)

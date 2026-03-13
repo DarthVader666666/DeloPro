@@ -35,6 +35,8 @@ const store = createStore({
 		user: null,
 		currentUser: null,
 		visits: [],
+		comments: [],
+		commentsCount: 0,
 		sessionStorageKeys: {
 			chaptersKey: 'chapters',
 			chapterNodesKey: 'chapterNodes',
@@ -168,6 +170,14 @@ const store = createStore({
 		getVisits(state) {
 			return state.visits
 		},
+
+		// COMMENTS
+		getComments(state) {
+			return state.comments
+		},
+		getCommentsCount(state) {
+			return state.comments.length
+		},
 	},
 	mutations: {
 		// ACCOUNT
@@ -270,6 +280,14 @@ const store = createStore({
 		// VISITS
 		setVisits(state, value) {
 			state.visits = value
+		},
+
+		// COMMENTS
+		setComments(state, value) {
+			state.comments = value
+		},
+		setCommentsCount(state, value) {
+			state.commentsCount = value
 		},
 	},
 	actions: {
@@ -410,7 +428,7 @@ const store = createStore({
 					}
 				})
 		},
-		async downloadTheme({ commit, state }, themeId) {
+		async downloadTheme({ dispatch, commit, state }, themeId) {
 			let url = `${state.serverUrl}/themes/gettheme/`
 
 			if (themeId) {
@@ -425,9 +443,10 @@ const store = createStore({
 
 			await axios
 				.get(url)
-				.then((response) => {
+				.then(async (response) => {
 					if (response.status === 200) {
 						setTimeout(() => commit('setTheme', response.data), 10)
+						await dispatch('downloadComments', themeId)
 					}
 				})
 				.catch((error) => {
@@ -1148,6 +1167,43 @@ const store = createStore({
 					}
 				})
 				.finally(() => commit('setPending', false))
+		},
+
+		// COMMENTS
+		async createComment({ dispatch, state }, createCommentRequest) {
+			await axios
+				.post(`${state.serverUrl}/comments/createcomment/`, createCommentRequest, {
+					headers: {
+						Content: 'application/json',
+						Accept: '*/*',
+					},
+				})
+				.then(async (response) => {
+					if (response.status === 200) {
+						await dispatch('downloadComments', createCommentRequest.themeId)
+						toast.success(response.data.okText)
+					}
+				})
+				.catch((error) => {
+					if (error.response) {
+						toast.error(error.response.data.errorText)
+					}
+				})
+		},
+		async downloadComments({ commit, state }, themeId) {
+			await axios
+				.get(`${state.serverUrl}/comments/getcomments?themeId=${themeId}`)
+				.then((response) => {
+					if (response.status === 200) {
+						commit('setComments', response.data)
+						commit('setCommentsCount', response.data.length)
+					}
+				})
+				.catch((error) => {
+					if (error.response) {
+						toast.error(error.response.data.errorText)
+					}
+				})
 		},
 	},
 })

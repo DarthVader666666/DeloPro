@@ -96,18 +96,12 @@ export const helper = {
 
 		if (hasSelect) {
 			let select = document.getElementsByClassName('p-select-list-container')[0]
-
-			// if (select.contains(event.target)) {
-			// 	isValidClick = true
-			// }
-			if (anyChildren(event, select)) isValidClick = true
+			if (anyChildren(event, select)) {
+				isValidClick = true
+			}
 		}
 
 		ids.forEach((id) => {
-			// const element = document.getElementById(id)
-			// if (element?.contains(event.target)) {
-			// 	isValidClick = true
-			// }
 			if (anyChildren(event, document.getElementById(id))) {
 				isValidClick = true
 			}
@@ -255,8 +249,6 @@ export const helper = {
 		for (const key in keys) {
 			sessionStorage.removeItem(keys[key])
 		}
-
-		// store.commit('setCurrentUser', null)
 	},
 	async isAuthenticated() {
 		return await axios
@@ -267,5 +259,30 @@ export const helper = {
 		Object.keys(obj).forEach((key) =>
 			obj[key] === false || obj[key] === true ? (obj[key] = false) : (obj[key] = null),
 		)
+	},
+	highlightSearchResult(themeContent, searchResult) {
+		if (searchResult) {
+			const highlightingStyles = { color: 'black', backgroundColor: 'yellow' }
+			const elements = themeContent?.querySelectorAll('*') ?? []
+			let index = 0
+
+			for (let el of elements) {
+				if (el.textContent.includes(searchResult.searchFragment) && index == searchResult.index) {
+					Object.assign(el.style, highlightingStyles)
+
+					el.querySelectorAll('*').forEach((child) => {
+						Object.assign(child.style, highlightingStyles)
+					})
+
+					el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+					break
+				} else if (
+					el.textContent.includes(searchResult.searchFragment) &&
+					index != searchResult.index
+				) {
+					index++
+				}
+			}
+		}
 	},
 }

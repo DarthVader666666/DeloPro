@@ -19,7 +19,7 @@ onMounted(() => {
 	})
 })
 
-watch(showRightColumn, (oldValue, newValue) => {
+watch(showRightColumn, (newValue) => {
 	if (!newValue) {
 		showDocuments()
 	} else {

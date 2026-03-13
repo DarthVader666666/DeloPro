@@ -25,6 +25,6 @@ const props = defineProps({
 	<i
 		v-else
 		class="pi pi-user avatar"
-		style="font-size: 5rem"
+		style="font-size: 5rem; width: 150px; height: 150px"
 	></i>
 </template>
