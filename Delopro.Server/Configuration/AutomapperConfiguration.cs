@@ -113,7 +113,7 @@ namespace Delopro.Server.Configurations
 
                     autoMapperConfig.CreateMap<Comment, CommentResponse>()
                     .ForMember(dest => dest.Nickname, opts => opts.MapFrom(src => src.User == null ? "" : src.User.Nickname))
-                    .ForMember(dest => dest.AvatarPath, opts => opts.MapFrom(src => src.User == null ? "" : src.User.AvatarPath));
+                    .ForMember(dest => dest.AvatarPath, opts => opts.MapFrom(src => GetFullAvatarPath(src.User!.AvatarPath)));
 
                 });
 
@@ -134,16 +134,6 @@ namespace Delopro.Server.Configurations
 
         private static string? GetFullAvatarPath(string? avatarPath) =>
             avatarPath is null ? null : (ConfigurationHelper.IsDevelopment ? $"/src/assets/avatars/{avatarPath}" : $"/avatars/{avatarPath}");
-
-        private static string? EncodeUTF8(byte[]? bytes)
-        {
-            if (bytes == null || !bytes.Any())
-            {
-                return null;
-            }
-
-            return Encoding.UTF8.GetString(bytes);
-        }
 
         private static string? GetContacts(string? email, string? phone)
         {

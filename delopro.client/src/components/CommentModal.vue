@@ -1,10 +1,10 @@
 <script setup>
 import Dialog from 'primevue/dialog'
-import Avatar from 'primevue/avatar'
 import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
 import { computed, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
+import AvatarImage from './Account/AvatarImage.vue'
 
 const props = defineProps({
 	themeId: {
@@ -103,19 +103,10 @@ const emit = defineEmits(['setShowCommentModal'])
 	>
 		<template #header>
 			<div style="display: flex; gap: 10px; align-items: center">
-				<div>
-					<Avatar
-						v-if="currentUser.avatarPath"
-						:image="currentUser.avatarPath"
-						shape="circle"
-						style="width: 50px; height: 50px"
-					/>
-					<i
-						v-else
-						class="pi pi-user avatar"
-						style="font-size: 1.5rem"
-					></i>
-				</div>
+				<AvatarImage
+					:avatar-path="currentUser.avatarPath"
+					:size="3.5"
+				></AvatarImage>
 				<div>
 					<span class="font-bold whitespace-nowrap">
 						{{ currentUser.nickname }}

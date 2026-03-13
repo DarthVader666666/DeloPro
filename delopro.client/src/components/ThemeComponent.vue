@@ -3,9 +3,11 @@ import { useStore } from 'vuex'
 import Button from 'primevue/button'
 import { RouterLink, useRouter } from 'vue-router'
 import { helper } from '@/helper/helper'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import SpinningCircle from './SpinningCircle.vue'
 import CommentModal from './CommentModal.vue'
+import ThemeContent from './ThemeContent.vue'
+import CommentsComponent from './CommentsComponent.vue'
 
 const store = useStore()
 const router = useRouter()
@@ -15,8 +17,6 @@ const isAdmin = computed(() => store.getters.isAdmin)
 const isOwner = computed(() => store.getters.isOwner)
 const isAuthenticated = computed(() => store.getters.isAuthenticated)
 const pending = computed(() => store.getters.getPending)
-const themeContent = ref(null)
-const comments = computed(() => store.getters.getComments)
 const commentsCount = computed(() => store.getters.getCommentsCount)
 
 const showCommentModal = ref(false)
@@ -39,14 +39,6 @@ const props = defineProps({
 		type: Object,
 		default: null,
 	},
-})
-
-onMounted(() => {
-	setTimeout(() => {
-		if (themeContent.value) {
-			helper.highlightSearchResult(themeContent.value, props.searchResult)
-		}
-	}, 20)
 })
 
 watch(pending, () => {
@@ -135,24 +127,12 @@ function setShowComments() {
 			<SpinningCircle></SpinningCircle>
 		</div>
 		<div v-else-if="!props.useShortMode">
-			<div
+			<ThemeContent
 				v-if="!showComments"
-				v-html="props.theme.content"
-				class="theme-content"
-				ref="themeContent"
-			></div>
-			<div
-				v-else
-				style="display: flex; flex-direction: column; gap: 10px"
-			>
-				<div
-					v-for="(comment, index) in comments"
-					:key="index"
-					style="background-color: white"
-				>
-					<span>{{ comment.text }}</span>
-				</div>
-			</div>
+				:content="props.theme.content"
+				:searchResult="props.searchResult"
+			></ThemeContent>
+			<CommentsComponent v-else></CommentsComponent>
 		</div>
 	</div>
 	<CommentModal
@@ -186,17 +166,6 @@ function setShowComments() {
 
 .theme-title {
 	width: 70%;
-}
-
-.theme-content {
-	padding: 18px 20px 20px 20px;
-	background: white;
-	overflow-x: scroll;
-}
-
-.theme-content:deep(img) {
-	max-width: 920px;
-	height: auto;
 }
 
 .theme-buttons {

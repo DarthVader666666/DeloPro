@@ -1,5 +1,5 @@
 <script setup>
-import Button from 'primevue/button'
+import AvatarImage from '../Account/AvatarImage.vue'
 
 const props = defineProps({
 	currentUser: {
@@ -12,31 +12,29 @@ const emit = defineEmits(['setShowAccountSettings'])
 </script>
 
 <template>
-	<div style="display: flex; flex-direction: column; font-size: medium; align-items: center">
-		<Button
-			style="height: 50px; width: 50px; border-radius: 50%"
-			@click="() => emit('setShowAccountSettings')"
-			severity="secondary"
-			rounded
+	<div class="account-menu-button">
+		<AvatarImage
+			:avatar-path="props.currentUser?.avatarPath"
+			:size="3.5"
 			id="account-button"
-		>
-			<img
-				v-if="props.currentUser?.avatarPath"
-				:src="props.currentUser?.avatarPath"
-				width="50px"
-				height="50px"
-			/>
-			<i
-				v-else
-				class="pi pi-user"
-				style="font-size: x-large"
-			></i>
-		</Button>
-		<span>{{ props.currentUser?.nickname }}</span>
+			@click="() => emit('setShowAccountSettings')"
+			style="box-shadow: var(--MENU-BOX-SHADOW)"
+		></AvatarImage>
+		<span style="font-size: medium">{{ props.currentUser?.nickname }}</span>
 	</div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+.account-menu-button {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	&:hover {
+		cursor: pointer;
+	}
+}
+
 .unread-messages-count {
 	right: 0;
 	background: red;

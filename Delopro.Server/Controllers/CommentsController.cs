@@ -62,9 +62,32 @@ namespace Delopro.Server.Controllers
             {
                 var comments = await _commentRepository.GetListIncludeAsync(themeId);
                 var response = _autoMapper.Map<IEnumerable<CommentResponse>>(comments);
-                return Ok(comments);
+                return Ok(response);
             }
             catch 
+            {
+                return StatusCode(500, new { errorText = "Ошибка сервера" });
+            }
+        }
+
+        [HttpDelete]
+        [Route("[action]")]
+        [Authorize]
+        public async Task<IActionResult> DeleteComment([FromQuery] int commentId, [FromQuery] int userId)
+        {
+            var user = await _userManager.GetCurrentUserAsync(HttpContext);
+
+            if (user is null || (user is not null && user!.UserRoles!.Count != 0 && user.UserRoles.Any(ur => ur!.Role?.RoleName == "User") && user.UserId != userId))
+            {
+                return Unauthorized(new { errorText = "Вы не имеете прав" });
+            }
+
+            try
+            {
+                await _commentRepository.DeleteAsync(commentId);
+                return Ok(new { okText = "Комментарий удален" });
+            }
+            catch
             {
                 return StatusCode(500, new { errorText = "Ошибка сервера" });
             }

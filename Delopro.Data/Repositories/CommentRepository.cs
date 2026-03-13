@@ -21,9 +21,18 @@ namespace Delopro.Data.Repositories
             return createdComment;
         }
 
-        public Task<Comment?> DeleteAsync(int? id_1, int? id_2 = null)
+        public async Task<Comment?> DeleteAsync(int? id_1, int? id_2 = null)
         {
-            throw new NotImplementedException();
+            var comment = await _dbContext.Comments.FindAsync(id_1);
+
+            if (comment is not null)
+            {
+                var result = _dbContext.Comments.Remove(comment).Entity;
+                await _dbContext.SaveChangesAsync();
+                return result;
+            }            
+
+            return null;
         }
 
         public Task DeleteRangeAsync(IEnumerable<Comment?> items)

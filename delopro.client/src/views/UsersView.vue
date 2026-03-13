@@ -9,6 +9,7 @@ import Column from 'primevue/column'
 import Tag from 'primevue/tag'
 import SpinningCircle from '@/components/SpinningCircle.vue'
 import UserModal from '@/components/UserModal.vue'
+import AvatarImage from '@/components/Account/AvatarImage.vue'
 
 const store = useStore()
 const pending = computed(() => store.getters.getPending)
@@ -66,16 +67,10 @@ function setShowUserModal() {
 			>
 				<template #body="{ data }">
 					<div style="display: flex; align-items: center; gap: 20px">
-						<img
-							v-if="data.avatarPath"
-							:src="data.avatarPath"
-							style="border-radius: 50%; height: 50px; width: 50px"
-						/>
-						<i
-							v-else
-							class="pi pi-user avatar"
-							style="height: 50px; width: 50px; font-size: 1.5rem"
-						></i>
+						<AvatarImage
+							:avatar-path="data.avatarPath"
+							:size="3.5"
+						></AvatarImage>
 						<span>{{ data.nickname }}</span>
 					</div>
 				</template>

@@ -26,6 +26,7 @@ const emit = defineEmits(['switchToEditMode'])
 			<AvatarImage
 				:avatarPath="props.user.avatarPath"
 				:avatarBase64="props.avatarBase64"
+				:size="10"
 			></AvatarImage>
 
 			<div class="account-short-info">

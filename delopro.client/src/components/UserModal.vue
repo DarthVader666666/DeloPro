@@ -7,6 +7,7 @@ import { useStore } from 'vuex'
 import Tag from 'primevue/tag'
 import Select from 'primevue/select'
 import MultiSelect from 'primevue/multiselect'
+import AvatarImage from './Account/AvatarImage.vue'
 
 const emit = defineEmits(['setShowUserModal'])
 const store = useStore()
@@ -101,18 +102,10 @@ async function deleteUser() {
 				"
 			>
 				<span style="font-size: 1.5rem">{{ user.nickname }}</span>
-				<div>
-					<img
-						v-if="user.avatarPath"
-						:src="user.avatarPath"
-						style="border-radius: 50%; height: 150px; width: 150px"
-					/>
-					<i
-						v-else
-						class="pi pi-user avatar"
-						style="height: 120px; width: 120px; font-size: 3.5rem"
-					></i>
-				</div>
+				<AvatarImage
+					:avatar-path="user.avatarPath"
+					:size="10"
+				></AvatarImage>
 				<div
 					style="
 						display: flex;

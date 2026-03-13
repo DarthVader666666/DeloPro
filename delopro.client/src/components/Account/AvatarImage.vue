@@ -1,4 +1,6 @@
 <script setup>
+import Avatar from 'primevue/avatar'
+
 const props = defineProps({
 	avatarPath: {
 		type: String,
@@ -8,23 +10,44 @@ const props = defineProps({
 		type: String,
 		default: null,
 	},
+	size: {
+		type: Number,
+		default: 10,
+	},
 })
 </script>
 
 <template>
-	<img
+	<Avatar
 		v-if="props.avatarBase64"
-		:src="props.avatarBase64"
-		class="avatar"
+		:image="props.avatarBase64"
+		:style="{ width: `${props.size}rem`, height: `${props.size}rem` }"
+		shape="circle"
 	/>
-	<img
+	<Avatar
 		v-else-if="props.avatarPath"
-		:src="props.avatarPath"
-		class="avatar"
+		:image="props.avatarPath"
+		:style="{ width: `${props.size}rem`, height: `${props.size}rem` }"
+		shape="circle"
 	/>
-	<i
+	<Avatar
 		v-else
-		class="pi pi-user avatar"
-		style="font-size: 5rem; width: 150px; height: 150px"
-	></i>
+		icon="pi pi-user"
+		:style="{
+			width: `${props.size}rem`,
+			height: `${props.size}rem`,
+			'--icon-size': `${props.size / 2}rem`,
+		}"
+		class="avatar-icon"
+		shape="circle"
+	/>
 </template>
+
+<style>
+.avatar-icon .pi {
+	font-size: var(--icon-size);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+</style>

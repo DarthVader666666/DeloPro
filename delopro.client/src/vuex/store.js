@@ -1205,6 +1205,23 @@ const store = createStore({
 					}
 				})
 		},
+		async deleteComment({ dispatch, state }, comment) {
+			await axios
+				.delete(
+					`${state.serverUrl}/comments/deletecomment?commentId=${comment.commentId}&userId=${comment.userId}`,
+				)
+				.then(async (response) => {
+					if (response.status === 200) {
+						await dispatch('downloadComments', comment.themeId)
+						toast.success(response.data.okText)
+					}
+				})
+				.catch((error) => {
+					if (error.response) {
+						toast.error(error.response.data.errorText)
+					}
+				})
+		},
 	},
 })
 
