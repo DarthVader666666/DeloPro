@@ -25,7 +25,7 @@ const emit = defineEmits(['setShowMessageModal'])
 				<span style="font-weight: bold">{{ ' ' + props.message.name }}</span>
 			</span>
 		</template>
-		<div style="word-break: break-word; overflow-wrap: break-word; text-align: justify">
+		<div style="word-break: break-word; overflow-wrap: break-word">
 			{{ props.message.text }}
 		</div>
 		<template #footer>

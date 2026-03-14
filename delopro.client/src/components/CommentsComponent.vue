@@ -1,8 +1,9 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import AvatarImage from './Account/AvatarImage.vue'
 import Button from 'primevue/button'
+import Textarea from 'primevue/textarea'
 import { helper } from '@/helper/helper'
 
 const store = useStore()
@@ -10,11 +11,45 @@ const currentUser = computed(() => store.getters.getCurrentUser)
 const isAdmin = computed(() => store.getters.isAdmin)
 const isOwner = computed(() => store.getters.isOwner)
 const comments = computed(() => store.getters.getComments)
+const editingId = ref(null)
+
+const emit = defineEmits(['setShowComments'])
+
+watch(comments, (newValue) => {
+	if (!newValue.length) {
+		emit('setShowComments')
+	}
+})
 
 async function deleteComment(comment) {
 	if (window.confirm('Вы уверены, что хотите удалить комментарий?')) {
 		await store.dispatch('deleteComment', comment)
 	}
+}
+
+function onKeyDown(event, comment) {
+	if (event.key === 'Enter' && !event.shiftKey) {
+		event.preventDefault()
+		updateComment(comment)
+		editingId.value = null
+	}
+}
+
+async function updateComment(comment) {}
+
+function setShowTextarea(commentId) {
+	editingId.value = editingId.value === commentId ? null : commentId
+
+	nextTick(() => {
+		const el = document.getElementById(`textarea_${commentId}`)
+		if (el) {
+			el.focus()
+		}
+	})
+}
+
+function isYourComment(userId) {
+	return userId === currentUser?.value?.userId
 }
 </script>
 
@@ -23,7 +58,9 @@ async function deleteComment(comment) {
 		<div
 			v-for="(comment, index) in comments"
 			:key="index"
+			:id="`comment_${comment.commentId}`"
 			class="comment"
+			:style="{ '--margin-value': isYourComment(comment.userId) ? 'auto' : '8px' }"
 		>
 			<div class="comment-header">
 				<div class="left-part">
@@ -34,25 +71,52 @@ async function deleteComment(comment) {
 					<span>{{ comment.nickname }}</span>
 				</div>
 				<div class="right-part">
-					<Button
-						v-if="comment.userId === currentUser?.userId"
-						text
-						rounded
+					<div
+						v-if="isYourComment(comment.userId) || isAdmin || isOwner"
+						class="comment-menu-buttons"
+					>
+						<Button
+							v-if="isYourComment(comment.userId)"
+							text
+							rounded
+							severity="contrast"
+							@click="setShowTextarea(comment.commentId)"
+							icon="pi pi-pencil"
+						></Button>
+						<Button
+							v-if="isYourComment(comment.userId) || isAdmin || isOwner"
+							text
+							rounded
+							@click="deleteComment(comment)"
+							severity="contrast"
+							icon="pi pi-trash"
+						></Button>
+					</div>
+
+					<span>{{ helper.getDateStringForUI(comment.dateCreated, false, false) }}</span>
+
+					<!-- <Button
+						v-if="isYourComment(comment.userId) || isAdmin || isOwner"
+						class="comment-menu-button"
+						icon="pi pi-ellipsis-v"
 						severity="contrast"
-						icon="pi pi-pencil"
-					></Button>
-					<Button
-						v-if="isAdmin || isOwner"
 						text
-						rounded
-						@click="deleteComment(comment)"
-						severity="contrast"
-						icon="pi pi-trash"
-					></Button>
-					<span>{{ helper.getDateStringForUI(comment.dateCreated, true) }}</span>
+					></Button> -->
 				</div>
 			</div>
-			<span>{{ comment.text }}</span>
+			<Textarea
+				v-if="editingId === comment.commentId"
+				:id="`textarea_${comment.commentId}`"
+				style="width: 100%"
+				v-model="comment.text"
+				@keydown="onKeyDown($event, comment)"
+			></Textarea>
+			<span
+				v-else
+				:id="`span_${comment.commentId}`"
+			>
+				{{ comment.text }}
+			</span>
 		</div>
 	</div>
 </template>
@@ -62,7 +126,7 @@ async function deleteComment(comment) {
 	padding-top: 10px;
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 3px;
 	animation-name: slide-down;
 	animation-duration: 0.2s;
 	transform: translateY(0%);
@@ -70,14 +134,25 @@ async function deleteComment(comment) {
 
 .comment {
 	padding: 12px;
-	width: 80%;
+	margin: 8px;
+	width: 85%;
 	border-radius: 10px;
 	box-shadow: var(--INPUT-BOX-SHADOW);
 	background-color: white;
+	margin-left: var(--margin-value);
+}
+
+/* .comment-menu-button {
+	width: 20px;
+	display: none;
+} */
+
+.comment-menu-buttons :deep(button) {
+	width: 30px;
+	height: 30px;
 }
 
 .comment-header {
-	position: relative;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -88,21 +163,35 @@ async function deleteComment(comment) {
 	display: flex;
 	gap: 5px;
 	align-items: center;
+	font-size: 0.9rem;
 }
 
 .right-part {
 	right: 0;
-	top: 0px;
-	position: absolute;
 	display: flex;
+	gap: 10px;
 	align-items: center;
-	font-size: small;
+	font-size: 0.7rem;
 }
 
 .right-part :deep(.p-button) {
-	opacity: 0.8;
-	margin: 0;
+	opacity: 0.6;
 	color: var(--TEXT-COLOR);
+}
+
+@media (max-width: 800px) {
+	/* .comment-menu-button {
+		display: block;
+	} */
+
+	/* .comment-menu-buttons {
+		position: absolute;
+		display: flex;
+		flex-direction: column;
+		background: white;
+		border-radius: 10px;
+		box-shadow: var(--GLOW-BOX-SHADOW);
+	} */
 }
 
 @keyframes slide-down {

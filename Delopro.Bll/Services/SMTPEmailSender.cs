@@ -1,5 +1,5 @@
-﻿using System.Net;
-using System.Net.Mail;
+﻿using MailKit.Net.Smtp;
+using MimeKit;
 
 using Delopro.Bll.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -17,33 +17,36 @@ namespace Delopro.Bll.Services
             _cryptoService = cryptoService;
         }
 
-        public bool SendEmail(string? to, string? subject, string? body)
+        public async Task<bool> SendEmailAsync(string to, string subject, string body)
         {
-            var fromAddress = new MailAddress(_configuration["SmtpEmailSender:UserName"] ?? "", "DeloPro");
-            var toAddress = new MailAddress(to ?? string.Empty);
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("DeloPro", _configuration["SmtpEmailSender:UserName"]));
+            message.To.Add(new MailboxAddress("", to));
+            message.Subject = subject;
 
-            var smtp = new SmtpClient
+            message.Body = new TextPart("html")
             {
-                Host = _configuration["SmtpEmailSender:Host"] ?? "",
-                Port = 587,
-                EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(_configuration["SmtpEmailSender:UserName"], _cryptoService.Decrypt(_configuration["SmtpEmailSender:Password"]))
+                Text = body
             };
 
-            var message = new MailMessage(fromAddress, toAddress)
-            {
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = true
-            };
+            using var client = new SmtpClient();
 
             try
             {
-                smtp.Send(message);
+                await client.ConnectAsync(
+                    _configuration["SmtpEmailSender:Host"],
+                    587,
+                    MailKit.Security.SecureSocketOptions.StartTls
+                );
 
-                return true;
+                await client.AuthenticateAsync(
+                    _configuration["SmtpEmailSender:UserName"],
+                    _cryptoService.Decrypt(_configuration["SmtpEmailSender:Password"])
+                );
+
+                var response = await client.SendAsync(message);
+                await client.DisconnectAsync(true);
+                return response.StartsWith("250");
             }
             catch
             {

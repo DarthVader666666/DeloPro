@@ -104,7 +104,7 @@ async function deleteUser() {
 				<span style="font-size: 1.5rem">{{ user.nickname }}</span>
 				<AvatarImage
 					:avatar-path="user.avatarPath"
-					:size="10"
+					:size="8"
 				></AvatarImage>
 				<div
 					style="

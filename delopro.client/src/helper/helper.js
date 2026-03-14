@@ -17,7 +17,7 @@ export const helper = {
 		const today = new Date()
 		return this.getDateStringCore(today, hmsFormat)
 	},
-	getDateStringForUI(dateString, short = false) {
+	getDateStringForUI(dateString, short = false, isMonthAWord = true) {
 		if (!dateString) {
 			return null
 		}
@@ -29,7 +29,7 @@ export const helper = {
 		} else {
 			return date.toLocaleDateString('ru-RU', {
 				day: 'numeric',
-				month: 'long',
+				month: isMonthAWord ? 'long' : 'numeric',
 				year: 'numeric',
 				hour: '2-digit',
 				minute: '2-digit',

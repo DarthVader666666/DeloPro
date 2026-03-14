@@ -52,6 +52,8 @@ function setShowCommentModal(value) {
 function setShowComments() {
 	if (commentsCount.value) {
 		showComments.value = !showComments.value
+	} else {
+		showComments.value = false
 	}
 }
 </script>
@@ -132,7 +134,10 @@ function setShowComments() {
 				:content="props.theme.content"
 				:searchResult="props.searchResult"
 			></ThemeContent>
-			<CommentsComponent v-else></CommentsComponent>
+			<CommentsComponent
+				@setShowComments="setShowComments"
+				v-else
+			></CommentsComponent>
 		</div>
 	</div>
 	<CommentModal

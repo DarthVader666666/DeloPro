@@ -960,8 +960,12 @@ const store = createStore({
 				.then(async (response) => {
 					if (response.status === 200) {
 						await dispatch('downloadCurrentUser')
+
+						if (store.getters.isOwner) {
+							await dispatch('downloadUnreadMessagesCount')
+						}
+
 						toast.success(`Вы вошли, как ${response.data.nickname}`)
-						router.push('/')
 					}
 				})
 				.catch((error) => {

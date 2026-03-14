@@ -20,7 +20,7 @@ onMounted(() => {
 })
 
 watch(showRightColumn, (newValue) => {
-	if (!newValue) {
+	if (newValue) {
 		showDocuments()
 	} else {
 		hideDocuments()

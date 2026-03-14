@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Delopro.Bll.Services
 {
-    public class AzureEmailSender: IEmailSender
+    public class AzureEmailSender : IEmailSender
     {
         private readonly IConfiguration _configuration;
 
@@ -15,25 +15,31 @@ namespace Delopro.Bll.Services
             _configuration = configuration;
         }
 
-        public bool SendEmail(string? to, string? subject, string? body)
+        public async Task<bool> SendEmailAsync(string? to, string? subject, string? body)
         {
             var sender = _configuration["AzureEmailSender"];
             var connectionString = _configuration["AzureCommunicationService"];
 
             var client = new EmailClient(connectionString);
 
-            EmailSendOperation? result;
+            EmailSendOperation? operation;
 
             try
             {
-                result = client.Send(Azure.WaitUntil.Completed, sender, to, subject, body);
+                operation = await client.SendAsync(
+                    Azure.WaitUntil.Completed,
+                    sender,
+                    to,
+                    subject,
+                    body
+                );
             }
             catch
             {
                 return false;
             }
 
-            return result?.Value.Status == EmailSendStatus.Succeeded;
+            return operation?.Value.Status == EmailSendStatus.Succeeded;
         }
     }
 }

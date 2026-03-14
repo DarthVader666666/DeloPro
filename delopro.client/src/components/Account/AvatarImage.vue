@@ -21,21 +21,21 @@ const props = defineProps({
 	<Avatar
 		v-if="props.avatarBase64"
 		:image="props.avatarBase64"
-		:style="{ width: `${props.size}rem`, height: `${props.size}rem` }"
+		:style="{ minWidth: `${props.size}rem`, minHeight: `${props.size}rem` }"
 		shape="circle"
 	/>
 	<Avatar
 		v-else-if="props.avatarPath"
 		:image="props.avatarPath"
-		:style="{ width: `${props.size}rem`, height: `${props.size}rem` }"
+		:style="{ minWidth: `${props.size}rem`, minHeight: `${props.size}rem` }"
 		shape="circle"
 	/>
 	<Avatar
 		v-else
 		icon="pi pi-user"
 		:style="{
-			width: `${props.size}rem`,
-			height: `${props.size}rem`,
+			minWidth: `${props.size}rem`,
+			minHeight: `${props.size}rem`,
 			'--icon-size': `${props.size / 2}rem`,
 		}"
 		class="avatar-icon"

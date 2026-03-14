@@ -47,7 +47,7 @@ namespace Delopro.Server.Controllers
 
             if (email != null)
             {
-                _emailSender.SendEmail(email, 
+                await _emailSender.SendEmailAsync(email, 
                     $"{messageForm.Name} прислал(а) сообщение в DeloPro",
                     $"<div>{messageForm.Text}</div>" +
                     (messageForm.Email.IsNullOrEmpty() ? "" : $"<div>Email: {messageForm.Email}</div>") +
