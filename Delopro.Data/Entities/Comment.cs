@@ -3,7 +3,7 @@
     public class Comment
     {
         public int CommentId { get; set; }
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
         public int ThemeId { get; set; }
         public string? Text { get; set; }
         public DateTime DateCreated { get; set; }

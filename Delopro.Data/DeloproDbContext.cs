@@ -29,7 +29,7 @@ namespace Delopro.Data
                 user.HasKey(x => x.UserId);
                 user.HasIndex(x => x.Email).IsUnique();
                 user.HasIndex(x => x.Nickname).IsUnique();
-                user.HasMany(x => x.Messages).WithOne(x => x.UserReceiver).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+                user.HasMany(x => x.Messages).WithOne(x => x.UserReceiver).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.NoAction);
                 user.Property(x => x.Email).HasMaxLength(maxNameLength).IsRequired();
                 user.Property(x => x.Phone).HasMaxLength(minNameLength).IsRequired(false).HasDefaultValue(null);
                 user.Property(x => x.Nickname).HasMaxLength(maxNameLength).IsRequired();
@@ -128,8 +128,8 @@ namespace Delopro.Data
                 comment.HasKey(x => x.CommentId);
                 comment.Property(x => x.Text).HasMaxLength(maxTextLength).IsRequired();
                 comment.Property(x => x.DateCreated).IsRequired();
-                comment.HasOne(x => x.Theme).WithMany(x => x.Comments).HasForeignKey(x => x.ThemeId);
-                comment.HasOne(x => x.User).WithMany(x => x.Comments).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.NoAction);
+                comment.HasOne(x => x.Theme).WithMany(x => x.Comments).HasForeignKey(x => x.ThemeId).OnDelete(DeleteBehavior.NoAction);
+                comment.HasOne(x => x.User).WithMany(x => x.Comments).HasForeignKey(x => x.UserId).IsRequired(false).OnDelete(DeleteBehavior.SetNull);
             });
             modelBuilder.Entity<Message>(message =>
             {
@@ -217,7 +217,7 @@ namespace Delopro.Data
                 visitor.HasKey(v => v.VisitorId);
                 visitor.Property(v => v.UserId).IsRequired(false);
                 visitor.HasOne(v => v.User).WithMany(u => u.Visitors).HasForeignKey(v => v.UserId).IsRequired(false);
-                visitor.HasMany(v => v.Visits).WithOne(v => v.Visitor).HasForeignKey(v => v.VisitorId).IsRequired(false).OnDelete(DeleteBehavior.Cascade);
+                visitor.HasMany(v => v.Visits).WithOne(v => v.Visitor).HasForeignKey(v => v.VisitorId).IsRequired(false).OnDelete(DeleteBehavior.NoAction);
                 visitor.Property(v => v.IpAddress).HasMaxLength(maxNameLength).IsRequired(true);
                 visitor.HasIndex(v => v.IpAddress).HasDatabaseName("IX_Visitors_IpAddress").IsUnique(true);
                 visitor.Property(v => v.Country).HasMaxLength(maxNameLength).IsRequired(false);

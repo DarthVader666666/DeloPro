@@ -52,7 +52,8 @@ namespace Delopro.Data.Repositories
 
         public Task<Comment?> GetAsync(int? id)
         {
-            throw new NotImplementedException();
+            var comment = _dbContext.Comments.Find(id);
+            return Task.FromResult(comment);
         }
 
         public Task<IEnumerable<Comment?>> GetListAsync(int? id = null)
@@ -61,9 +62,17 @@ namespace Delopro.Data.Repositories
             return Task.FromResult<IEnumerable<Comment?>>(comments);
         }
 
-        public Task<Comment?> UpdateAsync(Comment? item)
+        public async Task<Comment?> UpdateAsync(Comment? item)
         {
-            throw new NotImplementedException();
+            if (item is null)
+            {
+                return null;
+            }
+
+            var updatedComment = _dbContext.Comments.Update(item).Entity;
+            await _dbContext.SaveChangesAsync();
+
+            return await Task.FromResult<Comment?>(updatedComment);
         }
 
         public Task<IEnumerable<Comment?>> GetListIncludeAsync(int? id = null)

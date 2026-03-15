@@ -92,5 +92,31 @@ namespace Delopro.Server.Controllers
                 return StatusCode(500, new { errorText = "Ошибка сервера" });
             }
         }
+
+        [HttpPut]
+        [Route("[action]")]
+        [Authorize]
+        public async Task<IActionResult> UpdateComment([FromBody] CommentUpdateRequest commentUpdateRequest)
+        {
+            try
+            {
+                var comment = await _commentRepository.GetAsync(commentUpdateRequest.CommentId);
+
+                if (comment is null)
+                {
+                    return StatusCode(500, new { errorText = "Ошибка сервера" });
+                }
+
+                comment.Text = commentUpdateRequest.Text;
+                comment.DateEdited = DateTime.Now;
+                await _commentRepository.UpdateAsync(comment);
+
+                return Ok(new { okText = "Комментарий обновлён" });
+            }
+            catch
+            {
+                return StatusCode(500, new { errorText = "Ошибка сервера" });
+            }
+        }
     }
 }

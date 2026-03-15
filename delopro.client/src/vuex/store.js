@@ -1262,6 +1262,27 @@ const store = createStore({
 					}
 				})
 		},
+		async updateComment({ dispatch, state }, comment) {
+			console.log(comment)
+			await axios
+				.put(`${state.serverUrl}/comments/updatecomment/`, comment, {
+					headers: {
+						Content: 'application/json',
+						Accept: '*/*',
+					},
+				})
+				.then(async (response) => {
+					if (response.status === 200) {
+						await dispatch('downloadComments', comment.themeId)
+						toast.success(response.data.okText)
+					}
+				})
+				.catch((error) => {
+					if (error.response) {
+						toast.error(error.response.data.errorText)
+					}
+				})
+		},
 	},
 })
 

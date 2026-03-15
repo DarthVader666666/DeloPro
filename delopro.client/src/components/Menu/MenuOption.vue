@@ -85,6 +85,7 @@ function clicked() {
 
 .menu-button i {
 	font-weight: bold;
+	margin-bottom: 3px;
 }
 
 .count {

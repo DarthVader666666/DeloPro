@@ -112,8 +112,8 @@ namespace Delopro.Server.Configurations
                         .ForMember(dest => dest.Phone, opts => opts.MapFrom(src => cryptoService.Encrypt(src.Phone)));
 
                     autoMapperConfig.CreateMap<Comment, CommentResponse>()
-                    .ForMember(dest => dest.Nickname, opts => opts.MapFrom(src => src.User == null ? "" : src.User.Nickname))
-                    .ForMember(dest => dest.AvatarPath, opts => opts.MapFrom(src => GetFullAvatarPath(src.User!.AvatarPath)));
+                    .ForMember(dest => dest.Nickname, opts => opts.MapFrom(src => src.User == null ? null : src.User.Nickname))
+                    .ForMember(dest => dest.AvatarPath, opts => opts.MapFrom(src => src.User == null ? null : GetFullAvatarPath(src.User.AvatarPath)));
 
                 });
 

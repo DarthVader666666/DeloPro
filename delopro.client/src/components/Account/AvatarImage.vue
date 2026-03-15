@@ -10,6 +10,10 @@ const props = defineProps({
 		type: String,
 		default: null,
 	},
+	userDeleted: {
+		type: Boolean,
+		default: false,
+	},
 	size: {
 		type: Number,
 		default: 10,
@@ -19,7 +23,18 @@ const props = defineProps({
 
 <template>
 	<Avatar
-		v-if="props.avatarBase64"
+		v-if="props.userDeleted"
+		icon="pi pi-ban"
+		:style="{
+			minWidth: `${props.size}rem`,
+			minHeight: `${props.size}rem`,
+			'--icon-size': `${props.size / 2}rem`,
+		}"
+		class="avatar-icon"
+		shape="circle"
+	></Avatar>
+	<Avatar
+		v-else-if="props.avatarBase64"
 		:image="props.avatarBase64"
 		:style="{ minWidth: `${props.size}rem`, minHeight: `${props.size}rem` }"
 		shape="circle"
