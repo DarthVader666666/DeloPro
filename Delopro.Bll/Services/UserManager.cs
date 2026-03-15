@@ -32,11 +32,6 @@ namespace Delopro.Bll.Services
             _emailSender = emailSender;
         }
 
-        public static bool IsAuthenticated(HttpContext httpContext)
-        {
-            return httpContext.User?.Identity?.IsAuthenticated ?? false;
-        }
-
         public async Task<User?> GetCurrentUserAsync(HttpContext? httpContext)
         {
             var nickname = httpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;
@@ -90,18 +85,6 @@ namespace Delopro.Bll.Services
             catch
             { 
                 return false;
-            }
-        }
-
-        public static async Task LogOut(HttpContext httpContext)
-        {
-            try
-            {
-                await httpContext.SignOutAsync(authorizationScheme);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
             }
         }
 
@@ -199,6 +182,23 @@ namespace Delopro.Bll.Services
 
             user.Password = doEncryptPassword ? _cryptoService.Encrypt(password) : password;
             await _userRepository.UpdateAsync(user);
+        }
+
+        public static async Task LogOut(HttpContext httpContext)
+        {
+            try
+            {
+                await httpContext.SignOutAsync(authorizationScheme);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static bool IsAuthenticated(HttpContext httpContext)
+        {
+            return httpContext.User?.Identity?.IsAuthenticated ?? false;
         }
 
         private async Task<ClaimsIdentity?> GetIdentityAsync(User? user)

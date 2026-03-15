@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useToast } from 'vue-toastification'
 import router from '@/router/router'
 import { helper } from '@/helper/helper'
+import _ from 'lodash'
 // vueQuery ?
 const toast = useToast()
 
@@ -189,7 +190,11 @@ const store = createStore({
 		},
 		setCurrentUser(state, currentUser) {
 			state.currentUser = currentUser
-			sessionStorage.setItem(state.sessionStorageKeys.currentUserKey, JSON.stringify(currentUser))
+			if (currentUser) {
+				sessionStorage.setItem(state.sessionStorageKeys.currentUserKey, JSON.stringify(currentUser))
+			} else {
+				sessionStorage.removeItem(state.sessionStorageKeys.currentUserKey)
+			}
 		},
 
 		// ADMINISTRATION
@@ -940,59 +945,6 @@ const store = createStore({
 				commit('setCurrentUser', JSON.parse(storedCurrentUser))
 			}
 		},
-		async logIn({ dispatch, state }, loginRequestForm) {
-			const nickname = (
-				helper.validateEmail(loginRequestForm.nicknameOrEmail)
-					? ''
-					: loginRequestForm.nicknameOrEmail
-			).trimEnd()
-			const email = helper.validateEmail(loginRequestForm.nicknameOrEmail)
-				? loginRequestForm.nicknameOrEmail
-				: null
-
-			axios
-				.post(`${state.serverUrl}/authentication/login`, {
-					nickname: nickname,
-					email: email,
-					password: loginRequestForm.password,
-					remember: loginRequestForm.remember,
-				})
-				.then(async (response) => {
-					if (response.status === 200) {
-						await dispatch('downloadCurrentUser')
-
-						if (store.getters.isOwner) {
-							await dispatch('downloadUnreadMessagesCount')
-						}
-
-						toast.success(`Вы вошли, как ${response.data.nickname}`)
-					}
-				})
-				.catch((error) => {
-					if (error.response) {
-						toast.error(error.response.data.errorText)
-					}
-				})
-		},
-		logOut() {
-			axios
-				.post(`${store.getters.serverUrl}/authentication/logout/`, {
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				})
-				.then(async (response) => {
-					if (response.status === 200) {
-						helper.clearSession()
-						location.reload()
-					}
-				})
-				.catch((error) => {
-					if (error.response) {
-						toast.error(error.response.data.errorText)
-					}
-				})
-		},
 		async updateCurrentUser({ dispatch, state }, updatedUser) {
 			await axios
 				.put(`${state.serverUrl}/account/updatecurrentuser`, updatedUser, {
@@ -1146,6 +1098,90 @@ const store = createStore({
 				.catch((error) => {
 					if (error.response) {
 						toast.error(error.response.data.errorText)
+					}
+				})
+		},
+
+		// AUTHENTICATION
+		async logIn({ dispatch, state }, loginRequestForm) {
+			const nickname = (
+				helper.validateEmail(loginRequestForm.nicknameOrEmail)
+					? ''
+					: loginRequestForm.nicknameOrEmail
+			).trimEnd()
+
+			const email = helper.validateEmail(loginRequestForm.nicknameOrEmail)
+				? loginRequestForm.nicknameOrEmail
+				: null
+
+			axios
+				.post(`${state.serverUrl}/authentication/login`, {
+					nickname: nickname,
+					email: email,
+					password: loginRequestForm.password,
+					remember: loginRequestForm.remember,
+				})
+				.then(async (response) => {
+					if (response.status === 200) {
+						await dispatch('downloadCurrentUser')
+
+						if (store.getters.isOwner) {
+							await dispatch('downloadUnreadMessagesCount')
+						}
+
+						toast.success(`Вы вошли, как ${response.data.nickname}`)
+					}
+				})
+				.catch((error) => {
+					if (error.response) {
+						toast.error(error.response.data.errorText)
+					}
+				})
+		},
+		logOut() {
+			axios
+				.post(`${store.getters.serverUrl}/authentication/logout/`, {
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				})
+				.then(async (response) => {
+					if (response.status === 200) {
+						helper.clearSession()
+						location.reload()
+					}
+				})
+				.catch((error) => {
+					if (error.response) {
+						toast.error(error.response.data.errorText)
+					}
+				})
+		},
+		async checkAuthentication({ commit, state }) {
+			await axios
+				.get(`${state.serverUrl}/authentication/checkauthentication`)
+				.then((response) => {
+					if (response.status === 200) {
+						const user = response.data.currentUser
+						const isAuthenticated = response.data.isAuthenticated
+
+						if (isAuthenticated) {
+							const isEqual = _.isEqual(user, state.currentUser)
+
+							if (!isEqual) {
+								commit('setCurrentUser', user)
+							}
+						}
+
+						return isAuthenticated
+					}
+
+					return false
+				})
+				.catch((error) => {
+					if (error.response) {
+						toast.error(error.response.data.errorText)
+						return false
 					}
 				})
 		},

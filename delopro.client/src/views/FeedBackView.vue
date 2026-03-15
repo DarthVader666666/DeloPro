@@ -11,6 +11,7 @@ import InputComponent from '@/components/InputComponent.vue'
 
 const store = useStore()
 const router = useRouter()
+const isAuthenticated = computed(() => store.getters.isAuthenticated)
 
 const isCaptchaMatch = ref(false)
 const pending = computed(() => store.getters.getPending)
@@ -27,6 +28,12 @@ const feedbackForm = reactive({
 watch(feedbackForm, (newValue) => {
 	if (newValue.email || newValue.phone) {
 		invalid.value = false
+	}
+})
+
+watch(isAuthenticated, (newValue) => {
+	if (newValue) {
+		router.push('/')
 	}
 })
 

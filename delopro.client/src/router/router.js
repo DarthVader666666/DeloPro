@@ -113,6 +113,10 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
+	if (isAuthenticated.value) {
+		await helper.checkAuthentication()
+	}
+
 	if (to.meta.roles) {
 		if (!to.meta.roles.some((r) => currentUser?.value?.roles?.includes(r) ?? false)) {
 			return next('/')

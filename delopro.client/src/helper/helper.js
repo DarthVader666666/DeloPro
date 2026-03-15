@@ -1,5 +1,4 @@
 import store from '@/vuex/store'
-import axios from 'axios'
 
 export const helper = {
 	getUnicodeByteArray(text) {
@@ -250,10 +249,9 @@ export const helper = {
 			sessionStorage.removeItem(keys[key])
 		}
 	},
-	async isAuthenticated() {
-		return await axios
-			.get(`${store.state.serverUrl}/authentication/checkauthentication`, { withCredentials: true })
-			.then((response) => response.data)
+	async checkAuthentication() {
+		const isAuthenticated = await store.dispatch('checkAuthentication')
+		return isAuthenticated
 	},
 	resetObject(obj) {
 		Object.keys(obj).forEach((key) =>

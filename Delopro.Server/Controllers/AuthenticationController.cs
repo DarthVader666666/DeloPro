@@ -1,6 +1,6 @@
-﻿using Delopro.Bll.Interfaces;
+﻿using AutoMapper;
+
 using Delopro.Bll.Services;
-using Delopro.Server.Attributes;
 using Delopro.Server.Configuration;
 using Delopro.Server.Models;
 using Microsoft.AspNetCore.Cors;
@@ -16,11 +16,13 @@ namespace Delopro.Server.Controllers
     {
         private readonly UserManager _userManager;
         private readonly IMemoryCache _memoryCache;
+        private readonly IMapper _automapper;
 
-        public AuthenticationController(UserManager userManager, IMemoryCache memoryCache)
+        public AuthenticationController(UserManager userManager, IMemoryCache memoryCache, IMapper automapper)
         {
             _userManager = userManager;
             _memoryCache = memoryCache;
+            _automapper = automapper;
         }
 
         [HttpPost]
@@ -72,9 +74,26 @@ namespace Delopro.Server.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public bool CheckAuthentication()
+        public async Task<IActionResult> CheckAuthentication()
         {
-            return UserManager.IsAuthenticated(HttpContext);
+            try
+            {
+                var isAuthenticated = UserManager.IsAuthenticated(HttpContext);
+
+                if (isAuthenticated)
+                {
+                    var user = await _userManager.GetCurrentUserAsync(HttpContext);
+                    var currentUser = _automapper.Map<AccountResponse>(user);
+
+                    return Ok(new CheckAuthenticationResponse { IsAuthenticated = isAuthenticated, CurrentUser = currentUser });
+                }
+
+                return Ok(new CheckAuthenticationResponse { IsAuthenticated = isAuthenticated, CurrentUser = null });
+            }
+            catch
+            {
+                return StatusCode(500, new { errorText = "Ошибка сервера" });
+            }
         }
     }
 }

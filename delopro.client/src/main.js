@@ -17,7 +17,7 @@ async function bootstrap() {
 	store.commit('setPending', true)
 
 	try {
-		if (!store.getters.getCurrentUser && (await helper.isAuthenticated())) {
+		if (!store.getters.getCurrentUser && (await helper.checkAuthentication())) {
 			await store.dispatch('downloadCurrentUser')
 		}
 

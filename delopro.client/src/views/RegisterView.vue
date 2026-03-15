@@ -1,7 +1,7 @@
 <script setup>
 import RegisterComponent from '@/components/RegisterComponent.vue'
 import SpinningCircle from '@/components/SpinningCircle.vue'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import Button from 'primevue/button'
@@ -10,6 +10,13 @@ const store = useStore()
 const router = useRouter()
 const pending = computed(() => store.getters.getPending)
 const showNotification = ref(false)
+const isAuthenticated = computed(() => store.getters.isAuthenticated)
+
+watch(isAuthenticated, (newValue) => {
+	if (newValue) {
+		router.push('/')
+	}
+})
 
 async function registerUser(registerRequest) {
 	const result = await store.dispatch('registerUser', registerRequest)
