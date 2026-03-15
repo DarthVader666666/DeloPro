@@ -73,7 +73,7 @@ namespace Delopro.Server.Controllers
         [HttpDelete]
         [Route("[action]")]
         [Authorize]
-        public async Task<IActionResult> DeleteComment([FromQuery] int commentId, [FromQuery] int userId)
+        public async Task<IActionResult> DeleteComment([FromQuery] int commentId, [FromQuery] int? userId)
         {
             var user = await _userManager.GetCurrentUserAsync(HttpContext);
 

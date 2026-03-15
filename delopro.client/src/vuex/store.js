@@ -1248,7 +1248,7 @@ const store = createStore({
 		async deleteComment({ dispatch, state }, comment) {
 			await axios
 				.delete(
-					`${state.serverUrl}/comments/deletecomment?commentId=${comment.commentId}&userId=${comment.userId}`,
+					`${state.serverUrl}/comments/deletecomment?commentId=${comment.commentId}&userId=${comment.userId ?? ''}`,
 				)
 				.then(async (response) => {
 					if (response.status === 200) {
@@ -1258,7 +1258,7 @@ const store = createStore({
 				})
 				.catch((error) => {
 					if (error.response) {
-						toast.error(error.response.data.errorText)
+						toast.error(error.response.data?.errorText ?? error.message)
 					}
 				})
 		},
