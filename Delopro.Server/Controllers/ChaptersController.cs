@@ -99,22 +99,15 @@ namespace Delopro.Server.Controllers
         {
             if (!_memoryCache.TryGetValue(CacheKeys.ChaptersKey, out IEnumerable<ChapterResponse>? chapterResponse))
             {
-                try
-                {
-                    var chapters = await _chapterRepository.GetListAsync();
+                var chapters = await _chapterRepository.GetListAsync();
 
-                    if (chapters == null)
-                    {
-                        return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
-                    }
-
-                    chapterResponse = _mapper.Map<IEnumerable<ChapterResponse>>(chapters);
-                    _memoryCache.Set(CacheKeys.ChaptersKey, chapterResponse, TimeSpan.FromMinutes(5));
-                }
-                catch (Exception ex)
+                if (chapters == null)
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = ex.Message });
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
                 }
+
+                chapterResponse = _mapper.Map<IEnumerable<ChapterResponse>>(chapters);
+                _memoryCache.Set(CacheKeys.ChaptersKey, chapterResponse, TimeSpan.FromMinutes(5));
             }
 
             return Ok(chapterResponse);

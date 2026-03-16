@@ -32,7 +32,7 @@ const pending = computed(() => store.getters.getPending)
 					"
 				>
 					<img
-						:src="helper.getImagePath() + chapter.imagePath"
+						:src="helper.getImagePath('chapter') + chapter.imagePath"
 						width="150px"
 						height="auto"
 					/>

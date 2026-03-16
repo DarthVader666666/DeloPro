@@ -96,23 +96,16 @@ namespace Delopro.Server.Controllers
                 return NotFound(new { errorText = "Сообщение не найдено" });
             }
 
-            try
-            {
-                message.IsRead = true;
-                var messageResult = await _messageRepository.UpdateAsync(message);
+            message.IsRead = true;
+            var messageResult = await _messageRepository.UpdateAsync(message);
 
-                if (messageResult != null)
-                {
-                    return Ok();
-                }
-                else
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
-                }
-            }
-            catch (Exception ex)
+            if (messageResult != null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = ex.Message });
+                return Ok();
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
             }
         }
 

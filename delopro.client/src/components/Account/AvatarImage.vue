@@ -1,4 +1,5 @@
 <script setup>
+import { helper } from '@/helper/helper'
 import Avatar from 'primevue/avatar'
 
 const props = defineProps({
@@ -24,7 +25,7 @@ const props = defineProps({
 <template>
 	<Avatar
 		v-if="props.userDeleted"
-		image="src/assets/icons/deleted-user-3.png"
+		:image="helper.getImagePath('icon') + 'deleted-user-2.png'"
 		:style="{
 			minWidth: `${props.size}rem`,
 			minHeight: `${props.size}rem`,

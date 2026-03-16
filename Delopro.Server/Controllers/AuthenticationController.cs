@@ -76,24 +76,17 @@ namespace Delopro.Server.Controllers
         [Route("[action]")]
         public async Task<IActionResult> CheckAuthentication()
         {
-            try
+            var isAuthenticated = UserManager.IsAuthenticated(HttpContext);
+
+            if (isAuthenticated)
             {
-                var isAuthenticated = UserManager.IsAuthenticated(HttpContext);
+                var user = await _userManager.GetCurrentUserAsync(HttpContext);
+                var currentUser = _automapper.Map<AccountResponse>(user);
 
-                if (isAuthenticated)
-                {
-                    var user = await _userManager.GetCurrentUserAsync(HttpContext);
-                    var currentUser = _automapper.Map<AccountResponse>(user);
-
-                    return Ok(new CheckAuthenticationResponse { IsAuthenticated = isAuthenticated, CurrentUser = currentUser });
-                }
-
-                return Ok(new CheckAuthenticationResponse { IsAuthenticated = isAuthenticated, CurrentUser = null });
+                return Ok(new CheckAuthenticationResponse { IsAuthenticated = isAuthenticated, CurrentUser = currentUser });
             }
-            catch
-            {
-                return StatusCode(500, new { errorText = "Ошибка сервера" });
-            }
+
+            return Ok(new CheckAuthenticationResponse { IsAuthenticated = isAuthenticated, CurrentUser = null });
         }
     }
 }

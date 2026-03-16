@@ -74,10 +74,10 @@ export const helper = {
 			.slice(0, -1)
 		return '?' + queryString
 	},
-	getImagePath() {
+	getImagePath(type) {
 		return store.getters.environment === 'development'
-			? '/src/assets/chapters/chapter-'
-			: '/chapters/chapter-'
+			? `/src/assets/${type}s/${type}-`
+			: `/${type}s/${type}-`
 	},
 	scrollToTheme(themeId) {
 		if (themeId) {

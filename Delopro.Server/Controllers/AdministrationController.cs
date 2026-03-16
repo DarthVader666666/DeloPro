@@ -97,24 +97,17 @@ namespace Delopro.Server.Controllers
         [Route("[action]/{userId:int}")]
         public async Task<IActionResult> DeleteUser([FromRoute] int userId)
         {
-            try
-            {
-                var user = await _userRepository.GetAsync(userId);
+            var user = await _userRepository.GetAsync(userId);
 
-                if (user is null)
-                {
-                    return NotFound(new { errorText = "Пользователь не найден" });
-                }
-                else
-                {
-                    await _userRepository.DeleteAsync(userId);
-                    return Ok(new { okText = $"Пользователь {user.Nickname} успешно удалён" });
-                }
-            }
-            catch
+            if (user is null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
-            }            
+                return NotFound(new { errorText = "Пользователь не найден" });
+            }
+            else
+            {
+                await _userRepository.DeleteAsync(userId);
+                return Ok(new { okText = $"Пользователь {user.Nickname} успешно удалён" });
+            }
         }
     }
 }

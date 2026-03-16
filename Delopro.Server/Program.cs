@@ -6,6 +6,7 @@ using Delopro.Data.Entities;
 using Delopro.Data.Interfaces;
 using Delopro.Data.Repositories;
 using Delopro.Server.Configurations;
+using Delopro.Server.Middleware;
 
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
@@ -183,6 +184,7 @@ if (ConfigurationHelper.ChapterImagesPath is not null && !Directory.Exists(Confi
 var app = builder!.Build();
 
 app.UseStatusCodePagesWithReExecute("/home/api/error/{0}");
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();

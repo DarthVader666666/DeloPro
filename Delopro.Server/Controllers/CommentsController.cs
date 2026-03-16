@@ -58,16 +58,9 @@ namespace Delopro.Server.Controllers
         [Route("[action]")]
         public async Task<IActionResult> GetComments([FromQuery] int themeId)
         {
-            try
-            {
-                var comments = await _commentRepository.GetListIncludeAsync(themeId);
-                var response = _autoMapper.Map<IEnumerable<CommentResponse>>(comments);
-                return Ok(response);
-            }
-            catch 
-            {
-                return StatusCode(500, new { errorText = "Ошибка сервера" });
-            }
+            var comments = await _commentRepository.GetListIncludeAsync(themeId);
+            var response = _autoMapper.Map<IEnumerable<CommentResponse>>(comments);
+            return Ok(response);
         }
 
         [HttpDelete]
@@ -82,15 +75,8 @@ namespace Delopro.Server.Controllers
                 return Unauthorized(new { errorText = "Вы не имеете прав" });
             }
 
-            try
-            {
-                await _commentRepository.DeleteAsync(commentId);
-                return Ok(new { okText = "Комментарий удален" });
-            }
-            catch
-            {
-                return StatusCode(500, new { errorText = "Ошибка сервера" });
-            }
+            await _commentRepository.DeleteAsync(commentId);
+            return Ok(new { okText = "Комментарий удален" });
         }
 
         [HttpPut]
@@ -98,25 +84,18 @@ namespace Delopro.Server.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateComment([FromBody] CommentUpdateRequest commentUpdateRequest)
         {
-            try
-            {
-                var comment = await _commentRepository.GetAsync(commentUpdateRequest.CommentId);
+            var comment = await _commentRepository.GetAsync(commentUpdateRequest.CommentId);
 
-                if (comment is null)
-                {
-                    return StatusCode(500, new { errorText = "Ошибка сервера" });
-                }
-
-                comment.Text = commentUpdateRequest.Text;
-                comment.DateEdited = DateTime.Now;
-                await _commentRepository.UpdateAsync(comment);
-
-                return Ok(new { okText = "Комментарий обновлён" });
-            }
-            catch
+            if (comment is null)
             {
                 return StatusCode(500, new { errorText = "Ошибка сервера" });
             }
+
+            comment.Text = commentUpdateRequest.Text;
+            comment.DateEdited = DateTime.Now;
+            await _commentRepository.UpdateAsync(comment);
+
+            return Ok(new { okText = "Комментарий обновлён" });
         }
     }
 }

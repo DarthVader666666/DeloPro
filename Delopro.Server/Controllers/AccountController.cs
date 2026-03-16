@@ -59,31 +59,23 @@ namespace Delopro.Server.Controllers
         {
             var user = await _userManager.GetCurrentUserAsync(HttpContext);
 
-            try
-            {
-                if (user is null || accountUpdateRequest is null)
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
-                }
-
-                user.Nickname = accountUpdateRequest.Nickname;
-                user.FirstName = _cryptoService.Encrypt(accountUpdateRequest.FirstName);
-                user.LastName = _cryptoService.Encrypt(accountUpdateRequest.LastName);
-                user.BirthDate = accountUpdateRequest.BirthDate;
-                user.Country = accountUpdateRequest.Country;
-                user.City = accountUpdateRequest.City;
-                user.UserTitle = accountUpdateRequest.UserTitle;
-                user.Info = accountUpdateRequest.Info;
-                user.Email = _cryptoService.Encrypt(accountUpdateRequest.Email);
-                user.Phone = _cryptoService.Encrypt(accountUpdateRequest.Phone);
-
-                await _userRepository.UpdateAsync(user);
-                
-            }
-            catch
+            if (user is null || accountUpdateRequest is null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
             }
+
+            user.Nickname = accountUpdateRequest.Nickname;
+            user.FirstName = _cryptoService.Encrypt(accountUpdateRequest.FirstName);
+            user.LastName = _cryptoService.Encrypt(accountUpdateRequest.LastName);
+            user.BirthDate = accountUpdateRequest.BirthDate;
+            user.Country = accountUpdateRequest.Country;
+            user.City = accountUpdateRequest.City;
+            user.UserTitle = accountUpdateRequest.UserTitle;
+            user.Info = accountUpdateRequest.Info;
+            user.Email = _cryptoService.Encrypt(accountUpdateRequest.Email);
+            user.Phone = _cryptoService.Encrypt(accountUpdateRequest.Phone);
+
+            await _userRepository.UpdateAsync(user);
 
             return Ok(new { okText = $"Данные пользователя {user.Nickname} успешно обновлены"});
         }
