@@ -24,7 +24,7 @@ const props = defineProps({
 <template>
 	<Avatar
 		v-if="props.userDeleted"
-		icon="pi pi-ban"
+		image="src/assets/icons/deleted-user-3.png"
 		:style="{
 			minWidth: `${props.size}rem`,
 			minHeight: `${props.size}rem`,
