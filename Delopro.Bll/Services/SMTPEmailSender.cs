@@ -17,7 +17,7 @@ namespace Delopro.Bll.Services
             _cryptoService = cryptoService;
         }
 
-        public async Task<(string? Message, bool Result)> SendEmailAsync(string to, string subject, string body)
+        public async Task<bool> SendEmailAsync(string to, string subject, string body)
         {
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress("DeloPro", _configuration["SmtpEmailSender:UserName"]));
@@ -46,12 +46,12 @@ namespace Delopro.Bll.Services
 
                 var response = await client.SendAsync(message);
                 await client.DisconnectAsync(true);
-                return (response, true);
-                //return response.StartsWith("250");
+
+                return response.Contains("message accepted for delivery");
             }
             catch(Exception ex)
             {
-                throw ex;
+                throw new Exception(ex.Message);
             }
         }
     }
