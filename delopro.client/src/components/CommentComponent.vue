@@ -1,10 +1,11 @@
 <script setup>
-import { nextTick, reactive } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import AvatarImage from './Account/AvatarImage.vue'
 import Button from 'primevue/button'
 import Textarea from 'primevue/textarea'
 import { helper } from '@/helper/helper'
+import EmojiPicker from './EmojiPicker.vue'
 
 const store = useStore()
 const emit = defineEmits(['setEditingId'])
@@ -28,11 +29,21 @@ const props = defineProps({
 	},
 })
 
+const showEmojiPicker = ref(false)
+
 const updatedComment = reactive({
 	commentId: props.comment.commentId,
 	themeId: props.comment.themeId,
 	text: props.comment.text,
 })
+
+function setShowEmojiPicker(value) {
+	showEmojiPicker.value = value != undefined ? value : !showEmojiPicker.value
+}
+
+function addEmoji(emoji) {
+	updatedComment.text += emoji
+}
 
 function isYourComment(userId) {
 	return userId === props.currentUser?.userId
@@ -68,10 +79,13 @@ async function updateComment() {
 function cancelUpdate() {
 	updatedComment.text = props.comment.text
 	setShowTextarea()
+	setShowEmojiPicker(false)
 }
 
 function setShowTextarea() {
-	emit('setEditingId', props.editingId === props.comment.commentId ? null : props.comment.commentId)
+	const editingId = props.editingId === props.comment.commentId ? null : props.comment.commentId
+	emit('setEditingId', editingId)
+	setShowEmojiPicker(editingId === null)
 
 	nextTick(() => {
 		const el = document.getElementById(`textarea_${props.comment.commentId}`)
@@ -160,8 +174,10 @@ function setShowTextarea() {
 			v-if="props.editingId === props.comment.commentId"
 			:id="`textarea_${props.comment.commentId}`"
 			style="width: 100%; height: 5rem"
+			maxlength="1000"
 			v-model="updatedComment.text"
 			@keydown="onKeyDown($event)"
+			@focus="setShowEmojiPicker(false)"
 		></Textarea>
 		<span
 			v-else
@@ -170,6 +186,19 @@ function setShowTextarea() {
 			{{ props.comment.text }}
 		</span>
 		<div class="comment-footer">
+			<div>
+				<EmojiPicker
+					v-if="props.editingId === props.comment.commentId"
+					:show-emoji-picker="showEmojiPicker"
+					:width="85"
+					:height="100"
+					:bottom="-110"
+					:left="14"
+					@addEmoji="addEmoji"
+					@setShowEmojiPicker="setShowEmojiPicker"
+				></EmojiPicker>
+			</div>
+
 			<span>
 				{{
 					props.comment.dateEdited
@@ -210,7 +239,9 @@ function setShowTextarea() {
 }
 
 .comment-footer {
-	text-align: end;
+	position: relative;
+	display: flex;
+	justify-content: space-between;
 	padding-top: 10px;
 	font-size: 0.7rem;
 }

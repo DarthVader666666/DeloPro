@@ -1263,7 +1263,6 @@ const store = createStore({
 				})
 		},
 		async updateComment({ dispatch, state }, comment) {
-			console.log(comment)
 			await axios
 				.put(`${state.serverUrl}/comments/updatecomment/`, comment, {
 					headers: {
