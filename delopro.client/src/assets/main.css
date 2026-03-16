@@ -170,12 +170,6 @@ body {
 	min-width: 220px;
 }
 
-.slide-container button span {
-	font-weight: bold;
-	color: var(--TEXT-COLOR);
-	border-radius: 0;
-}
-
 .slide-container button {
 	border-radius: 0;
 	width: 100%;

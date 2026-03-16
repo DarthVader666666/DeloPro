@@ -78,14 +78,20 @@ function clicked() {
 
 <style scoped>
 .menu-button {
-	border-radius: 5px 5px 0 0;
+	border-radius: 0;
 	font-weight: bold;
 	color: var(--TEXT-COLOR);
 }
 
 .menu-button i {
 	font-weight: bold;
+	color: var(--TEXT-COLOR);
 	margin-bottom: 3px;
+}
+
+.menu-button span {
+	font-weight: bold;
+	color: var(--TEXT-COLOR);
 }
 
 .count {

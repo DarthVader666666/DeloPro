@@ -102,6 +102,7 @@ const accountOptions = [
 		path: 'account',
 		id: 'account_acc_button',
 		label: 'Личный кабинет',
+		icon: 'pi pi-user',
 		clickHandler: () => setShowAccountSettings(false),
 		roles: ['Owner', 'Admin', 'User'],
 	},

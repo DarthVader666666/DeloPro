@@ -43,16 +43,7 @@ const props = defineProps({
 	display: flex;
 	flex-direction: row;
 	align-items: end;
-	gap: 0px;
-}
-
-.menu button {
-	border-radius: 0;
-}
-
-.menu span {
-	font-weight: bold;
-	color: var(--TEXT-COLOR);
+	gap: 2px;
 }
 
 @media (max-width: 1100px) {
