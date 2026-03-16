@@ -98,7 +98,7 @@ function clicked() {
 	height: 17px;
 	text-align: center;
 	align-content: center;
-	top: -38%;
+	top: -35%;
 	right: -12%;
 	padding-right: 1%;
 	border: solid 1px rgba(0, 0, 0, 0.2);

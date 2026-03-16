@@ -89,6 +89,7 @@ const options = [
 		path: 'messages',
 		id: 'messages_menu_button',
 		label: 'Сообщения',
+		icon: 'pi pi-envelope',
 		roles: ['Owner'],
 		clickHandler: () => setShowSlideMenu(),
 	},

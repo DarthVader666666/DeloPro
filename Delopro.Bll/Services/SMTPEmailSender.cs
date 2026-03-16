@@ -48,9 +48,9 @@ namespace Delopro.Bll.Services
                 await client.DisconnectAsync(true);
                 return response.StartsWith("250");
             }
-            catch
+            catch(Exception ex)
             {
-                return false;
+                throw ex;
             }
         }
     }
