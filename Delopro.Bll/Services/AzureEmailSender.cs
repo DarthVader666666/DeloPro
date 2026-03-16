@@ -15,7 +15,7 @@ namespace Delopro.Bll.Services
             _configuration = configuration;
         }
 
-        public async Task<bool> SendEmailAsync(string? to, string? subject, string? body)
+        public async Task<(string? Message, bool Result)> SendEmailAsync(string? to, string? subject, string? body)
         {
             var sender = _configuration["AzureEmailSender"];
             var connectionString = _configuration["AzureCommunicationService"];
@@ -34,12 +34,12 @@ namespace Delopro.Bll.Services
                     body
                 );
             }
-            catch
+            catch(Exception ex)
             {
-                return false;
+                return (ex.Message, false);
             }
 
-            return operation?.Value.Status == EmailSendStatus.Succeeded;
+            return ($"{operation.Value.Status.ToString()}", operation?.Value.Status == EmailSendStatus.Succeeded);
         }
     }
 }

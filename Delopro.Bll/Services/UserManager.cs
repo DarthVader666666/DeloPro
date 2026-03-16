@@ -88,11 +88,11 @@ namespace Delopro.Bll.Services
             }
         }
 
-        public async Task<bool> RegisterAsync(User? user, string? serverUrl)
+        public async Task<(string? Message, bool Result)> RegisterAsync(User? user, string? serverUrl)
         {
             if (user == null)
             {
-                return false;
+                return ("User is null", false);
             }
 
             var nicknameByteString = GetByteString(key1, user.Nickname);
@@ -105,11 +105,11 @@ namespace Delopro.Bll.Services
                 $"Подтвердить регистрацию" +
                 $"</a>";
 
-            var result = await _emailSender.SendEmailAsync(user.Email ?? string.Empty, "Пожалуйста, подтвердите регистрацию в DeloPro", url);
+            var response = await _emailSender.SendEmailAsync(user.Email ?? string.Empty, "Пожалуйста, подтвердите регистрацию в DeloPro", url);
 
-            if (!result)
+            if (!response.Result)
             {
-                return false;
+                return response;
             }
 
             user.FirstName = _cryptoService.Encrypt(user.FirstName);
@@ -121,10 +121,10 @@ namespace Delopro.Bll.Services
 
             if (createdUser == null)
             {
-                return false;
+                return ("Пользователь не создан", false);
             }
 
-            return result;
+            return response;
         }
 
         public async Task<User?> ConfirmUserAsync(string[]? keys)

@@ -57,15 +57,15 @@ namespace Delopro.Server.Controllers
             {
                 var user = _mapper.Map<User>(registerRequest);
 
-                var result = await _userManager.RegisterAsync(user, HttpContext?.Request?.GetDisplayUrl().Replace("RegisterUser", string.Empty, StringComparison.OrdinalIgnoreCase));
+                var response = await _userManager.RegisterAsync(user, HttpContext?.Request?.GetDisplayUrl().Replace("RegisterUser", string.Empty, StringComparison.OrdinalIgnoreCase));
 
-                if (result)
+                if (response.Result)
                 {
-                    return Ok(new { okText = "Письмо отправлено" });
+                    return Ok(new { okText = response.Message });
                 }
                 else
                 {
-                    return BadRequest(new { errorText = "Ошибка регистрации" });
+                    return BadRequest(new { errorText = response.Message });
                 }
             }
             catch (Exception ex)
