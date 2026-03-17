@@ -37,6 +37,16 @@ const updatedComment = reactive({
 	text: props.comment.text,
 })
 
+const editArea = ref(null)
+
+function autoResize() {
+	const el = editArea.value?.$el || editArea.value
+	if (!el) return
+
+	el.style.height = 'auto'
+	el.style.height = el.scrollHeight + 'px'
+}
+
 function setShowEmojiPicker(value) {
 	showEmojiPicker.value = value != undefined ? value : !showEmojiPicker.value
 }
@@ -56,23 +66,15 @@ async function deleteComment() {
 }
 
 function onKeyDown(event) {
-	if (event.key === 'Enter') {
-		if (props.comment.text === updatedComment.text) {
-			setShowTextarea()
-			return
-		}
-
-		event.preventDefault()
-		updateComment()
-	}
-
 	if (event.key === 'Escape') {
 		cancelUpdate()
 	}
 }
 
 async function updateComment() {
-	await store.dispatch('updateComment', updatedComment)
+	if (props.comment.text != updatedComment.text) {
+		await store.dispatch('updateComment', updatedComment)
+	}
 	setShowTextarea()
 }
 
@@ -89,8 +91,14 @@ function setShowTextarea() {
 
 	nextTick(() => {
 		const el = document.getElementById(`textarea_${props.comment.commentId}`)
-		if (el) el.focus()
+		if (el) {
+			el.focus()
+			el.style.height = 'auto'
+			el.style.height = el.scrollHeight + 'px'
+		}
 	})
+
+	autoResize()
 }
 </script>
 
@@ -98,6 +106,7 @@ function setShowTextarea() {
 	<div
 		:id="`comment_${props.comment.commentId}`"
 		class="comment"
+		:class="{ editing: props.editingId === props.comment.commentId }"
 		:style="{ '--margin-value': isYourComment(props.comment.userId) ? 'auto' : '8px' }"
 	>
 		<div class="comment-header">
@@ -132,7 +141,6 @@ function setShowTextarea() {
 						@click="updateComment()"
 						title="Сохранить"
 						icon="pi pi-save"
-						:disabled="props.comment.text === updatedComment.text"
 					></Button>
 				</div>
 				<div
@@ -158,22 +166,14 @@ function setShowTextarea() {
 						icon="pi pi-trash"
 					></Button>
 				</div>
-
 				<span>{{ helper.getDateStringForUI(props.comment.dateCreated, false, false) }}</span>
-
-				<!-- <Button
-						v-if="isYourComment(comment.userId) || isAdmin || isOwner"
-						class="comment-menu-button"
-						icon="pi pi-ellipsis-v"
-						severity="contrast"
-						text
-					></Button> -->
 			</div>
 		</div>
 		<Textarea
 			v-if="props.editingId === props.comment.commentId"
 			:id="`textarea_${props.comment.commentId}`"
-			style="width: 100%; height: 5rem"
+			ref="editArea"
+			class="edit-area"
 			maxlength="1000"
 			v-model="updatedComment.text"
 			@keydown="onKeyDown($event)"
@@ -182,6 +182,7 @@ function setShowTextarea() {
 		<span
 			v-else
 			:id="`span_${props.comment.commentId}`"
+			class="comment-text"
 		>
 			{{ props.comment.text }}
 		</span>
@@ -214,17 +215,20 @@ function setShowTextarea() {
 .comment {
 	padding: 12px;
 	margin: 8px;
-	width: 85%;
+	max-width: 85%;
+	width: fit-content;
+	display: inline-block;
 	border-radius: 10px;
 	box-shadow: var(--INPUT-BOX-SHADOW);
 	background-color: white;
 	margin-left: var(--margin-value);
+	word-break: break-word;
 }
 
-/* .comment-menu-button {
-	width: 20px;
-	display: none;
-} */
+.comment.editing {
+	width: 85% !important;
+	display: block;
+}
 
 .comment-menu-buttons :deep(button) {
 	width: 30px;
@@ -244,6 +248,10 @@ function setShowTextarea() {
 	justify-content: space-between;
 	padding-top: 10px;
 	font-size: 0.7rem;
+}
+
+.comment-text {
+	white-space: pre-wrap;
 }
 
 .left-part {
@@ -266,18 +274,10 @@ function setShowTextarea() {
 	color: var(--TEXT-COLOR);
 }
 
-@media (max-width: 800px) {
-	/* .comment-menu-button {
-		display: block;
-	} */
-
-	/* .comment-menu-buttons {
-		position: absolute;
-		display: flex;
-		flex-direction: column;
-		background: white;
-		border-radius: 10px;
-		box-shadow: var(--GLOW-BOX-SHADOW);
-	} */
+.edit-area {
+	overflow: scroll;
+	resize: none;
+	min-height: 6rem;
+	width: 100%;
 }
 </style>
