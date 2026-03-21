@@ -58,7 +58,7 @@ function hideDocuments() {
 		class="title"
 		id="title"
 	>
-		<h2 style="margin: 0">{{ title }}</h2>
+		<h2>{{ title }}</h2>
 	</div>
 	<div
 		class="main-container"
@@ -93,6 +93,19 @@ function hideDocuments() {
 	gap: 0.5%;
 	min-height: var(--MAIN-COMPONENT-MIN-HEIGHT);
 	box-shadow: var(--COMPONENT-BOX-SHADOW);
+}
+
+.title {
+	text-align: center;
+	align-content: center;
+	height: var(--TITLE-HEIGHT);
+	margin: 10px 0 10px 0;
+	background-color: var(--MENU-BCKGND-CLR);
+	box-shadow: var(--COMPONENT-BOX-SHADOW);
+}
+
+.title h2 {
+	color: var(--MENU-TEXT-COLOR);
 }
 
 .document-button {

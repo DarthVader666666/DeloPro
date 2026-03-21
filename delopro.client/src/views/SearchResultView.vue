@@ -83,7 +83,7 @@ const searchResult = computed(() => store.getters.getSearchResult)
 .search-result-header a {
 	text-decoration: none;
 	margin-left: 5px;
-	color: var(--TEXT-COLOR);
+	color: var(--MENU-TEXT-COLOR);
 }
 
 .search-result-header a:hover {
@@ -102,6 +102,7 @@ const searchResult = computed(() => store.getters.getSearchResult)
 
 .date {
 	font-size: small;
+	color: var(--MENU-TEXT-COLOR);
 }
 
 .table-class:deep(td) {

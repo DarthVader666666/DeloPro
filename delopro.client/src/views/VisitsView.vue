@@ -20,6 +20,7 @@ const dateRangeForm = reactive({
 
 onMounted(async () => {
 	await helper.timeoutAsync(10)
+	//document.documentElement.style.setProperty('--p-content-border-color', 'lightgray')
 
 	const dateNow = new Date()
 	dateRangeForm.fromDate = helper.getDateStringForInput(dateNow.setDate(dateNow.getDate() - 30))
@@ -56,7 +57,7 @@ const setVisitChartOptions = () => {
 	const documentStyle = getComputedStyle(document.documentElement)
 	const textColor = documentStyle.getPropertyValue('--p-text-color')
 	const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color')
-	const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color')
+	const surfaceBorder = '#d3d3d3'
 
 	return {
 		maintainAspectRatio: false,

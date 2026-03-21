@@ -175,6 +175,7 @@ async function handleDeleteChapter() {
 .chapter-create-update {
 	display: flex;
 	justify-content: space-between;
+	padding: 20px !important;
 }
 
 .chapter-create-update form {
@@ -199,11 +200,5 @@ async function handleDeleteChapter() {
 
 .chapter-buttons button {
 	width: 100px;
-}
-
-@media (max-width: 1100px) {
-	.chapter-create-update {
-		margin: 20px;
-	}
 }
 </style>

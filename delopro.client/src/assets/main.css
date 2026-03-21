@@ -36,7 +36,7 @@
 	--MAIN-COMPONENT-MIN-HEIGHT: 810px;
 	--HEADER-HEIGHT: 90px;
 	--SEARCHBAR-HEIGHT: 60px;
-	--TITLE-HEIGHT: 77px;
+	--TITLE-HEIGHT: 64px;
 }
 
 html {
@@ -66,14 +66,6 @@ body {
 	position: sticky;
 	height: 100vh;
 	top: 0;
-}
-
-.title {
-	text-align: center;
-	align-content: center;
-	height: var(--TITLE-HEIGHT);
-	margin-bottom: 7px;
-	background-color: var(--CENTRAL-BCKGND-CLR);
 }
 
 .form-container {
