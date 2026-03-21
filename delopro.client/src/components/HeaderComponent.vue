@@ -197,52 +197,35 @@ async function handleLogout() {
 .header-container {
 	display: flex;
 	flex-direction: row;
-	justify-content: center;
-	background-image: var(--BCKGND-GRADIENT);
+	justify-content: space-between;
+	background: var(--MENU-BCKGND-CLR);
 	box-shadow: var(--COMPONENT-BOX-SHADOW);
-	border-radius: 0 0 5px 5px;
 	height: var(--HEADER-HEIGHT);
 }
 
 .logo {
-	position: absolute;
-	left: 0;
-	text-shadow: 3px 3px rgba(22, 22, 22, 0.651);
-	height: 18px;
-	margin-left: 10px;
-	width: 10px;
+	padding-top: 12px;
+	padding-left: 15px;
 }
 
 .logo a {
 	text-decoration: none;
-	color: var(--LOGO-COLOR);
-	font-size: 18px;
-}
-
-.logo a:hover {
-	color: var(--LOGO-COLOR);
-}
-
-label {
-	font-weight: bold;
-}
-
-.account {
-	position: absolute;
-	right: 20px;
-	top: 15px;
-	padding-bottom: 8px;
-}
-
-@media (max-width: 1100px) {
-	.account {
-		display: none;
+	color: var(--MENU-TEXT-COLOR);
+	text-shadow: var(--LOGO-SHADOW);
+	font-size: 0.8rem;
+	&:hover {
+		color: var(--LOGO-HOVER-TEXT-COLOR);
 	}
 }
 
-@media (max-width: 1100px) {
-	.header-container {
-		justify-content: end;
+.account {
+	padding-top: 10px;
+	padding-right: 20px;
+}
+
+@media (max-width: 1000px) {
+	.account {
+		display: none;
 	}
 }
 </style>

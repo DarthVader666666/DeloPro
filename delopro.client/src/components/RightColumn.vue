@@ -403,7 +403,7 @@ function stopCountdown() {
 										v-model="moveFolder"
 										v-on:change="moveFile"
 										placeholder="Путь..."
-                    appendTo="self"
+										appendTo="self"
 									>
 										<template #option="{ option }">
 											<span style="font-size: small">
@@ -618,7 +618,7 @@ function stopCountdown() {
 	}
 
 	.tree-table {
-		font-size: medium;
+		font-size: small;
 	}
 
 	.setting-buttons {

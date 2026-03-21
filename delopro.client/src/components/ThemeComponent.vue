@@ -114,9 +114,9 @@ function setShowComments() {
 
 			<Button
 				v-if="useDeleteButtons && (store.getters.isAdmin || store.getters.isOwner)"
-				icon="pi pi-times"
+				icon="pi pi-trash"
+				style="color: var(--MENU-TEXT-COLOR)"
 				text
-				severity="danger"
 				title="Удалить тему"
 				rounded
 				@click="() => emit('removeTheme', props.theme)"
@@ -162,7 +162,7 @@ function setShowComments() {
 .theme-header a {
 	text-decoration: none;
 	margin-left: 5px;
-	color: var(--TEXT-COLOR);
+	color: var(--MENU-TEXT-COLOR);
 
 	&:hover {
 		text-decoration: underline;
@@ -179,8 +179,8 @@ function setShowComments() {
 
 .theme-buttons :deep(.p-button-icon) {
 	font-size: 1.3rem;
-	opacity: 0.7;
-	color: var(--TEXT-COLOR);
+	opacity: 0.9;
+	color: var(--MENU-TEXT-COLOR);
 }
 
 .theme-buttons :deep(.p-button-label) {
@@ -198,7 +198,8 @@ function setShowComments() {
 }
 
 :deep(#comments-button.active) {
-	background-color: rgba(255, 255, 255, 0.9);
+	background: rgba(230, 230, 230, 0.7);
+	color: white;
 }
 
 .disabled {
@@ -210,6 +211,7 @@ function setShowComments() {
 }
 
 .date {
+	color: var(--MENU-TEXT-COLOR);
 	font-size: small;
 }
 

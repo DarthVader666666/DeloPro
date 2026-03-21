@@ -87,6 +87,14 @@ function hideDocuments() {
 </template>
 
 <style scoped>
+.main-container {
+	display: flex;
+	flex-direction: row;
+	background-color: var(--CENTRAL-BCKGND-CLR);
+	min-height: var(--MAIN-COMPONENT-MIN-HEIGHT);
+	box-shadow: var(--COMPONENT-BOX-SHADOW);
+}
+
 .document-button {
 	position: fixed;
 	margin-top: 25vh;

@@ -142,7 +142,12 @@ function nextTheme() {
 .theme-buttons button {
 	height: 50px;
 	width: 50px;
-	background-color: #10b9818f;
+	background: rgba(0, 50, 90, 0.5);
+	border-width: 0;
+	&:hover {
+		background: rgba(0, 50, 90, 0.7);
+		border-width: 0;
+	}
 }
 
 @media (max-width: 1100px) {

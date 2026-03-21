@@ -46,7 +46,7 @@ const props = defineProps({
 	gap: 2px;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1000px) {
 	.menu {
 		display: none;
 	}

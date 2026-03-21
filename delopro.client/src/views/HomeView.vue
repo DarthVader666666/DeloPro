@@ -13,7 +13,7 @@ const pending = computed(() => store.getters.getPending)
 <template>
 	<div>
 		<div class="chapters-header">
-			<h1>Документационное обеспечение управления</h1>
+			<h2>Документационное обеспечение управления</h2>
 		</div>
 		<SpinningCircle v-if="pending"></SpinningCircle>
 		<div
@@ -47,8 +47,9 @@ const pending = computed(() => store.getters.getPending)
 .chapters-header {
 	text-align: center;
 	margin: 15px;
-	filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.5));
-	color: var(--HOME-HEADER-COLOR);
+	padding: 1px;
+	background: var(--MENU-BCKGND-CLR);
+	color: var(--MENU-TEXT-COLOR);
 }
 
 .chapter-links {
@@ -107,8 +108,12 @@ const pending = computed(() => store.getters.getPending)
 		font-size: small;
 	}
 
-	h1 {
-		font-size: large;
+	h2 {
+		font-size: medium;
+	}
+
+	.chapters-header {
+		margin: 0;
 	}
 }
 </style>

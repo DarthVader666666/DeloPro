@@ -31,25 +31,28 @@ onMounted(() => {
 		@keydown.enter.prevent="() => handleLogIn(loginRequestForm)"
 		id="log-in-form"
 	>
-		<div class="log-in-input">
-			<label>Логин:</label>
-			<InputText
-				v-model="loginRequestForm.nicknameOrEmail"
-				type="text"
-				placeholder="Почта или никнэйм"
-				required
-				id="log-in-input"
-			/>
+		<div class="upper-part">
+			<div class="log-in-input">
+				<label>Логин:</label>
+				<InputText
+					v-model="loginRequestForm.nicknameOrEmail"
+					type="text"
+					placeholder="Почта или никнэйм"
+					required
+					id="log-in-input"
+				/>
+			</div>
+			<div class="log-in-input">
+				<label>Пароль:</label>
+				<InputText
+					v-model="loginRequestForm.password"
+					type="password"
+					placeholder="Пароль"
+					required
+				/>
+			</div>
 		</div>
-		<div class="log-in-input">
-			<label>Пароль:</label>
-			<InputText
-				v-model="loginRequestForm.password"
-				type="password"
-				placeholder="Пароль"
-				required
-			/>
-		</div>
+
 		<div class="bottom-part">
 			<div class="remember">
 				<label for="remember-checkbox">Запомнить</label>
@@ -70,6 +73,7 @@ onMounted(() => {
 		<RouterLink
 			to="/recover-password"
 			@click="() => emit('setShowLogIn', false)"
+			class="forgot-password"
 		>
 			Забыли пароль?
 		</RouterLink>
@@ -80,7 +84,6 @@ onMounted(() => {
 .log-in-input {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
 }
 
 .log-in-input input {
@@ -91,15 +94,19 @@ onMounted(() => {
 	cursor: text;
 }
 
+.upper-part {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
 .bottom-part {
 	display: flex;
-	flex-direction: row;
 	align-items: center;
 	margin-top: 8px;
 }
 
 .bottom-part button {
-	font-size: medium;
 	height: 30px;
 	padding: 8px;
 	margin-left: 22px;
@@ -113,19 +120,24 @@ onMounted(() => {
 	gap: 5px;
 }
 
-.remember label:hover,
-input:hover {
-	cursor: pointer;
+.remember label,
+input {
+	&:hover {
+		cursor: pointer;
+	}
+}
+
+.forgot-password {
+	color: var(--MENU-TEXT-COLOR);
+	opacity: 0.6;
 }
 
 label {
-	font-weight: bold;
-	color: var(--TEXT-COLOR);
+	color: var(--MENU-TEXT-COLOR);
 }
 
 input[type='text'],
 input[type='password'] {
-	font-size: medium;
 	height: 30px;
 }
 </style>

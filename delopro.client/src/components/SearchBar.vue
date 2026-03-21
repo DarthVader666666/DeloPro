@@ -55,10 +55,8 @@ async function handleSearch() {
 	text-align: center;
 	align-content: center;
 	background-color: var(--COLUMNS-BCKGND-CLR);
-	margin-top: 0.5rem;
-	margin-bottom: 0.5rem;
+	margin: 12px 0 12px 0;
 	box-shadow: var(--COMPONENT-BOX-SHADOW);
-	border-radius: 5px;
 	padding-right: 60px;
 }
 

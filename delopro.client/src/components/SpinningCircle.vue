@@ -144,33 +144,33 @@ const props = defineProps({
 
 @-webkit-keyframes color {
 	0% {
-		stroke: #70c542;
+		stroke: var(--MENU-BCKGND-CLR);
 	}
 	40% {
-		stroke: #70c542;
+		stroke: var(--MENU-BCKGND-CLR);
 	}
 	66% {
-		stroke: #70c542;
+		stroke: var(--MENU-BCKGND-CLR);
 	}
 	80%,
 	90% {
-		stroke: #70c542;
+		stroke: var(--MENU-BCKGND-CLR);
 	}
 }
 
 @keyframes color {
 	0% {
-		stroke: #70c542;
+		stroke: var(--MENU-BCKGND-CLR);
 	}
 	40% {
-		stroke: #70c542;
+		stroke: var(--MENU-BCKGND-CLR);
 	}
 	66% {
-		stroke: #70c542;
+		stroke: var(--MENU-BCKGND-CLR);
 	}
 	80%,
 	90% {
-		stroke: #70c542;
+		stroke: var(--MENU-BCKGND-CLR);
 	}
 }
 </style>

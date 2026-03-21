@@ -3,27 +3,28 @@
 :root {
 	/* COLORS */
 	--DANGER-RED: rgb(220, 0, 0);
-	--LOGO-COLOR: rgb(124, 172, 124);
+	--LOGO-TEXT-COLOR: rgb(194, 194, 194);
+	--LOGO-HOVER-TEXT-COLOR: rgb(200, 200, 200);
 	--TEXT-COLOR: rgb(44, 44, 44);
-	--HOME-HEADER-COLOR: rgb(56, 185, 56);
+	--HOME-HEADER-COLOR: rgb(1, 47, 85);
+	--MENU-TEXT-COLOR: rgb(230, 230, 230);
+	--MENU-HOVER-TEXT-COLOR: rgb(200, 200, 200);
 
 	/* BACKGROUNDS */
-	--CENTRAL-BCKGND-CLR: rgb(226, 219, 219);
-	--COLUMNS-BCKGND-CLR: rgb(242, 240, 240);
+	--CENTRAL-BCKGND-CLR: rgb(230, 230, 230);
+	--COLUMNS-BCKGND-CLR: rgb(230, 230, 230);
 	--TEXT-BCKGND-CLR: rgba(204, 204, 204, 0.98);
 	--SELECTED-LINK-BCKGND-CLR: rgb(49, 127, 62);
-	--MENU-BCKGND-CLR: rgb(88, 175, 88);
+	--MENU-BCKGND-CLR: rgb(0, 50, 90);
+	--THEME-HEADER-BCKGND-GRADIENT: rgb(0, 50, 90);
 
 	/* SHADOWS */
 	--GLOW-BOX-SHADOW: rgba(158, 158, 158, 0.8) 0 0 10px 2px;
-	--COMPONENT-BOX-SHADOW: 0 7px 15px -3px black;
+	--COMPONENT-BOX-SHADOW: 0 5px 6px -3px black;
 	--INPUT-BOX-SHADOW: 0px 2px 3px -2px black;
 	--PNG-IMAGE-SHADOW: 5px 5px 5px #222;
 	--MENU-BOX-SHADOW: 0px 0px 10px 0px black;
-
-	/* GRADIENTS */
-	--BCKGND-GRADIENT: linear-gradient(to right, rgb(165, 218, 165), rgb(72, 163, 72));
-	--THEME-HEADER-BCKGND-GRADIENT: linear-gradient(to top, rgb(180, 231, 180), rgb(148, 216, 148));
+	--LOGO-SHADOW: 3px 3px rgba(22, 22, 22, 0.651);
 
 	/* SIZES */
 	--LEFT-COLUMN-WIDTH: 17%;
@@ -34,7 +35,7 @@
 	--MAIN-COMPONENT-MIN-HEIGHT: 810px;
 	--HEADER-HEIGHT: 90px;
 	--SEARCHBAR-HEIGHT: 60px;
-	--TITLE-HEIGHT: 76px;
+	--TITLE-HEIGHT: 84px;
 }
 
 html {
@@ -47,8 +48,9 @@ body {
 	flex-direction: row;
 	justify-content: center;
 	margin: 0;
+	font-size: 0.9rem;
 	color: var(--TEXT-COLOR);
-	background-color: var(--CENTRAL-BCKGND-CLR);
+	background-color: rgb(171, 171, 171);
 }
 
 #app {
@@ -63,14 +65,6 @@ body {
 	position: sticky;
 	height: 100vh;
 	top: 0;
-}
-
-.main-container {
-	display: flex;
-	flex-direction: row;
-	background-color: var(--CENTRAL-BCKGND-CLR);
-	min-height: var(--MAIN-COMPONENT-MIN-HEIGHT);
-	box-shadow: var(--COMPONENT-BOX-SHADOW);
 }
 
 .title {
@@ -154,15 +148,12 @@ body {
 }
 
 .slide-container {
-	display: flex;
-	flex-direction: column;
 	position: fixed;
 	top: var(--HEADER-HEIGHT);
 	right: 0;
-	z-index: 1;
+	z-index: 2;
 	background-color: var(--MENU-BCKGND-CLR);
 	padding: 15px;
-	border-radius: 3px;
 	box-shadow: var(--MENU-BOX-SHADOW);
 	animation-name: slide;
 	animation-duration: 0.2s;

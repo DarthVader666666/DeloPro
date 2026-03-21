@@ -12,13 +12,12 @@ const emit = defineEmits(['setShowSlideMenu'])
 </script>
 <template>
 	<div class="burger">
-		<span style="font-weight: bold">
+		<span>
 			{{ props.nickname ?? '' }}
 		</span>
 		<Button
 			@click="emit('setShowSlideMenu')"
 			security="contrast"
-			rounded
 			text
 			id="burger-button"
 		>
@@ -31,21 +30,25 @@ const emit = defineEmits(['setShowSlideMenu'])
 .burger {
 	display: none;
 	align-content: center;
+	color: var(--MENU-TEXT-COLOR);
 }
 
 .burger button {
 	margin: 0 10px 0 10px;
 	padding: 12px;
-	border-width: 1px;
-	border-color: rgba(0, 0, 0, 0.332);
+	border-width: 2px;
+	border-color: var(--MENU-TEXT-COLOR);
+	&:hover {
+		border-width: 2px;
+	}
 }
 
 .burger i {
-	color: var(--TEXT-COLOR);
+	color: var(--MENU-TEXT-COLOR);
 	font-size: x-large;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1000px) {
 	.burger {
 		display: flex;
 		align-items: center;

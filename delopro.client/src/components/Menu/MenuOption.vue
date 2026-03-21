@@ -55,9 +55,8 @@ function clicked() {
 	<Button
 		class="menu-button"
 		:id="props.id"
-		:style="route.path.includes(props.path) ? { backgroundColor: '#f8fafc' } : {}"
+		:style="route.path.includes(props.path) ? { background: '#ffffff38' } : {}"
 		@click="clicked"
-		severity="contrast"
 		text
 	>
 		<i
@@ -79,19 +78,22 @@ function clicked() {
 <style scoped>
 .menu-button {
 	border-radius: 0;
-	font-weight: bold;
-	color: var(--TEXT-COLOR);
+	font-weight: normal;
+	font-size: 0.9rem;
+	color: var(--MENU-TEXT-COLOR);
+
+	&:hover {
+		background: transparent !important;
+		color: var(--MENU-HOVER-TEXT-COLOR) !important;
+	}
 }
 
 .menu-button i {
-	font-weight: bold;
-	color: var(--TEXT-COLOR);
-	margin-bottom: 3px;
+	margin-bottom: 2px;
 }
 
-.menu-button span {
-	font-weight: bold;
-	color: var(--TEXT-COLOR);
+.p-button {
+	justify-content: start;
 }
 
 .count {

@@ -21,19 +21,34 @@ const emit = defineEmits(['setShowAccountSettings'])
 			text
 			icon="pi pi-times"
 			rounded
-			style="width: 25px; height: 25px; position: absolute; right: 5%"
+			class="close-account-settings-button"
 			@click="emit('setShowAccountSettings')"
 		></Button>
-		<div style="padding-top: 25px">
-			<MenuOption
-				v-for="(option, index) in props.accountOptions"
-				:key="index"
-				:path="option.path"
-				:label="option.label"
-				:icon="option.icon"
-				:clickHandler="option.clickHandler"
-				:id="option.id"
-			></MenuOption>
-		</div>
+		<MenuOption
+			v-for="(option, index) in props.accountOptions"
+			:key="index"
+			:path="option.path"
+			:label="option.label"
+			:icon="option.icon"
+			:clickHandler="option.clickHandler"
+			:id="option.id"
+		></MenuOption>
 	</div>
 </template>
+<style scoped>
+.slide-container {
+	padding-top: 40px;
+}
+
+.close-account-settings-button {
+	position: absolute;
+	margin-left: 220px;
+	margin-top: -35px;
+	width: 40px;
+	color: var(--MENU-TEXT-COLOR);
+
+	&:hover {
+		color: var(--TEXT-COLOR);
+	}
+}
+</style>

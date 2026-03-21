@@ -11,10 +11,29 @@ const showSearchBar = computed(() => store.state.showSearchBar)
 </script>
 
 <template>
-	<HeaderComponent />
-	<SearchBar v-if="showSearchBar" />
-	<MainComponent />
-	<FooterComponent />
+	<div class="app-container">
+		<HeaderComponent />
+		<SearchBar v-if="showSearchBar" />
+		<MainComponent />
+		<FooterComponent />
+	</div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.app-container {
+	padding: 2%;
+}
+
+@media (max-width: 1400px) {
+	.app-container {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+@media (max-width: 1000px) {
+	.app-container {
+		padding: 0;
+	}
+}
+</style>

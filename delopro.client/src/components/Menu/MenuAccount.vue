@@ -20,7 +20,7 @@ const emit = defineEmits(['setShowAccountSettings'])
 			@click="() => emit('setShowAccountSettings')"
 			style="box-shadow: var(--MENU-BOX-SHADOW)"
 		></AvatarImage>
-		<span style="font-size: medium">{{ props.currentUser?.nickname }}</span>
+		<span class="account-nickname">{{ props.currentUser?.nickname }}</span>
 	</div>
 </template>
 
@@ -29,10 +29,16 @@ const emit = defineEmits(['setShowAccountSettings'])
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	gap: 3px;
 
 	&:hover {
 		cursor: pointer;
 	}
+}
+
+.account-nickname {
+	font-size: 0.9rem;
+	color: var(--MENU-TEXT-COLOR);
 }
 
 .unread-messages-count {
