@@ -177,11 +177,9 @@ async function handleLogout() {
 			v-if="showLogIn"
 			@setShowLogIn="setShowLogIn"
 		></MenuLoginForm>
-		<div
-			v-if="isAuthenticated"
-			class="account"
-		>
+		<div class="account">
 			<MenuAccount
+				v-if="isAuthenticated"
 				:currentUser="currentUser"
 				@setShowAccountSettings="setShowAccountSettings"
 			></MenuAccount>
@@ -204,7 +202,7 @@ async function handleLogout() {
 }
 
 .logo {
-	padding-top: 12px;
+	padding-top: 15px;
 	padding-left: 15px;
 }
 

@@ -90,7 +90,7 @@ function hideDocuments() {
 .main-container {
 	display: flex;
 	flex-direction: row;
-	background-color: var(--CENTRAL-BCKGND-CLR);
+	gap: 0.5%;
 	min-height: var(--MAIN-COMPONENT-MIN-HEIGHT);
 	box-shadow: var(--COMPONENT-BOX-SHADOW);
 }
@@ -111,7 +111,7 @@ function hideDocuments() {
 }
 
 #central-container {
-	width: var(--CENTRAL-COLUMN_WIDTH);
+	width: var(--CENTRAL-COLUMN-WIDTH);
 	background-color: var(--CENTRAL-BCKGND-CLR);
 	padding: 10px;
 	overflow-wrap: break-word;

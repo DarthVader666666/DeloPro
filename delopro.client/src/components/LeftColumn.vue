@@ -82,7 +82,7 @@ function toggleNode(node) {
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-	min-height: 30px;
+	min-height: 39px;
 }
 
 .items-header button {

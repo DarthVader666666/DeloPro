@@ -530,7 +530,7 @@ function stopCountdown() {
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-	min-height: 30px;
+	min-height: 37px;
 	padding: 6px 0 0 0;
 }
 

@@ -158,6 +158,7 @@ export const helper = {
 	],
 	lightenContainers: [document.getElementsByClassName('message')],
 	darkenBackground() {
+		document.body.style.background = 'rgb(100,100,100)'
 		this.darkenContainers.forEach((items) => {
 			for (let item of items) {
 				item.style.opacity = 0.8
@@ -166,6 +167,8 @@ export const helper = {
 		})
 	},
 	lightenBackground() {
+		document.body.style.background = 'var(--BODY-BCKGND-CLR)'
+
 		this.darkenContainers.forEach((items) => {
 			for (let item of items) {
 				item.style.removeProperty('opacity')
