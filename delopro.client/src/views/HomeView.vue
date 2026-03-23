@@ -1,13 +1,52 @@
 <script setup>
 import { useStore } from 'vuex'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { helper } from '@/helper/helper'
 import SpinningCircle from '@/components/SpinningCircle.vue'
+import Carousel from 'primevue/carousel'
 
 const store = useStore()
 const chapters = computed(() => store.getters.getChapters)
 const pending = computed(() => store.getters.getPending)
+
+const responsiveOptions = ref([
+	{
+		breakpoint: '2000px',
+		numVisible: 4,
+		numScroll: 1,
+	},
+	{
+		breakpoint: '1800px',
+		numVisible: 3,
+		numScroll: 1,
+	},
+	{
+		breakpoint: '1400px',
+		numVisible: 3,
+		numScroll: 1,
+	},
+	{
+		breakpoint: '1000px',
+		numVisible: 3.5,
+		numScroll: 1,
+	},
+	{
+		breakpoint: '800px',
+		numVisible: 3.2,
+		numScroll: 1,
+	},
+	{
+		breakpoint: '600px',
+		numVisible: 2.5,
+		numScroll: 1,
+	},
+	{
+		breakpoint: '500px',
+		numVisible: 2,
+		numScroll: 1,
+	},
+])
 </script>
 
 <template>
@@ -15,30 +54,37 @@ const pending = computed(() => store.getters.getPending)
 		<div class="chapters-header">
 			<h2>Документационное обеспечение управления</h2>
 		</div>
+
 		<SpinningCircle v-if="pending"></SpinningCircle>
+
 		<div
-			v-else
 			class="chapter-links"
+			v-else
 		>
-			<div
-				v-for="(chapter, index) in chapters"
-				:key="index"
-				class="chapter"
+			<Carousel
+				:value="chapters"
+				:responsiveOptions="responsiveOptions"
 			>
-				<RouterLink
-					:to="
-						`/chapters/${chapter.chapterId}` +
-						`${chapter.themes.length > 0 ? '/' + chapter.themes[0].themeId : ''}`
-					"
-				>
-					<img
-						:src="helper.getImagePath('chapter') + chapter.imagePath"
-						width="150px"
-						height="auto"
-					/>
-					<p>{{ chapter.chapterTitle }}</p>
-				</RouterLink>
-			</div>
+				<template #item="slotProps">
+					<div class="chapter">
+						<RouterLink
+							:to="
+								`/chapters/${slotProps.data.chapterId}` +
+								`${slotProps.data.themes.length > 0 ? '/' + slotProps.data.themes[0].themeId : ''}`
+							"
+						>
+							<div class="chapter-image">
+								<img
+									:src="helper.getImagePath('chapter') + slotProps.data.imagePath"
+									width="220px"
+									height="200px"
+								/>
+								<p>{{ slotProps.data.chapterTitle }}</p>
+							</div>
+						</RouterLink>
+					</div>
+				</template>
+			</Carousel>
 		</div>
 	</div>
 </template>
@@ -53,44 +99,35 @@ const pending = computed(() => store.getters.getPending)
 }
 
 .chapter-links {
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: space-around;
-	padding: 15px;
-	gap: 30px;
+	padding-top: 15px;
+	margin: 0 10px 0 10px;
 }
 
 .chapter {
-	padding: 10px;
-	max-width: 130px;
-	max-height: 150px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	text-decoration: none;
-}
-
-.chapter a {
-	text-decoration: none;
-	color: var(--TEXT-COLOR);
+	max-height: 200px;
+	max-width: 220px;
 }
 
 .chapter p {
+	position: absolute;
 	font-size: medium;
 	text-align: center;
 	font-weight: bold;
+	bottom: 10%;
+	color: rgb(240, 240, 240);
+	text-shadow: 2px 2px 3px rgba(0, 0, 0);
 }
 
-.chapter img:hover {
+.chapter:hover {
 	-webkit-transform: scale(1.1);
 	-moz-transform: scale(1.1);
 	-o-transform: scale(1.1);
 	transform: scale(1.1);
-
+	opacity: 0.8;
 	cursor: pointer;
 }
 
-.chapter img {
+.chapter {
 	-webkit-transition: all 0.2s ease-in-out;
 	-moz-transition: all 0.2s ease-in-out;
 	-o-transition: all 0.2s ease-in-out;
@@ -98,10 +135,36 @@ const pending = computed(() => store.getters.getPending)
 	filter: drop-shadow(var(--PNG-IMAGE-SHADOW));
 }
 
+@media (max-width: 1000px) {
+	.chapter {
+		max-width: 180px;
+		max-height: 160px;
+	}
+	.chapter img {
+		max-width: 180px;
+		max-height: 160px;
+	}
+}
+
 @media (max-width: 800px) {
+	.chapter {
+		max-width: 140px;
+		max-height: 130px;
+	}
+	.chapter img {
+		max-width: 140px;
+		max-height: 130px;
+	}
+}
+
+@media (max-width: 600px) {
+	.chapter {
+		max-width: 120px;
+		max-height: 110px;
+	}
 	.chapter img {
 		max-width: 120px;
-		max-height: auto;
+		max-height: 110px;
 	}
 
 	.chapter p {
