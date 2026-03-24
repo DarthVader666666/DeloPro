@@ -50,7 +50,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ${{ secrets.FTP_PATH }}
           local-dir: ./publish/
-          protocol: ftp
+          protocol: ftps
 
 
 
