@@ -38,12 +38,12 @@ const responsiveOptions = ref([
 	},
 	{
 		breakpoint: '600px',
-		numVisible: 2.5,
+		numVisible: 3,
 		numScroll: 1,
 	},
 	{
 		breakpoint: '500px',
-		numVisible: 2,
+		numVisible: 2.5,
 		numScroll: 1,
 	},
 ])
@@ -74,11 +74,7 @@ const responsiveOptions = ref([
 							"
 						>
 							<div class="chapter-image">
-								<img
-									:src="helper.getImagePath('chapter') + slotProps.data.imagePath"
-									width="220px"
-									height="200px"
-								/>
+								<img :src="helper.getImagePath('chapter') + slotProps.data.imagePath" />
 								<p>{{ slotProps.data.chapterTitle }}</p>
 							</div>
 						</RouterLink>
@@ -103,19 +99,38 @@ const responsiveOptions = ref([
 	margin: 0 10px 0 10px;
 }
 
-.chapter {
-	max-height: 200px;
-	max-width: 220px;
+.chapter-links :deep(.p-button-text.p-button-secondary) {
+	background: lightgray;
 }
 
-.chapter p {
+.chapter {
+	height: 220px;
+	width: 240px;
+	padding: 18px;
+}
+
+.chapter-image {
+	position: relative;
+}
+
+.chapter-image img {
+	height: 180px;
+	width: 220px;
+}
+
+.chapter-image p {
 	position: absolute;
 	font-size: medium;
 	text-align: center;
-	font-weight: bold;
+	left: 0;
+	right: 0;
 	bottom: 10%;
-	color: rgb(240, 240, 240);
-	text-shadow: 2px 2px 3px rgba(0, 0, 0);
+	font-weight: bold;
+	color: var(--MENU-TEXT-COLOR);
+	text-shadow:
+		2px -2px 3px rgba(0, 0, 0, 1),
+		-2px 2px 3px rgba(0, 0, 0, 1),
+		2px 2px 3px rgba(0, 0, 0, 1);
 }
 
 .chapter:hover {
@@ -135,48 +150,67 @@ const responsiveOptions = ref([
 	filter: drop-shadow(var(--PNG-IMAGE-SHADOW));
 }
 
+:deep(.p-carousel-indicator-active .p-carousel-indicator-button) {
+	background: rgb(50, 50, 50);
+}
+
+:deep(.p-carousel-indicator-button) {
+	background: lightgray;
+}
+
 @media (max-width: 1000px) {
 	.chapter {
-		max-width: 180px;
-		max-height: 160px;
+		width: 200px;
+		height: 180px;
 	}
-	.chapter img {
-		max-width: 180px;
-		max-height: 160px;
+	.chapter-image img {
+		width: 180px;
+		height: 150px;
 	}
 }
 
 @media (max-width: 800px) {
 	.chapter {
-		max-width: 140px;
-		max-height: 130px;
+		width: 180px;
+		height: 150px;
 	}
-	.chapter img {
-		max-width: 140px;
-		max-height: 130px;
+	.chapter-image img {
+		width: 150px;
+		height: 130px;
+	}
+	.chapter-image p {
+		font-size: small;
 	}
 }
 
 @media (max-width: 600px) {
 	.chapter {
-		max-width: 120px;
-		max-height: 110px;
+		width: 150px;
+		height: 130px;
 	}
-	.chapter img {
-		max-width: 120px;
-		max-height: 110px;
+	.chapter-image img {
+		width: 130px;
+		height: 100px;
 	}
-
-	.chapter p {
+	.chapter-image p {
 		font-size: small;
 	}
-
 	h2 {
 		font-size: medium;
 	}
-
 	.chapters-header {
 		margin: 0;
+	}
+}
+
+@media (max-width: 500px) {
+	.chapter {
+		width: 120px;
+		height: 100px;
+	}
+	.chapter-image img {
+		width: 100px;
+		height: 80px;
 	}
 }
 </style>

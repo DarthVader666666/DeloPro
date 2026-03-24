@@ -1,6 +1,6 @@
 <script setup>
 import ThemeComponent from '@/components/ThemeComponent.vue'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useRoute } from 'vue-router'
@@ -16,6 +16,10 @@ const isOwner = computed(() => store.getters.isOwner)
 const chapter = computed(() => store.getters.getChapter)
 const theme = computed(() => store.getters.getTheme)
 const themeIds = computed(() => store.getters.getThemes.map((x) => x.themeId))
+const themeIndex = computed(() => themeIds.value.indexOf(theme.value?.themeId ?? 0))
+const themeNumber = computed(() => themeIndex.value + 1)
+const showThemeButtons = ref(true)
+
 const searchResult = computed(() => {
 	if (route.query?.searchFragment) {
 		return {
@@ -28,19 +32,19 @@ const searchResult = computed(() => {
 })
 
 function previousTheme() {
-	const themeIndex = themeIds.value.indexOf(theme.value.themeId)
-
-	if (themeIndex != 0) {
-		router.push(`/chapters/${theme.value.chapterId}/${themeIds.value[themeIndex - 1]}`)
+	if (themeIndex.value != 0 && theme.value) {
+		router.push(`/chapters/${theme.value.chapterId}/${themeIds.value[themeIndex.value - 1]}`)
 	}
 }
 
 function nextTheme() {
-	const themeIndex = themeIds.value.indexOf(theme.value.themeId)
-
-	if (!(themeIndex >= themeIds.value.length - 1)) {
-		router.push(`/chapters/${theme.value.chapterId}/${themeIds.value[themeIndex + 1]}`)
+	if (!(themeIndex.value >= themeIds.value.length - 1)) {
+		router.push(`/chapters/${theme.value.chapterId}/${themeIds.value[themeIndex.value + 1]}`)
 	}
+}
+
+function setShowThemeButtons(value) {
+	showThemeButtons.value = value != undefined ? value : false
 }
 </script>
 
@@ -76,14 +80,21 @@ function nextTheme() {
 			v-if="theme"
 			:theme="theme"
 			:searchResult="searchResult"
+			@setShowThemeButtons="setShowThemeButtons"
 		></ThemeComponent>
-		<div class="theme-buttons">
+		<div
+			v-if="showThemeButtons"
+			class="theme-buttons"
+		>
 			<Button
 				@click="previousTheme"
 				icon="pi pi-arrow-left"
 				rounded
 				raised
 			></Button>
+			<div class="theme-counter">
+				<span>{{ `${themeNumber} из ${themeIds.length}` }}</span>
+			</div>
 			<Button
 				@click="nextTheme"
 				icon="pi pi-arrow-right"
@@ -136,7 +147,14 @@ function nextTheme() {
 }
 
 .theme-buttons {
-	display: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 10%;
+	width: inherit;
+	position: fixed;
+	z-index: 1;
+	bottom: 5%;
 }
 
 .theme-buttons button {
@@ -150,15 +168,18 @@ function nextTheme() {
 	}
 }
 
+.theme-counter {
+	padding: 10px;
+	border-radius: 20px;
+	background: rgba(0, 50, 90, 0.5);
+	color: white;
+}
+
 @media (max-width: 1100px) {
 	.theme-buttons {
-		display: flex;
 		justify-content: center;
-		gap: 50px;
 		width: inherit;
 		position: fixed;
-		z-index: 1;
-		bottom: 30px;
 	}
 }
 

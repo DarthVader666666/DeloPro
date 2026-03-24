@@ -166,7 +166,9 @@ function setShowTextarea() {
 						icon="pi pi-trash"
 					></Button>
 				</div>
-				<span>{{ helper.getDateStringForUI(props.comment.dateCreated, false, false) }}</span>
+				<span style="opacity: 0.7">
+					{{ helper.getDateStringForUI(props.comment.dateCreated, false, false) }}
+				</span>
 			</div>
 		</div>
 		<Textarea
@@ -200,7 +202,7 @@ function setShowTextarea() {
 				></EmojiPicker>
 			</div>
 
-			<span>
+			<span style="opacity: 0.7">
 				{{
 					props.comment.dateEdited
 						? `Ред.: ${helper.getDateStringForUI(props.comment.dateEdited, false, false)}`

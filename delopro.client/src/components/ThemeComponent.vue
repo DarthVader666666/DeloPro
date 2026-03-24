@@ -11,7 +11,7 @@ import CommentsComponent from './CommentsComponent.vue'
 
 const store = useStore()
 const router = useRouter()
-const emit = defineEmits(['removeTheme'])
+const emit = defineEmits(['removeTheme', 'setShowThemeButtons'])
 
 const isAdmin = computed(() => store.getters.isAdmin)
 const isOwner = computed(() => store.getters.isOwner)
@@ -55,6 +55,8 @@ function setShowComments() {
 	} else {
 		showComments.value = false
 	}
+
+	emit('setShowThemeButtons', !showComments.value)
 }
 </script>
 
