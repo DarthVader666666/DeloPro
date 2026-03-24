@@ -46,6 +46,7 @@ function toggleNode(node) {
 					v-if="isAdmin || isOwner"
 					raised
 					severity="secondary"
+					style="border-radius: 30px"
 					@click="router.push('/create-chapter')"
 				>
 					<i class="pi pi-plus"></i>
