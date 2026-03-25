@@ -25,14 +25,6 @@ async function updateTheme() {
 
 	await store.dispatch('updateTheme', themeUpdateForm)
 }
-
-function handleCancel() {
-	if (chapter.value) {
-		router.push(`/chapters/${chapter.value.chapterId}/${theme.value.themeId}`)
-	} else {
-		router.push('/')
-	}
-}
 </script>
 
 <template>
@@ -67,7 +59,7 @@ function handleCancel() {
 					</Button>
 					<Button
 						type="button"
-						@click="handleCancel"
+						@click="router.back()"
 						raised
 						severity="contrast"
 					>

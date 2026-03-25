@@ -1,7 +1,7 @@
 import RegisterView from '@/views/RegisterView.vue'
 import HomeView from '@/views/HomeView.vue'
 import ChapterCreateView from '@/views/ChapterCreateView.vue'
-import ChapterDetailsView from '@/views/ChapterDetailsView.vue'
+import ChapterView from '@/views/ChapterView.vue'
 import ChapterEditView from '@/views/ChapterEditView.vue'
 import ThemeEditView from '@/views/ThemeEditView.vue'
 import FeedBackView from '@/views/FeedBackView.vue'
@@ -25,6 +25,52 @@ const isAuthenticated = computed(() => store.getters.isAuthenticated)
 const router = createRouter({
 	history: createWebHistory(),
 	routes: [
+		// CHAPTERS
+		{
+			path: '/chapters/create',
+			name: 'create-chapter',
+			component: ChapterCreateView,
+		},
+		{
+			path: '/chapters/:chapterId/themes/:themeId?',
+			name: 'chapter-themes',
+			component: ChapterView,
+		},
+		{
+			path: '/chapters/:chapterId/themes/:themeId/comments',
+			name: 'comments',
+			component: CommentsView,
+		},
+		{
+			path: '/chapters/:chapterId/edit',
+			name: 'edit-chapter',
+			component: ChapterEditView,
+		},
+		{
+			path: '/chapters/:chapterId/themes/:themeId/edit',
+			name: 'edit-theme',
+			component: ThemeEditView,
+		},
+		// ADMINISTRATION
+		{
+			path: '/administration/users',
+			name: 'users',
+			meta: { requiresAuth: true, roles: ['Owner', 'Admin'] },
+			component: UsersView,
+		},
+		{
+			path: '/administration/messages',
+			name: 'messages',
+			meta: { requiresAuth: true, roles: ['Owner'] },
+			component: MessagesView,
+		},
+		{
+			path: '/administration/visits',
+			name: 'visits',
+			meta: { requiresAuth: true, roles: ['Owner', 'Admin'] },
+			component: VisitsView,
+		},
+
 		{
 			path: '/',
 			name: 'home',
@@ -36,40 +82,9 @@ const router = createRouter({
 			component: RegisterView,
 		},
 		{
-			path: '/create-chapter',
-			name: 'create-chapter',
-			component: ChapterCreateView,
-		},
-		{
-			path: '/chapters/:chapterId/:themeId?',
-			name: 'chapter-details',
-			component: ChapterDetailsView,
-		},
-		{
-			path: '/edit-chapter/:chapterId',
-			name: 'edit-chapter',
-			component: ChapterEditView,
-		},
-		{
-			path: '/:catchAll(.*)', // any resource which doesn't exist
-			name: 'home',
-			component: HomeView,
-		},
-		{
-			path: '/edit-theme/:themeId',
-			name: 'edit-theme',
-			component: ThemeEditView,
-		},
-		{
 			path: '/feedback',
 			name: 'feedback',
 			component: FeedBackView,
-		},
-		{
-			path: '/messages',
-			name: 'messages',
-			meta: { requiresAuth: true, roles: ['Owner'] },
-			component: MessagesView,
 		},
 		{
 			path: '/search-result',
@@ -87,27 +102,15 @@ const router = createRouter({
 			component: RecoverPasswordView,
 		},
 		{
-			path: '/users',
-			name: 'users',
-			meta: { requiresAuth: true, roles: ['Owner', 'Admin'] },
-			component: UsersView,
-		},
-		{
 			path: '/account',
 			name: 'account',
 			meta: { requiresAuth: true, roles: ['Owner', 'Admin', 'User'] },
 			component: AccountView,
 		},
 		{
-			path: '/visits',
-			name: 'visits',
-			meta: { requiresAuth: true, roles: ['Owner', 'Admin'] },
-			component: VisitsView,
-		},
-		{
-			path: '/comments',
-			name: 'comments',
-			component: CommentsView,
+			path: '/:catchAll(.*)',
+			name: 'error',
+			component: HomeView,
 		},
 	],
 })
@@ -160,7 +163,7 @@ router.afterEach(async (to) => {
 	store.commit('setPending', true)
 	store.commit('setShowRightColumn', false)
 
-	if (to.name === 'chapter-details') {
+	if (to.name === 'chapter-themes') {
 		await store.dispatch('downloadChapter', to.params['chapterId'])
 
 		if (to.params['themeId']) {
@@ -176,6 +179,11 @@ router.afterEach(async (to) => {
 	} else {
 		store.commit('setShowChapterList', true)
 		store.commit('setTheme', null)
+	}
+
+	if (to.name === 'comments') {
+		await store.dispatch('downloadTheme', to.params['themeId'])
+		store.commit('renderSearchBar')
 	}
 
 	if (to.name === 'edit-theme') {
@@ -228,17 +236,6 @@ router.afterEach(async (to) => {
 
 	if (to.name === 'visits') {
 		store.commit('setTitle', 'Статистика посещений')
-	}
-
-	if (to.name === 'comments') {
-		await store.dispatch('downloadTheme', to.query.themeId)
-		await helper.timeoutAsync(10)
-		const theme = store.getters.getTheme
-		store.commit('setTitle', `${theme?.themeTitle}`)
-	}
-
-	if (to.name === 'add-comment') {
-		store.commit('setTitle', 'Ваш комментарий')
 	}
 
 	if (store.getters.isOwner) {

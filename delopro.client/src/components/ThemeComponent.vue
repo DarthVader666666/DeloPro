@@ -3,7 +3,7 @@ import { useStore } from 'vuex'
 import Button from 'primevue/button'
 import { RouterLink, useRouter } from 'vue-router'
 import { helper } from '@/helper/helper'
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import SpinningCircle from './SpinningCircle.vue'
 import CommentModal from './CommentModal.vue'
 import ThemeContent from './ThemeContent.vue'
@@ -11,6 +11,7 @@ import CommentsComponent from './CommentsComponent.vue'
 
 const store = useStore()
 const router = useRouter()
+
 const emit = defineEmits(['removeTheme', 'setShowThemeButtons'])
 
 const isAdmin = computed(() => store.getters.isAdmin)
@@ -20,7 +21,6 @@ const pending = computed(() => store.getters.getPending)
 const commentsCount = computed(() => store.getters.getCommentsCount)
 
 const showCommentModal = ref(false)
-const showComments = ref(false)
 
 const props = defineProps({
 	theme: {
@@ -39,24 +39,24 @@ const props = defineProps({
 		type: Object,
 		default: null,
 	},
-})
-
-watch(pending, () => {
-	showComments.value = false
+	isCommentsMode: {
+		type: Boolean,
+		default: false,
+	},
 })
 
 function setShowCommentModal(value) {
 	showCommentModal.value = value
 }
 
-function setShowComments() {
-	if (commentsCount.value) {
-		showComments.value = !showComments.value
+function redirectToComments() {
+	if (!props.isCommentsMode) {
+		if (commentsCount.value > 0) {
+			router.push(`/chapters/${props.theme.chapterId}/themes/${props.theme.themeId}/comments`)
+		}
 	} else {
-		showComments.value = false
+		router.back()
 	}
-
-	emit('setShowThemeButtons', !showComments.value)
 }
 </script>
 
@@ -69,7 +69,7 @@ function setShowComments() {
 			<div class="theme-title">
 				<RouterLink
 					:class="!props.useShortMode && `disabled`"
-					:to="`/chapters/${store.state.chapter.chapterId}/${props.theme.themeId}`"
+					:to="`/chapters/${props.theme.chapterId}/themes/${props.theme.themeId}`"
 					:disabled="true"
 				>
 					{{ props.theme.themeTitle }}
@@ -86,7 +86,9 @@ function setShowComments() {
 					icon="pi pi-pencil"
 					severity="contrast"
 					title="Редактировать"
-					@click="router.push(`/edit-theme/${props.theme.themeId}`)"
+					@click="
+						router.push(`/chapters/${props.theme.chapterId}/themes/${props.theme.themeId}/edit`)
+					"
 				></Button>
 				<Button
 					v-if="isAuthenticated"
@@ -106,8 +108,8 @@ function setShowComments() {
 					icon="pi pi-comments"
 					title="Комментарии"
 					id="comments-button"
-					:class="{ active: showComments }"
-					@click="setShowComments"
+					:class="{ active: props.isCommentsMode }"
+					@click="redirectToComments"
 				></Button>
 			</div>
 			<span class="date">
@@ -131,18 +133,16 @@ function setShowComments() {
 			<SpinningCircle></SpinningCircle>
 		</div>
 		<div v-else-if="!props.useShortMode">
+			<CommentsComponent v-if="props.isCommentsMode"></CommentsComponent>
 			<ThemeContent
-				v-if="!showComments"
+				v-else
 				:content="props.theme.content"
 				:searchResult="props.searchResult"
 			></ThemeContent>
-			<CommentsComponent
-				@setShowComments="setShowComments"
-				v-else
-			></CommentsComponent>
 		</div>
 	</div>
 	<CommentModal
+		v-if="showCommentModal"
 		v-model:visible="showCommentModal"
 		:themeId="props.theme.themeId"
 		@setShowCommentModal="setShowCommentModal"

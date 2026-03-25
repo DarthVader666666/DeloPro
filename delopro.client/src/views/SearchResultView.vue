@@ -31,7 +31,9 @@ const searchResult = computed(() => store.getters.getSearchResult)
 			<Column>
 				<template #body="slotProps">
 					<div class="search-result-header">
-						<RouterLink :to="`/chapters/${slotProps.data.chapterId}/${slotProps.data.themeId}`">
+						<RouterLink
+							:to="`/chapters/${slotProps.data.chapterId}/themes/${slotProps.data.themeId}`"
+						>
 							{{ slotProps.data.themeTitle }}
 						</RouterLink>
 						<span class="date">{{ helper.getDateStringForUI(slotProps.data.dateCreated) }}</span>
@@ -41,7 +43,7 @@ const searchResult = computed(() => store.getters.getSearchResult)
 						class="search-result-content"
 						@click="
 							router.push({
-								path: `/chapters/${slotProps.data.chapterId}/${slotProps.data.themeId}`,
+								path: `/chapters/${slotProps.data.chapterId}/themes/${slotProps.data.themeId}`,
 								query: {
 									searchFragment: helper.trimTags(slotProps.data.searchFragment),
 									index: slotProps.data.index,

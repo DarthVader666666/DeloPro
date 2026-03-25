@@ -32,7 +32,7 @@ watch(changeBackground, (newValue) => {
 
 const options = [
 	{
-		path: 'home',
+		routeName: 'home',
 		id: 'home_menu_button',
 		label: 'Главная',
 		icon: 'pi pi-home',
@@ -40,7 +40,7 @@ const options = [
 		clickHandler: () => setShowSlideMenu(),
 	},
 	{
-		path: 'feedback',
+		routeName: 'feedback',
 		id: 'feedback_menu_button',
 		label: 'Обратная связь',
 		icon: 'pi pi-send',
@@ -48,7 +48,7 @@ const options = [
 		clickHandler: () => setShowSlideMenu(),
 	},
 	{
-		path: 'register',
+		routeName: 'register',
 		id: 'register_menu_button',
 		label: 'Регистрация',
 		icon: 'pi pi-user-plus',
@@ -56,7 +56,7 @@ const options = [
 		clickHandler: () => setShowSlideMenu(),
 	},
 	{
-		path: 'sign-in',
+		routeName: 'sign-in',
 		id: 'sign-in_menu_button',
 		label: 'Войти',
 		icon: 'pi pi-sign-in',
@@ -64,7 +64,7 @@ const options = [
 		roles: [],
 	},
 	{
-		path: 'create-chapter',
+		routeName: 'create-chapter',
 		id: 'create-chapter_menu_button',
 		label: 'Cоздать раздел',
 		icon: 'pi pi-plus-circle',
@@ -72,7 +72,7 @@ const options = [
 		clickHandler: () => setShowSlideMenu(),
 	},
 	{
-		path: 'users',
+		routeName: 'users',
 		id: 'users_menu_button',
 		label: 'Пользователи',
 		icon: 'pi pi-users',
@@ -80,7 +80,7 @@ const options = [
 		clickHandler: () => setShowSlideMenu(),
 	},
 	{
-		path: 'visits',
+		routeName: 'visits',
 		id: 'visits_menu_button',
 		label: 'Статистика посещений',
 		icon: 'pi pi-chart-line',
@@ -88,7 +88,7 @@ const options = [
 		clickHandler: () => setShowSlideMenu(),
 	},
 	{
-		path: 'messages',
+		routeName: 'messages',
 		id: 'messages_menu_button',
 		label: 'Сообщения',
 		icon: 'pi pi-envelope',
@@ -99,7 +99,7 @@ const options = [
 
 const accountOptions = [
 	{
-		path: 'account',
+		routeName: 'account',
 		id: 'account_acc_button',
 		label: 'Личный кабинет',
 		icon: 'pi pi-user',
@@ -107,7 +107,7 @@ const accountOptions = [
 		roles: ['Owner', 'Admin', 'User'],
 	},
 	{
-		path: null,
+		routeName: null,
 		id: 'sign-out_acc_button',
 		label: 'Выйти',
 		icon: 'pi pi-sign-out',

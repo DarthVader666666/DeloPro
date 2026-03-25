@@ -54,7 +54,7 @@ namespace Delopro.Server.Configurations
                             {
                                 Key = $"{x.ChapterId}-{x.ThemeId}",
                                 Label = x.ThemeTitle,
-                                Data = $"/chapters/{x.ChapterId}/{x.ThemeId}"
+                                Data = $"/chapters/{x.ChapterId}/themes/{x.ThemeId}"
                             }).ToArray()));
 
                     autoMapperConfig.CreateMap<ChapterUpdateRequest, Chapter>().ForMember(dest => dest.Themes, opts => opts.Ignore());

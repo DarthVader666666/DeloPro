@@ -17,7 +17,7 @@ const props = defineProps({
 	clickHandler: {
 		type: Function,
 	},
-	path: {
+	routeName: {
 		type: String,
 		default: null,
 	},
@@ -41,8 +41,8 @@ function clicked() {
 		}
 	}
 
-	if (props.path && props.path != 'sign-in') {
-		router.push('/' + props.path)
+	if (props.routeName && props.routeName != 'sign-in') {
+		router.push({ name: props.routeName })
 	}
 
 	if (props.clickHandler) {
@@ -55,7 +55,7 @@ function clicked() {
 	<Button
 		class="menu-button"
 		:id="props.id"
-		:style="route.path.includes(props.path) ? { background: '#ffffff38' } : {}"
+		:style="route.name === props.routeName ? { background: '#ffffff38' } : {}"
 		@click="clicked"
 		text
 	>
@@ -66,7 +66,7 @@ function clicked() {
 		<span style="position: relative">
 			{{ props.label }}
 			<span
-				v-if="props.path === 'messages' && unreadMessagesCount"
+				v-if="props.routeName === 'messages' && unreadMessagesCount"
 				class="count"
 			>
 				{{ unreadMessagesCount > 99 ? '99+' : unreadMessagesCount }}

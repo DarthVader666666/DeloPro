@@ -28,7 +28,7 @@ const props = defineProps({
 						? option.roles.some((role) => currentUser?.roles?.includes(role))
 						: option.roles.length === 0)
 				"
-				:path="option.path"
+				:routeName="option.routeName"
 				:label="option.label"
 				:icon="option.icon"
 				:clickHandler="option.clickHandler"

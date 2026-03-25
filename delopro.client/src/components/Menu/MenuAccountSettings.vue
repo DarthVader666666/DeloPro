@@ -27,7 +27,7 @@ const emit = defineEmits(['setShowAccountSettings'])
 		<MenuOption
 			v-for="(option, index) in props.accountOptions"
 			:key="index"
-			:path="option.path"
+			:routeName="option.path"
 			:label="option.label"
 			:icon="option.icon"
 			:clickHandler="option.clickHandler"

@@ -69,7 +69,7 @@ const responsiveOptions = ref([
 					<div class="chapter">
 						<RouterLink
 							:to="
-								`/chapters/${slotProps.data.chapterId}` +
+								`/chapters/${slotProps.data.chapterId}/themes` +
 								`${slotProps.data.themes.length > 0 ? '/' + slotProps.data.themes[0].themeId : ''}`
 							"
 						>
@@ -128,9 +128,9 @@ const responsiveOptions = ref([
 	font-weight: bold;
 	color: var(--MENU-TEXT-COLOR);
 	text-shadow:
-		2px -2px 3px rgba(0, 0, 0, 1),
-		-2px 2px 3px rgba(0, 0, 0, 1),
-		2px 2px 3px rgba(0, 0, 0, 1);
+		2px -2px 2px rgba(0, 0, 0, 1),
+		-2px 2px 2px rgba(0, 0, 0, 1),
+		2px 2px 2px rgba(0, 0, 0, 1);
 }
 
 .chapter:hover {

@@ -47,7 +47,7 @@ function toggleNode(node) {
 					raised
 					severity="secondary"
 					style="border-radius: 30px"
-					@click="router.push('/create-chapter')"
+					@click="router.push({ name: 'create-chapter' })"
 				>
 					<i class="pi pi-plus"></i>
 					<span>Создать</span>

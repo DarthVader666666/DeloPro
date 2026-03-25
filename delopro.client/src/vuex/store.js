@@ -523,8 +523,7 @@ const store = createStore({
 						store.dispatch('downloadChapters')
 						store.dispatch('downloadChapter', themeUpdateForm.chapterId)
 						store.dispatch('downloadTheme', themeUpdateForm.theme.themeId)
-
-						router.push(`/chapters/${themeUpdateForm.chapterId}/${themeUpdateForm.theme.themeId}`)
+						router.back()
 					}
 				})
 				.catch((error) => {
