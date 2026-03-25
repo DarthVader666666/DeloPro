@@ -50,7 +50,7 @@ function setShowAccountSettings(value) {
 						? option.roles.some((role) => currentUser?.roles?.includes(role))
 						: option.roles.length === 0)
 				"
-				:routeName="option.path"
+				:routeName="option.routeName"
 				:label="option.label"
 				:icon="option.icon"
 				:clickHandler="option.clickHandler"

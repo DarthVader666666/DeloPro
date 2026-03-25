@@ -1,6 +1,6 @@
 <script setup>
 import { useStore } from 'vuex'
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { helper } from '@/helper/helper'
 import SpinningCircle from '@/components/SpinningCircle.vue'
@@ -13,40 +13,58 @@ const pending = computed(() => store.getters.getPending)
 const responsiveOptions = ref([
 	{
 		breakpoint: '2000px',
-		numVisible: 4,
-		numScroll: 1,
-	},
-	{
-		breakpoint: '1800px',
 		numVisible: 3,
 		numScroll: 1,
 	},
 	{
-		breakpoint: '1400px',
+		breakpoint: '1200px',
+		numVisible: 2,
+		numScroll: 1,
+	},
+	{
+		breakpoint: '1100px',
 		numVisible: 3,
 		numScroll: 1,
 	},
 	{
-		breakpoint: '1000px',
-		numVisible: 3.5,
+		breakpoint: '950px',
+		numVisible: 3,
 		numScroll: 1,
 	},
 	{
 		breakpoint: '800px',
-		numVisible: 3.2,
-		numScroll: 1,
-	},
-	{
-		breakpoint: '600px',
-		numVisible: 3,
-		numScroll: 1,
-	},
-	{
-		breakpoint: '500px',
 		numVisible: 2,
 		numScroll: 1,
 	},
 ])
+
+const width = ref(window.innerWidth)
+
+const onResize = () => {
+	width.value = window.innerWidth
+}
+
+onMounted(() => {
+	window.addEventListener('resize', onResize)
+})
+
+onBeforeUnmount(() => {
+	window.removeEventListener('resize', onResize)
+})
+
+const isMobile = computed(() => width.value <= 500)
+
+function chunkArray(arr, size = 3) {
+	const result = []
+	for (let i = 0; i < arr.length; i += size) {
+		result.push(arr.slice(i, i + size))
+	}
+	return result
+}
+
+const chunkedChapters = computed(() =>
+	isMobile.value ? chunkArray(chapters.value || [], 3) : chapters.value,
+)
 </script>
 
 <template>
@@ -55,14 +73,17 @@ const responsiveOptions = ref([
 			<h2>Документационное обеспечение управления</h2>
 		</div>
 
-		<SpinningCircle v-if="pending"></SpinningCircle>
+		<SpinningCircle v-if="pending" />
 
 		<div
 			class="chapter-links"
 			v-else
 		>
 			<Carousel
-				:value="chapters"
+				v-if="!isMobile"
+				:value="chunkedChapters"
+				:numVisible="1"
+				:numScroll="1"
 				:responsiveOptions="responsiveOptions"
 			>
 				<template #item="slotProps">
@@ -78,6 +99,32 @@ const responsiveOptions = ref([
 								<p>{{ slotProps.data.chapterTitle }}</p>
 							</div>
 						</RouterLink>
+					</div>
+				</template>
+			</Carousel>
+			<Carousel
+				v-else
+				:value="chunkedChapters"
+			>
+				<template #item="slotProps">
+					<div class="chapter-mobile-group">
+						<div
+							v-for="chapter in slotProps.data"
+							:key="chapter.chapterId"
+							class="chapter"
+						>
+							<RouterLink
+								:to="
+									`/chapters/${chapter.chapterId}/themes` +
+									`${chapter.themes.length > 0 ? '/' + chapter.themes[0].themeId : ''}`
+								"
+							>
+								<div class="chapter-image">
+									<img :src="helper.getImagePath('chapter') + chapter.imagePath" />
+									<p>{{ chapter.chapterTitle }}</p>
+								</div>
+							</RouterLink>
+						</div>
 					</div>
 				</template>
 			</Carousel>
@@ -101,6 +148,13 @@ const responsiveOptions = ref([
 
 .chapter-links :deep(.p-button-text.p-button-secondary) {
 	background: lightgray;
+}
+
+.chapter-mobile-group {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-right: 6%;
 }
 
 .chapter {
@@ -158,40 +212,7 @@ const responsiveOptions = ref([
 	background: lightgray;
 }
 
-@media (max-width: 1000px) {
-	.chapter {
-		width: 200px;
-		height: 180px;
-	}
-	.chapter-image img {
-		width: 180px;
-		height: 150px;
-	}
-}
-
 @media (max-width: 800px) {
-	.chapter {
-		width: 180px;
-		height: 150px;
-	}
-	.chapter-image img {
-		width: 150px;
-		height: 130px;
-	}
-	.chapter-image p {
-		font-size: small;
-	}
-}
-
-@media (max-width: 600px) {
-	.chapter {
-		width: 150px;
-		height: 130px;
-	}
-	.chapter-image img {
-		width: 130px;
-		height: 100px;
-	}
 	.chapter-image p {
 		font-size: small;
 	}
@@ -200,17 +221,6 @@ const responsiveOptions = ref([
 	}
 	.chapters-header {
 		margin: 0;
-	}
-}
-
-@media (max-width: 500px) {
-	.chapter {
-		width: 120px;
-		height: 100px;
-	}
-	.chapter-image img {
-		width: 100px;
-		height: 80px;
 	}
 }
 </style>

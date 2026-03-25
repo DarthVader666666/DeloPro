@@ -13,10 +13,6 @@ const router = useRouter()
 const chapter = computed(() => store.getters.getChapter)
 const theme = computed(() => store.getters.getTheme)
 
-function handleThemeChange() {
-	document.getElementById('save-button').disabled = false
-}
-
 async function updateTheme() {
 	const themeUpdateForm = {
 		theme: theme.value,
@@ -24,6 +20,33 @@ async function updateTheme() {
 	}
 
 	await store.dispatch('updateTheme', themeUpdateForm)
+}
+
+function handleThemeChange(e) {
+	document.getElementById('save-button').disabled = false
+	const html = e.htmlValue
+	if (!html) return
+
+	const updated = addTableBorders(html)
+
+	// update the reactive theme content
+	theme.value.content = updated
+}
+
+function addTableBorders(html) {
+	// style <table>
+	html = html.replace(
+		/<table(.*?)>/g,
+		`<table$1 style="border-collapse: collapse; border: 1px solid black;">`,
+	)
+
+	// style <td>
+	html = html.replace(/<td(.*?)>/g, `<td$1 style="border: 1px solid black; padding: 4px;">`)
+
+	// style <th>
+	html = html.replace(/<th(.*?)>/g, `<th$1 style="border: 1px solid black; padding: 4px;">`)
+
+	return html
 }
 </script>
 
