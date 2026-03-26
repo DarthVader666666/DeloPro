@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Caching.Memory;
 using Delopro.Server.Configuration;
 using Delopro.Server.Attributes;
@@ -39,7 +38,7 @@ namespace Delopro.Server.Controllers
         [Route("[action]")]
         public async Task<IActionResult> CreateChapter([FromForm] ChapterCreateRequest chapterCreateRequest)
         {
-            if (chapterCreateRequest == null || chapterCreateRequest.ChapterTitle.IsNullOrEmpty() || chapterCreateRequest.DateCreated == null)
+            if (chapterCreateRequest == null || string.IsNullOrEmpty(chapterCreateRequest.ChapterTitle) || chapterCreateRequest.DateCreated == null)
             {
                 return BadRequest(new { errorText = "Неверные данные для создания раздела" } );
             }

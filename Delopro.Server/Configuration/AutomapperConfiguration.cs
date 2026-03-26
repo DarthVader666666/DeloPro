@@ -2,8 +2,6 @@
 
 using Delopro.Server.Models;
 using Delopro.Data.Entities;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
 using Delopro.Server.Enums;
 using System.ComponentModel;
 using Delopro.Data.Enums;
@@ -16,7 +14,7 @@ namespace Delopro.Server.Configurations
     {
         public static void ConfigureAutomapper(this IServiceCollection services)
         {
-            _ = services.AddSingleton(provider =>
+            services.AddSingleton(provider =>
             {
                 var cryptoService = provider.GetRequiredService<CryptoService>();
 
@@ -115,7 +113,7 @@ namespace Delopro.Server.Configurations
                     .ForMember(dest => dest.Nickname, opts => opts.MapFrom(src => src.User == null ? null : src.User.Nickname))
                     .ForMember(dest => dest.AvatarPath, opts => opts.MapFrom(src => src.User == null ? null : GetFullAvatarPath(src.User.AvatarPath)));
 
-                });
+                }, provider.GetRequiredService<ILoggerFactory>());
 
                 return config.CreateMapper();
             });
@@ -125,9 +123,9 @@ namespace Delopro.Server.Configurations
         {
             return (user?.FirstName, user?.LastName) switch
             {
-                (var x, var y) when !x.IsNullOrEmpty() && !y.IsNullOrEmpty() => $"{cryptoService.Decrypt(x)} {cryptoService.Decrypt(y)}",
-                (var x, var y) when !x.IsNullOrEmpty() && y.IsNullOrEmpty() => cryptoService.Decrypt(x),
-                (var x, var y) when x.IsNullOrEmpty() && !y.IsNullOrEmpty() => cryptoService.Decrypt(y),
+                (var x, var y) when !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y) => $"{cryptoService.Decrypt(x)} {cryptoService.Decrypt(y)}",
+                (var x, var y) when !string.IsNullOrEmpty(x) && string.IsNullOrEmpty(y) => cryptoService.Decrypt(x),
+                (var x, var y) when string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y) => cryptoService.Decrypt(y),
                 _ => null
             };
         }
@@ -139,9 +137,9 @@ namespace Delopro.Server.Configurations
         {
             return (email, phone) switch
             {
-                (var e, var p) when !e.IsNullOrEmpty() && !p.IsNullOrEmpty() => $"Email: {e}\n\rТел.: {p}",
-                (var e, var p) when e.IsNullOrEmpty() && !p.IsNullOrEmpty() => $"Тел.: {p}",
-                (var e, var p) when !e.IsNullOrEmpty() && p.IsNullOrEmpty() => $"Email: {e}",
+                (var e, var p) when !string.IsNullOrEmpty(e) && !string.IsNullOrEmpty(p) => $"Email: {e}\n\rТел.: {p}",
+                (var e, var p) when string.IsNullOrEmpty(e) && !string.IsNullOrEmpty(p) => $"Тел.: {p}",
+                (var e, var p) when !string.IsNullOrEmpty(e) && string.IsNullOrEmpty(p) => $"Email: {e}",
                 _ => null
             };
         }

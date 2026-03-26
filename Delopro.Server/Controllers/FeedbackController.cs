@@ -50,8 +50,8 @@ namespace Delopro.Server.Controllers
                 await _emailSender.SendEmailAsync(email, 
                     $"{messageForm.Name} прислал(а) сообщение в DeloPro",
                     $"<div>{messageForm.Text}</div>" +
-                    (messageForm.Email.IsNullOrEmpty() ? "" : $"<div>Email: {messageForm.Email}</div>") +
-                    (messageForm.Phone.IsNullOrEmpty() ? "" : $"<div>Телефон: {messageForm.Phone}</div>")
+                    (string.IsNullOrEmpty(messageForm.Email) ? "" : $"<div>Email: {messageForm.Email}</div>") +
+                    (string.IsNullOrEmpty(messageForm.Phone) ? "" : $"<div>Телефон: {messageForm.Phone}</div>")
                 );
             }
 

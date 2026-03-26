@@ -182,6 +182,7 @@ router.afterEach(async (to) => {
 	}
 
 	if (to.name === 'comments') {
+		await store.dispatch('downloadChapter', to.params['chapterId'])
 		await store.dispatch('downloadTheme', to.params['themeId'])
 		store.commit('renderSearchBar')
 	}

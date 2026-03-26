@@ -41,7 +41,7 @@ namespace Delopro.Bll.Services
 
         public async Task<User?> GetUserByAsync(string? nickname = null, string? email = null)
         {
-            if (nickname.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(nickname))
             {
                 return await _userRepository.FindByAsync(_cryptoService.Encrypt(email));
             }

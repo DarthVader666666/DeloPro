@@ -58,7 +58,7 @@ namespace Delopro.Server.Controllers
 
             var searchResultResponse = (await _themeRepository.GetListIncludeAsync())
                 .Where(theme => theme!.Content != null && getPlainText(theme.Content).Contains(searchLine.SearchLine, StringComparison.OrdinalIgnoreCase))
-                .SelectMany(theme => theme == null || theme.Content.IsNullOrEmpty() ? [] : GetSearchResult(theme, searchLine.SearchLine))
+                .SelectMany(theme => theme == null || string.IsNullOrEmpty(theme.Content) ? [] : GetSearchResult(theme, searchLine.SearchLine))
                 .GroupBy(s => new { s.ThemeId, s.SearchFragment })
                 .SelectMany(group => group.Select((s, index) =>
                 {

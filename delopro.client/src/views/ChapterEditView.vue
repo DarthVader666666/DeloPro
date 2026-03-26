@@ -89,6 +89,7 @@ async function updateChapter(updatedChapter) {
 				<h3>Темы:</h3>
 				<Button
 					@click="changeFormStatus"
+					style="border-radius: 40px; height: 40px"
 					raised
 					:severity="isFormActive ? 'contrast' : 'secondary'"
 				>
@@ -99,6 +100,7 @@ async function updateChapter(updatedChapter) {
 					v-if="isFormActive"
 					form="form"
 					type="submit"
+					style="border-radius: 40px; height: 40px"
 					raised
 					severity="secondary"
 				>
