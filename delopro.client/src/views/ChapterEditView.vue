@@ -4,14 +4,12 @@ import ChapterCreateUpdateForm from '@/components/ChapterCreateUpdateForm.vue'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { helper } from '@/helper/helper'
-import { useRouter } from 'vue-router'
 import Editor from 'primevue/editor'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import { Form } from '@primevue/forms'
 
 const store = useStore()
-const router = useRouter()
 
 const isAdmin = computed(() => store.getters.isAdmin)
 const isOwner = computed(() => store.getters.isOwner)
@@ -53,12 +51,6 @@ async function addNewTheme() {
 	clearNewTheme()
 }
 
-function cancel() {
-	router.push(
-		`/chapters/${chapter.value.chapterId}${chapter.value.themes.length > 0 ? '/' + chapter.value.themes[0].themeId : ''}`,
-	)
-}
-
 function clearNewTheme() {
 	newTheme.value.themeTitle = null
 	newTheme.value.content = null
@@ -82,7 +74,6 @@ async function updateChapter(updatedChapter) {
 				v-if="!isFormActive"
 				:chapter="chapter"
 				@updateChapter="updateChapter"
-				@cancel="cancel"
 			/>
 			<hr v-if="!isFormActive" />
 			<div class="add-new-theme">

@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, computed, ref } from 'vue'
+import { onMounted, computed, ref, reactive } from 'vue'
 import { helper } from '@/helper/helper.js'
 import { useStore } from 'vuex'
 import Button from 'primevue/button'
@@ -37,7 +37,8 @@ const props = defineProps({
 
 const store = useStore()
 const router = useRouter()
-const emit = defineEmits(['cancel', 'updateChapter'])
+
+const emit = defineEmits(['updateChapter'])
 const chapter = reactive(props.chapter)
 const imageNames = computed(() => store.getters.getImageNames)
 const imagePath = ref(null)
@@ -49,13 +50,7 @@ onMounted(() => {
 })
 
 function handleCancel() {
-	const chapterId = chapter.chapterId
-
-	if (chapterId) {
-		emit('cancel')
-	} else {
-		router.push('/')
-	}
+	router.back()
 }
 
 function handleSave(chapter) {

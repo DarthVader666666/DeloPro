@@ -422,9 +422,7 @@ const store = createStore({
 						sessionStorage.removeItem(state.sessionStorageKeys.chapterNodesKey)
 						await dispatch('downloadChapter', chapter.chapterId)
 						await dispatch('downloadChapters')
-						router.push(
-							`/chapters/${chapter.chapterId}${chapter.themes.length > 0 ? '/' + chapter.themes[0].themeId : ''}`,
-						)
+						router.back()
 					}
 				})
 				.catch((error) => {
