@@ -106,6 +106,7 @@ function hideDocuments() {
 
 .title h2 {
 	color: var(--MENU-TEXT-COLOR);
+	margin: 0 10px 0 10px;
 }
 
 .document-button {

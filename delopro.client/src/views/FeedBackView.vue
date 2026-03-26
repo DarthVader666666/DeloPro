@@ -83,7 +83,6 @@ function setCaptchaMatch(isMatch) {
 				placeholder="Ваше имя"
 				:required="true"
 				v-model="feedbackForm.name"
-				:titleFont="{ fontWeight: 'normal' }"
 			></InputComponent>
 
 			<h3 style="margin: 20px 0 0 0">Email или номер телефона</h3>
@@ -111,7 +110,6 @@ function setCaptchaMatch(isMatch) {
 				:required="true"
 				v-model="feedbackForm.text"
 				:maxlength="1500"
-				:titleFont="{ fontWeight: 'normal' }"
 			></InputComponent>
 			<CaptchaComponent
 				style="padding: 10px 0 10px 0"
