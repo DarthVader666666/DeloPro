@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, computed, ref, reactive } from 'vue'
+import { onMounted, computed, ref, reactive, watch } from 'vue'
 import { helper } from '@/helper/helper.js'
 import { useStore } from 'vuex'
 import Button from 'primevue/button'
@@ -39,7 +39,24 @@ const store = useStore()
 const router = useRouter()
 
 const emit = defineEmits(['updateChapter'])
-const chapter = reactive(props.chapter)
+const chapter = reactive({
+	chapterId: props.chapter.chapterId,
+	chapterTitle: props.chapter.chapterTitle,
+	imagePath: props.chapter.imagePath,
+	userId: props.chapter.userId,
+	dateCreated: props.chapter.dateCreated,
+	dateDeleted: props.chapter.dateDeleted,
+	themes: props.chapter.themes,
+})
+
+watch(
+	() => props.chapter,
+	(newValue) => {
+		Object.assign(chapter, newValue || {})
+	},
+	{ immediate: true },
+)
+
 const imageNames = computed(() => store.getters.getImageNames)
 const imagePath = ref(null)
 
