@@ -89,7 +89,7 @@ const chunkedChapters = computed(() =>
 					class="chapter"
 				>
 					<div
-						@click="
+						@click.prevent="
 							router.push(
 								`/chapters/${chapter.chapterId}/themes` +
 									`${chapter.themes.length > 0 ? '/' + chapter.themes[0].themeId : ''}`,
@@ -97,7 +97,7 @@ const chunkedChapters = computed(() =>
 						"
 					>
 						<div class="chapter-image">
-							<img :src="helper.getImagePath('chapter') + chapter.imagePath" />
+							<img :src="helper.getImagePath('chapters') + chapter.imagePath" />
 							<p>{{ chapter.chapterTitle }}</p>
 							<Button
 								v-if="isAdmin || isOwner"
@@ -117,7 +117,7 @@ const chunkedChapters = computed(() =>
 				class="chapter"
 			>
 				<div
-					@click="
+					@click.prevent="
 						router.push(
 							`/chapters/${slotProps.data.chapterId}/themes` +
 								`${slotProps.data.themes.length > 0 ? '/' + slotProps.data.themes[0].themeId : ''}`,
@@ -125,7 +125,7 @@ const chunkedChapters = computed(() =>
 					"
 				>
 					<div class="chapter-image">
-						<img :src="helper.getImagePath('chapter') + slotProps.data.imagePath" />
+						<img :src="helper.getImagePath('chapters') + slotProps.data.imagePath" />
 						<p>{{ slotProps.data.chapterTitle }}</p>
 						<Button
 							v-if="isAdmin || isOwner"

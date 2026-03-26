@@ -181,6 +181,11 @@ if (ConfigurationHelper.ChapterImagesPath is not null && !Directory.Exists(Confi
     Directory.CreateDirectory(ConfigurationHelper.ChapterImagesPath);
 }
 
+if (ConfigurationHelper.IconsPath is not null && !Directory.Exists(ConfigurationHelper.IconsPath))
+{
+    Directory.CreateDirectory(ConfigurationHelper.IconsPath);
+}
+
 var app = builder!.Build();
 
 app.UseStatusCodePagesWithReExecute("/home/api/error/{0}");

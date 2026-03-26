@@ -13,6 +13,7 @@ namespace Delopro.Bll
         public static string? DocsFolderId;
         public static string? ChapterImagesPath;
         public static string? AvatarsPath;
+        public static string? IconsPath;
 
         public static void Initialize(IConfiguration configuration, string webRootPath, string environmentName)
         {
@@ -27,6 +28,7 @@ namespace Delopro.Bll
             var imagesRootPath = IsDevelopment ? Path.GetFullPath(configuration["DevRootPath"] ?? string.Empty) : WebRootPath;
             ChapterImagesPath = Path.Combine(imagesRootPath, "chapters");
             AvatarsPath = Path.Combine(imagesRootPath, "avatars");
+            IconsPath = Path.Combine(imagesRootPath, "icons");
         }
 
         public static bool IsDevelopment => EnvironmentName == "Development";

@@ -368,6 +368,9 @@ FodyWeavers.xsd
 
 # Images
 *.png
+*.jpg
+*.bmp
+*.gif
 
 # Text
 *.txt

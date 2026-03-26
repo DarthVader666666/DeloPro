@@ -75,9 +75,7 @@ export const helper = {
 		return '?' + queryString
 	},
 	getImagePath(type) {
-		return store.getters.environment === 'development'
-			? `/src/assets/${type}s/${type}-`
-			: `/${type}s/${type}-`
+		return store.getters.environment === 'development' ? `/src/assets/${type}/` : `/${type}/`
 	},
 	scrollToTheme(themeId) {
 		if (themeId) {
