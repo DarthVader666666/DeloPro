@@ -11,6 +11,10 @@ import Aura from '@primevue/themes/aura'
 import axios from 'axios'
 import { helper } from './helper/helper'
 
+// Import PrimeVue components you're using
+import TreeTable from 'primevue/treetable'
+import Column from 'primevue/column'
+
 axios.defaults.withCredentials = true
 
 async function bootstrap() {
@@ -29,18 +33,28 @@ async function bootstrap() {
 	}
 }
 
-createApp(App)
-	.use(PrimeVue, {
-		theme: {
-			preset: Aura,
-			options: {
-				darkModeSelector: '.fake-dark-selector',
-			},
+const app = createApp(App)
+
+// Configure PrimeVue
+app.use(PrimeVue, {
+	theme: {
+		preset: Aura,
+		options: {
+			darkModeSelector: '.fake-dark-selector',
+			cssLayer: false,
 		},
-	})
-	.use(router)
-	.use(Toast, { timeout: 2000, position: POSITION.TOP_CENTER })
-	.use(store)
-	.mount('#app')
+	},
+})
+
+// Register PrimeVue components globally
+app.component('TreeTable', TreeTable)
+app.component('Column', Column)
+
+// Use other plugins
+app.use(router)
+app.use(Toast, { timeout: 2000, position: POSITION.TOP_CENTER })
+app.use(store)
+
+app.mount('#app')
 
 bootstrap()
