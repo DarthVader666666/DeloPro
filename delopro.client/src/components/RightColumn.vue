@@ -20,7 +20,7 @@ const newName = ref(null)
 const moveFolder = ref(null)
 const editedNode = ref(null)
 const editedNodeId = ref(null)
-const expandedNodes = ref({ docs: true })
+const expandedNodes = { docs: true }
 const interval = ref(null)
 
 async function createFolder(path) {
