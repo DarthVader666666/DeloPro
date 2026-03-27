@@ -243,13 +243,6 @@ export const helper = {
 			reader.readAsDataURL(file)
 		})
 	},
-	clearSession() {
-		const keys = store.state.sessionStorageKeys
-
-		for (const key in keys) {
-			sessionStorage.removeItem(keys[key])
-		}
-	},
 	async checkAuthentication() {
 		const isAuthenticated = await store.dispatch('checkAuthentication')
 		return isAuthenticated

@@ -2,8 +2,11 @@
 import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import CommentComponent from './CommentComponent.vue'
+import Button from 'primevue/button'
+import { useRouter } from 'vue-router'
 
 const store = useStore()
+const router = useRouter()
 const currentUser = computed(() => store.getters.getCurrentUser)
 const isAdmin = computed(() => store.getters.isAdmin)
 const isOwner = computed(() => store.getters.isOwner)
@@ -24,6 +27,15 @@ function setShowComments(value) {
 </script>
 
 <template>
+	<div class="comments-header">
+		<Button
+			icon="pi pi-arrow-left"
+			text
+			rounded
+			@click="router.back()"
+		></Button>
+		<h2>Комментарии</h2>
+	</div>
 	<div class="comments">
 		<CommentComponent
 			v-for="comment in comments"
@@ -47,6 +59,25 @@ function setShowComments(value) {
 	animation-name: slide-down;
 	animation-duration: 0.2s;
 	transform: translateY(0%);
+}
+
+.comments-header {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+}
+
+.comments-header h2 {
+	color: var(--MENU-BCKGND-CLR);
+	text-align: center;
+}
+
+.comments-header button {
+	position: absolute;
+	color: var(--MENU-BCKGND-CLR);
+	background: rgba(0, 50, 90, 0.2);
+	left: 2%;
 }
 
 @keyframes slide-down {

@@ -39,7 +39,11 @@ onMounted(() => {
 }
 
 .theme-content:deep(img) {
-	max-width: 920px;
+	max-width: 98%;
 	height: auto;
+}
+
+.theme-content:deep(.ql-align-center) {
+	text-align: center;
 }
 </style>

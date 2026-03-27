@@ -1144,7 +1144,7 @@ const store = createStore({
 				})
 				.then(async (response) => {
 					if (response.status === 200) {
-						helper.clearSession()
+						sessionStorage.clear()
 						location.reload()
 					}
 				})
