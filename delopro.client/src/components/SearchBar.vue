@@ -25,11 +25,7 @@ async function handleSearch() {
 		class="search-bar"
 		id="search-bar"
 	>
-		<label>
-			Поиск
-			<span>в разделах</span>
-			:
-		</label>
+		<span style="padding-right: 10px; font-size: medium">Поиск</span>
 		<InputText
 			v-model="searchLine"
 			@keydown.enter="handleSearch"
@@ -54,7 +50,7 @@ async function handleSearch() {
 	flex-direction: row;
 	text-align: center;
 	align-content: center;
-	background-color: var(--COLUMNS-BCKGND-CLR);
+	background-color: var(--SEARCHBAR-BACKGROUND);
 	margin: 12px 0 12px 0;
 	box-shadow: var(--COMPONENT-BOX-SHADOW);
 	padding-right: 60px;
@@ -86,10 +82,6 @@ async function handleSearch() {
 	}
 
 	.search-bar button span {
-		display: none;
-	}
-
-	.search-bar label span {
 		display: none;
 	}
 

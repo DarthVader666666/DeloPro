@@ -30,7 +30,7 @@ const store = createStore({
 		title: null,
 		imageNames: [],
 		showChapterList: true,
-		showRightColumn: false,
+		showRightColumn: true,
 		pending: false,
 		users: [],
 		user: null,

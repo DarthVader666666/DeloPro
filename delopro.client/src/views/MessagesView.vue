@@ -7,7 +7,7 @@ import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import Column from 'primevue/column'
 import ToggleSwitch from 'primevue/toggleswitch'
-import MessageModal from '@/components/MessageModal.vue'
+import MessageModal from '@/components/Messages/MessageModal.vue'
 
 const store = useStore()
 const messages = computed(() => store.getters.getMessages)

@@ -75,7 +75,7 @@ export const helper = {
 		return '?' + queryString
 	},
 	getImagePath(type) {
-		return store.getters.environment === 'development' ? `/src/assets/${type}/` : `/${type}/`
+		return store.getters.environment === 'development' ? `/src/assets/${type}s/` : `/${type}s/`
 	},
 	scrollToTheme(themeId) {
 		if (themeId) {
@@ -165,7 +165,7 @@ export const helper = {
 		})
 	},
 	lightenBackground() {
-		document.body.style.background = 'var(--BODY-BCKGND-CLR)'
+		document.body.style.background = 'var(--BODY-BACKGROUND)'
 
 		this.darkenContainers.forEach((items) => {
 			for (let item of items) {

@@ -11,7 +11,7 @@ const store = useStore()
 
 <style scoped>
 .footer-container {
-	background: var(--MENU-BCKGND-CLR);
+	background: var(--MENU-BACKGROUND);
 	color: var(--MENU-TEXT-COLOR);
 	height: 4rem;
 	align-content: center;

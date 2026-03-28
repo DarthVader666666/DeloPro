@@ -83,16 +83,16 @@ function handleInput() {
 }
 
 function handleSelect(value) {
-	imagePath.value = helper.getImagePath('chapters') + value
+	imagePath.value = helper.getImagePath('chapter') + value
 	handleInput()
 }
 
 function onMouseEnter(option) {
-	imagePath.value = helper.getImagePath('chapters') + option
+	imagePath.value = helper.getImagePath('chapter') + option
 }
 
 function onMouseLeave() {
-	imagePath.value = helper.getImagePath('chapters') + chapter.imagePath
+	imagePath.value = helper.getImagePath('chapter') + chapter.imagePath
 }
 
 async function handleDeleteChapter() {
@@ -118,7 +118,7 @@ async function handleDeleteChapter() {
 				placeholder="Заголовок раздела"
 			/>
 			<img
-				:src="imagePath ? imagePath : helper.getImagePath('chapters') + chapter.imagePath"
+				:src="imagePath ? imagePath : helper.getImagePath('chapter') + chapter.imagePath"
 				width="150px"
 				height="120px"
 			/>

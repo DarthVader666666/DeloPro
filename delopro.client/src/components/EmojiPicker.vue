@@ -118,7 +118,7 @@ const emit = defineEmits(['addEmoji', 'setShowEmojiPicker'])
 	border-radius: 10px;
 	box-shadow: var(--INPUT-BOX-SHADOW);
 	padding: 5px;
-	background: var(--TEXT-BCKGND-CLR);
+	background: var(--TEXT-BACKGROUND);
 	animation-name: slide-up;
 	animation-duration: 0.2s;
 	transform: translateY(0%);

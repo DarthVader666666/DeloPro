@@ -1,9 +1,9 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
-import CommentComponent from './CommentComponent.vue'
 import Button from 'primevue/button'
 import { useRouter } from 'vue-router'
+import CommentComponent from './CommentComponent.vue'
 
 const store = useStore()
 const router = useRouter()
@@ -69,13 +69,13 @@ function setShowComments(value) {
 }
 
 .comments-header h2 {
-	color: var(--MENU-BCKGND-CLR);
+	color: var(--MENU-BACKGROUND);
 	text-align: center;
 }
 
 .comments-header button {
 	position: absolute;
-	color: var(--MENU-BCKGND-CLR);
+	color: var(--MENU-BACKGROUND);
 	background: rgba(0, 50, 90, 0.2);
 	left: 2%;
 }

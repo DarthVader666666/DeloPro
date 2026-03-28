@@ -1,6 +1,6 @@
 <script setup>
-import ThemeList from '@/components/ThemeList.vue'
-import ChapterCreateUpdateForm from '@/components/ChapterCreateUpdateForm.vue'
+import ThemeList from '@/components/Themes/ThemeList.vue'
+import ChapterCreateUpdateForm from '@/components/Chapters/ChapterCreateUpdateForm.vue'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { helper } from '@/helper/helper'

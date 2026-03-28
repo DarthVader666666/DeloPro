@@ -4,10 +4,10 @@ import Button from 'primevue/button'
 import { RouterLink, useRouter } from 'vue-router'
 import { helper } from '@/helper/helper'
 import { computed, ref } from 'vue'
-import SpinningCircle from './SpinningCircle.vue'
-import CommentModal from './CommentModal.vue'
+import SpinningCircle from '../SpinningCircle.vue'
+import CommentsComponent from '../Comments/CommentsComponent.vue'
 import ThemeContent from './ThemeContent.vue'
-import CommentsComponent from './CommentsComponent.vue'
+import CommentModal from '../Comments/CommentModal.vue'
 
 const store = useStore()
 const router = useRouter()
@@ -156,7 +156,7 @@ function redirectToComments() {
 	justify-content: space-between;
 	align-items: center;
 	font-size: large;
-	background: var(--THEME-HEADER-BCKGND-GRADIENT);
+	background: var(--THEME-HEADER-BACKGROUND);
 	padding: 6px;
 	min-height: 34px;
 }
@@ -190,7 +190,7 @@ function redirectToComments() {
 	color: var(--TEXT-COLOR);
 	border: solid 1px rgba(128, 128, 128, 0.562);
 	border-radius: 50%;
-	background: var(--COLUMNS-BCKGND-CLR);
+	background: var(--COLUMNS-BACKGROUND);
 	width: 17px;
 	height: 17px;
 	align-content: center;

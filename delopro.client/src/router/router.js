@@ -17,6 +17,7 @@ import AccountView from '@/views/AccountView.vue'
 import VisitsView from '@/views/VisitsView.vue'
 import CommentsView from '@/views/CommentsView.vue'
 import { helper } from '@/helper/helper'
+import DocumentsView from '@/views/DocumentsView.vue'
 
 const doScrollUp = ref(true)
 const currentUser = computed(() => store.getters.getCurrentUser)
@@ -108,6 +109,11 @@ const router = createRouter({
 			component: AccountView,
 		},
 		{
+			path: '/documents',
+			name: 'documents',
+			component: DocumentsView,
+		},
+		{
 			path: '/:catchAll(.*)',
 			name: 'error',
 			component: HomeView,
@@ -161,7 +167,7 @@ router.beforeEach(async (to, from, next) => {
 
 router.afterEach(async (to) => {
 	store.commit('setPending', true)
-	store.commit('setShowRightColumn', false)
+	store.commit('setShowRightColumn', true)
 
 	if (to.name === 'chapter-themes') {
 		await store.dispatch('downloadChapter', to.params['chapterId'])
@@ -173,8 +179,10 @@ router.afterEach(async (to) => {
 		store.commit('renderSearchBar')
 		store.commit('setShowChapterList', false)
 
-		if (to.query.searchFragment) {
-			doScrollUp.value = false
+		doScrollUp.value = false
+
+		if (!to.query.searchFragment) {
+			window.scrollTo(0, 170)
 		}
 	} else {
 		store.commit('setShowChapterList', true)
@@ -237,6 +245,11 @@ router.afterEach(async (to) => {
 
 	if (to.name === 'visits') {
 		store.commit('setTitle', 'Статистика посещений')
+	}
+
+	if (to.name === 'documents') {
+		store.commit('setShowRightColumn', false)
+		store.commit('setTitle', 'Документы')
 	}
 
 	if (store.getters.isOwner) {

@@ -41,7 +41,6 @@ function toggleNode(node) {
 	<div class="left-container">
 		<div class="items">
 			<div class="items-header">
-				<strong>Разделы:</strong>
 				<Button
 					v-if="isAdmin || isOwner"
 					raised
@@ -81,7 +80,7 @@ function toggleNode(node) {
 .items-header {
 	display: flex;
 	flex-direction: row;
-	justify-content: space-between;
+	justify-content: center;
 	align-items: center;
 	min-height: 39px;
 }
@@ -99,7 +98,7 @@ function toggleNode(node) {
 	padding: 0;
 	font-size: small;
 	font-weight: bold;
-	background: var(--COLUMNS-BCKGND-CLR);
+	background: var(--COLUMNS-BACKGROUND);
 }
 
 .tree:deep(button) {

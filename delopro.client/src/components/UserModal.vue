@@ -197,7 +197,7 @@ async function deleteUser() {
 						flex-direction: column;
 						align-items: center;
 						justify-content: center;
-						background-color: var(--COLUMNS-BCKGND-CLR);
+						background-color: var(--COLUMNS-BACKGROUND);
 						align-content: center;
 						text-align: center;
 						padding: 15px;

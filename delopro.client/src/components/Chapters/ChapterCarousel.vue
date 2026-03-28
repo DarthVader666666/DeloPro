@@ -1,10 +1,11 @@
 <script setup>
 import Carousel from 'primevue/carousel'
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { helper } from '../helper/helper.js'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
+import { helper } from '@/helper/helper'
 
 const store = useStore()
 const router = useRouter()
@@ -52,12 +53,19 @@ const onResize = () => {
 	width.value = window.innerWidth
 }
 
+const chunkedChapters = ref([])
+
 onMounted(() => {
 	window.addEventListener('resize', onResize)
+	chunkedChapters.value = isMobile.value ? chunkArray(chapters.value, 3) : chapters.value
 })
 
 onBeforeUnmount(() => {
 	window.removeEventListener('resize', onResize)
+})
+
+watch([chapters, isMobile], () => {
+	chunkedChapters.value = isMobile.value ? chunkArray(chapters.value, 3) : chapters.value
 })
 
 function chunkArray(arr, size = 3) {
@@ -67,28 +75,24 @@ function chunkArray(arr, size = 3) {
 	}
 	return result
 }
-
-const chunkedChapters = computed(() =>
-	isMobile.value ? chunkArray(chapters.value || [], 3) : chapters.value,
-)
 </script>
 
 <template>
 	<Carousel
+		v-if="isMobile"
 		:value="chunkedChapters"
 		:responsiveOptions="responsiveOptions"
+		:key="chunkedChapters.length + '-mobile'"
 	>
 		<template #item="slotProps">
-			<div
-				v-if="isMobile"
-				class="chapter-mobile-group"
-			>
+			<div class="chapter-mobile-group">
 				<div
 					v-for="chapter in slotProps.data"
 					:key="chapter.chapterId"
 					class="chapter"
 				>
 					<div
+						class="chapter-image"
 						@click.prevent="
 							router.push(
 								`/chapters/${chapter.chapterId}/themes` +
@@ -96,37 +100,8 @@ const chunkedChapters = computed(() =>
 							)
 						"
 					>
-						<div class="chapter-image">
-							<img :src="helper.getImagePath('chapters') + chapter.imagePath" />
-							<p>{{ chapter.chapterTitle }}</p>
-							<Button
-								v-if="isAdmin || isOwner"
-								text
-								rounded
-								severity="contrast"
-								icon="pi pi-pen-to-square"
-								title="Редактировать"
-								@click.stop="router.push(`/chapters/${chapter.chapterId}/edit`)"
-							/>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div
-				v-else
-				class="chapter"
-			>
-				<div
-					@click.prevent="
-						router.push(
-							`/chapters/${slotProps.data.chapterId}/themes` +
-								`${slotProps.data.themes.length > 0 ? '/' + slotProps.data.themes[0].themeId : ''}`,
-						)
-					"
-				>
-					<div class="chapter-image">
-						<img :src="helper.getImagePath('chapters') + slotProps.data.imagePath" />
-						<p>{{ slotProps.data.chapterTitle }}</p>
+						<img :src="helper.getImagePath('chapter') + chapter.imagePath" />
+						<p>{{ chapter.chapterTitle }}</p>
 						<Button
 							v-if="isAdmin || isOwner"
 							text
@@ -134,9 +109,41 @@ const chunkedChapters = computed(() =>
 							severity="contrast"
 							icon="pi pi-pen-to-square"
 							title="Редактировать"
-							@click.stop="router.push(`/chapters/${slotProps.data.chapterId}/edit`)"
+							@click.stop="router.push(`/chapters/${chapter.chapterId}/edit`)"
 						/>
 					</div>
+				</div>
+			</div>
+		</template>
+	</Carousel>
+	<Carousel
+		v-else
+		:value="chapters"
+		:responsiveOptions="responsiveOptions"
+		:key="chapters.length + '-desktop'"
+	>
+		<template #item="slotProps">
+			<div class="chapter">
+				<div
+					class="chapter-image"
+					@click.prevent="
+						router.push(
+							`/chapters/${slotProps.data.chapterId}/themes` +
+								`${slotProps.data.themes.length > 0 ? '/' + slotProps.data.themes[0].themeId : ''}`,
+						)
+					"
+				>
+					<img :src="helper.getImagePath('chapter') + slotProps.data.imagePath" />
+					<p>{{ slotProps.data.chapterTitle }}</p>
+					<Button
+						v-if="isAdmin || isOwner"
+						text
+						rounded
+						severity="contrast"
+						icon="pi pi-pen-to-square"
+						title="Редактировать"
+						@click.stop="router.push(`/chapters/${slotProps.data.chapterId}/edit`)"
+					/>
 				</div>
 			</div>
 		</template>
@@ -148,13 +155,10 @@ const chunkedChapters = computed(() =>
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin-right: 6%;
 }
 
 .chapter {
-	height: 220px;
-	width: 240px;
-	padding: 18px;
+	padding: 10px;
 	-webkit-transition: all 0.2s ease-in-out;
 	-moz-transition: all 0.2s ease-in-out;
 	-o-transition: all 0.2s ease-in-out;
@@ -162,10 +166,10 @@ const chunkedChapters = computed(() =>
 	filter: drop-shadow(var(--PNG-IMAGE-SHADOW));
 
 	&:hover {
-		-webkit-transform: scale(1.1);
-		-moz-transform: scale(1.1);
-		-o-transform: scale(1.1);
-		transform: scale(1.1);
+		-webkit-transform: scale(1.05);
+		-moz-transform: scale(1.05);
+		-o-transform: scale(1.05);
+		transform: scale(1.05);
 		opacity: 0.8;
 		cursor: pointer;
 	}
@@ -176,8 +180,8 @@ const chunkedChapters = computed(() =>
 }
 
 .chapter-image img {
-	height: 180px;
-	width: 220px;
+	height: 200px;
+	width: 100%;
 }
 
 .chapter-image p {
@@ -214,17 +218,6 @@ const chunkedChapters = computed(() =>
 	background: lightgray;
 }
 
-@media (min-width: 1600px) {
-	.chapter {
-		height: 240px;
-		width: 300px;
-	}
-	.chapter-image img {
-		height: 220px;
-		width: 280px;
-	}
-}
-
 @media (max-width: 800px) {
 	.chapter-image p {
 		font-size: 0.9rem;
@@ -234,6 +227,16 @@ const chunkedChapters = computed(() =>
 	}
 	.chapters-header {
 		margin: 0;
+	}
+}
+
+@media (max-width: 500px) {
+	.chapter {
+		width: 260px;
+	}
+
+	.chapter-image img {
+		height: 160px;
 	}
 }
 </style>

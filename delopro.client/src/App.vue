@@ -21,17 +21,10 @@ const showSearchBar = computed(() => store.state.showSearchBar)
 
 <style scoped>
 .app-container {
-	padding: 2%;
+	padding: var(--APP-PADDING);
 }
 
-@media (max-width: 1400px) {
-	.app-container {
-		padding-left: 0;
-		padding-right: 0;
-	}
-}
-
-@media (max-width: 1000px) {
+@media (max-width: 1600px) {
 	.app-container {
 		padding: 0;
 	}

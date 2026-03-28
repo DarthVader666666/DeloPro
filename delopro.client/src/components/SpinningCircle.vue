@@ -39,7 +39,7 @@ const props = defineProps({
 	align-items: center;
 	width: var(--APP-COMPONENT-WIDTH);
 	padding: 10px;
-	background-color: var(--CENTRAL-BCKGND-CLR);
+	background-color: var(--CENTRAL-BACKGROUND);
 	width: 100%;
 }
 
@@ -144,33 +144,33 @@ const props = defineProps({
 
 @-webkit-keyframes color {
 	0% {
-		stroke: var(--MENU-BCKGND-CLR);
+		stroke: var(--MENU-BACKGROUND);
 	}
 	40% {
-		stroke: var(--MENU-BCKGND-CLR);
+		stroke: var(--MENU-BACKGROUND);
 	}
 	66% {
-		stroke: var(--MENU-BCKGND-CLR);
+		stroke: var(--MENU-BACKGROUND);
 	}
 	80%,
 	90% {
-		stroke: var(--MENU-BCKGND-CLR);
+		stroke: var(--MENU-BACKGROUND);
 	}
 }
 
 @keyframes color {
 	0% {
-		stroke: var(--MENU-BCKGND-CLR);
+		stroke: var(--MENU-BACKGROUND);
 	}
 	40% {
-		stroke: var(--MENU-BCKGND-CLR);
+		stroke: var(--MENU-BACKGROUND);
 	}
 	66% {
-		stroke: var(--MENU-BCKGND-CLR);
+		stroke: var(--MENU-BACKGROUND);
 	}
 	80%,
 	90% {
-		stroke: var(--MENU-BCKGND-CLR);
+		stroke: var(--MENU-BACKGROUND);
 	}
 }
 </style>

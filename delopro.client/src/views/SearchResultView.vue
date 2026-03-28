@@ -77,7 +77,7 @@ const searchResult = computed(() => store.getters.getSearchResult)
 	justify-content: space-between;
 	align-items: center;
 	font-size: large;
-	background: var(--THEME-HEADER-BCKGND-GRADIENT);
+	background: var(--THEME-HEADER-BACKGROUND);
 	padding: 6px;
 	min-height: 34px;
 }
@@ -109,7 +109,7 @@ const searchResult = computed(() => store.getters.getSearchResult)
 
 .table-class:deep(td) {
 	padding-top: 0;
-	background-color: var(--CENTRAL-BCKGND-CLR);
+	background-color: var(--CENTRAL-BACKGROUND);
 }
 
 .table-class:deep(th) {

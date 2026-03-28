@@ -3,21 +3,22 @@
 :root {
 	/* COLORS */
 	--DANGER-RED: rgb(220, 0, 0);
-	--LOGO-TEXT-COLOR: rgb(194, 194, 194);
-	--LOGO-HOVER-TEXT-COLOR: rgb(200, 200, 200);
+	--LOGO-COLOR: rgb(194, 194, 194);
+	--LOGO-HOVER-COLOR: rgb(200, 200, 200);
 	--TEXT-COLOR: rgb(44, 44, 44);
 	--HOME-HEADER-COLOR: rgb(1, 47, 85);
 	--MENU-TEXT-COLOR: rgb(230, 230, 230);
 	--MENU-HOVER-TEXT-COLOR: rgb(200, 200, 200);
 
 	/* BACKGROUNDS */
-	--CENTRAL-BCKGND-CLR: rgb(230, 230, 230);
-	--COLUMNS-BCKGND-CLR: rgb(230, 230, 230);
-	--TEXT-BCKGND-CLR: rgba(204, 204, 204, 0.98);
-	--SELECTED-LINK-BCKGND-CLR: rgb(49, 127, 62);
-	--MENU-BCKGND-CLR: rgb(0, 50, 90);
-	--THEME-HEADER-BCKGND-GRADIENT: rgb(0, 50, 90);
-	--BODY-BCKGND-CLR: rgb(170, 170, 170);
+	--SEARCHBAR-BACKGROUND: rgb(240, 240, 240);
+	--CENTRAL-BACKGROUND: rgb(240, 240, 240);
+	--COLUMNS-BACKGROUND: rgb(230, 230, 230);
+	--TEXT-BACKGROUND: rgba(204, 204, 204, 0.98);
+	--SELECTED-LINK-BACKGROUND: rgb(49, 127, 62);
+	--MENU-BACKGROUND: rgb(0, 50, 90);
+	--THEME-HEADER-BACKGROUND: rgb(0, 50, 90);
+	--BODY-BACKGROUND: rgb(190, 190, 190);
 
 	/* SHADOWS */
 	--GLOW-BOX-SHADOW: rgba(158, 158, 158, 0.8) 0 0 10px 2px;
@@ -30,13 +31,14 @@
 	/* SIZES */
 	--LEFT-COLUMN-WIDTH: 16%;
 	--RIGHT-COLUMN-WIDTH: 16%;
-	--CENTRAL-COLUMN-WIDTH: 66%;
-	--MAIN-COMPONENT-WIDTH: 85%;
+	--CENTRAL-COLUMN-WIDTH: 68%;
+	--MAIN-COMPONENT-WIDTH: 100%;
 	--APP-COMPONENT-WIDTH: 90%;
 	--MAIN-COMPONENT-MIN-HEIGHT: 810px;
 	--HEADER-HEIGHT: 90px;
 	--SEARCHBAR-HEIGHT: 60px;
 	--TITLE-HEIGHT: 64px;
+	--APP-PADDING: 2%;
 }
 
 html {
@@ -51,7 +53,7 @@ body {
 	margin: 0;
 	font-size: 0.9rem;
 	color: var(--TEXT-COLOR);
-	background-color: var(--BODY-BCKGND-CLR);
+	background-color: var(--BODY-BACKGROUND);
 }
 
 #app {
@@ -61,7 +63,7 @@ body {
 
 .left-container {
 	width: var(--LEFT-COLUMN-WIDTH);
-	background-color: var(--COLUMNS-BCKGND-CLR);
+	background-color: var(--COLUMNS-BACKGROUND);
 	word-break: break-word;
 	position: sticky;
 	height: 100vh;
@@ -71,7 +73,7 @@ body {
 .form-container {
 	padding: 20px;
 	font-size: small;
-	background-color: var(--CENTRAL-BCKGND-CLR);
+	background-color: var(--CENTRAL-BACKGROUND);
 }
 
 .email-sent-notification {
@@ -81,7 +83,7 @@ body {
 	align-items: center;
 	width: var(--APP-COMPONENT-WIDTH);
 	padding-bottom: 10px;
-	background-color: var(--CENTRAL-BCKGND-CLR);
+	background-color: var(--CENTRAL-BACKGROUND);
 }
 
 .email-sent-notification a {
@@ -146,7 +148,7 @@ body {
 	top: var(--HEADER-HEIGHT);
 	right: 0;
 	z-index: 2;
-	background-color: var(--MENU-BCKGND-CLR);
+	background-color: var(--MENU-BACKGROUND);
 	padding: 15px;
 	box-shadow: var(--MENU-BOX-SHADOW);
 	animation-name: slide;

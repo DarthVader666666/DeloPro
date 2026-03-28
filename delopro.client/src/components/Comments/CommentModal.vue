@@ -4,8 +4,8 @@ import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
 import { computed, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
-import AvatarImage from './Account/AvatarImage.vue'
-import EmojiPicker from './EmojiPicker.vue'
+import AvatarImage from '../Account/AvatarImage.vue'
+import EmojiPicker from '../EmojiPicker.vue'
 
 const props = defineProps({
 	themeId: {

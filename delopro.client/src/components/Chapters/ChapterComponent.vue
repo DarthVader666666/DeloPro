@@ -1,6 +1,6 @@
 <script setup>
-import ThemeComponent from '@/components/ThemeComponent.vue'
-import ThemeSwitchComponent from '@/components/ThemeSwitchButtons.vue'
+import ThemeComponent from '@/components/Themes/ThemeComponent.vue'
+import ThemeSwitchComponent from '@/components/Themes/ThemeSwitchButtons.vue'
 import { computed } from 'vue'
 import Button from 'primevue/button'
 import { helper } from '@/helper/helper'

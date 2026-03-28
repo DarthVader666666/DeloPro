@@ -1,11 +1,11 @@
 <script setup>
 import { nextTick, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
-import AvatarImage from './Account/AvatarImage.vue'
 import Button from 'primevue/button'
 import Textarea from 'primevue/textarea'
 import { helper } from '@/helper/helper'
-import EmojiPicker from './EmojiPicker.vue'
+import AvatarImage from '../Account/AvatarImage.vue'
+import EmojiPicker from '../EmojiPicker.vue'
 
 const store = useStore()
 const emit = defineEmits(['setEditingId'])

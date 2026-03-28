@@ -262,7 +262,7 @@ async function deleteAccount() {
 					:isTextarea="true"
 				></InputComponent>
 			</form>
-			<div style="background-color: var(--COLUMNS-BCKGND-CLR); padding: 10px">
+			<div style="background-color: var(--COLUMNS-BACKGROUND); padding: 10px">
 				<h3 style="margin-top: 0">Сменить пароль</h3>
 				<InputComponent
 					:title="'Cтарый пароль'"
@@ -302,7 +302,7 @@ async function deleteAccount() {
 					></Button>
 				</div>
 			</div>
-			<div style="background-color: var(--COLUMNS-BCKGND-CLR); padding: 10px">
+			<div style="background-color: var(--COLUMNS-BACKGROUND); padding: 10px">
 				<div class="delete-account">
 					<h3>Удалить аккаунт</h3>
 					<Button

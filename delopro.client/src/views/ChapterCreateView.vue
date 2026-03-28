@@ -1,5 +1,5 @@
 <script setup>
-import ChapterCreateUpdateForm from '@/components/ChapterCreateUpdateForm.vue'
+import ChapterCreateUpdateForm from '@/components/Chapters/ChapterCreateUpdateForm.vue'
 import { useStore } from 'vuex'
 import { helper } from '@/helper/helper'
 
