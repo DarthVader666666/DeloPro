@@ -155,6 +155,7 @@ function chunkArray(arr, size = 3) {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	margin-right: 6%;
 }
 
 .chapter {

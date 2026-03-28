@@ -11,7 +11,7 @@ const pending = computed(() => store.getters.getPending)
 <template>
 	<div class="home-container">
 		<div class="chapters-header">
-			<h2>Документационное обеспечение управления</h2>
+			<h2>Документационное обеспечение управления в Республике Беларусь</h2>
 		</div>
 		<div style="padding: 10px; display: flex; flex-direction: column">
 			<span style="font-size: 1.1rem">
