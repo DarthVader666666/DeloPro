@@ -59,6 +59,10 @@ const pending = computed(() => store.getters.getPending)
 	color: var(--MENU-TEXT-COLOR);
 }
 
+.chapters-header h2 {
+	padding: 0 2% 0 2%;
+}
+
 .chapter-links {
 	margin: 0 10px 0 10px;
 }
@@ -77,7 +81,7 @@ const pending = computed(() => store.getters.getPending)
 }
 
 @media (max-width: 800px) {
-	h2 {
+	.chapters-header h2 {
 		font-size: medium;
 	}
 	.chapters-header {
