@@ -193,6 +193,9 @@ app.UseStatusCodePagesWithReExecute("/home/api/error/{0}");
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseDefaultFiles();
+
+app.UseStaticFiles();
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "chapters")),
