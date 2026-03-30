@@ -58,6 +58,9 @@ const showRightColumn = computed(() => store.getters.getShowRightColumn)
 #right-container {
 	width: var(--RIGHT-COLUMN-WIDTH);
 	background-color: var(--COLUMNS-BACKGROUND);
+	position: sticky;
+	height: 100vh;
+	top: 0;
 }
 
 @media (max-width: 1100px) {
