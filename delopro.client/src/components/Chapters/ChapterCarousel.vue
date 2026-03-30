@@ -15,6 +15,11 @@ const isOwner = computed(() => store.getters.isOwner)
 
 const responsiveOptions = ref([
 	{
+		breakpoint: '2400px',
+		numVisible: 4,
+		numScroll: 1,
+	},
+	{
 		breakpoint: '2000px',
 		numVisible: 3,
 		numScroll: 1,
@@ -121,6 +126,8 @@ function chunkArray(arr, size = 3) {
 		:value="chapters"
 		:responsiveOptions="responsiveOptions"
 		:key="chapters.length + '-desktop'"
+		:numVisible="6"
+		:numScroll="1"
 	>
 		<template #item="slotProps">
 			<div class="chapter">
@@ -202,8 +209,8 @@ function chunkArray(arr, size = 3) {
 
 .chapter-image button {
 	position: absolute;
-	top: 7%;
-	right: 0;
+	top: 5%;
+	right: 3%;
 	background: rgba(210, 210, 210, 0.6);
 }
 
@@ -217,6 +224,12 @@ function chunkArray(arr, size = 3) {
 
 :deep(.p-carousel-indicator-button) {
 	background: lightgray;
+}
+
+@media (min-width: 1800px) {
+	.chapter-image img {
+		height: 230px;
+	}
 }
 
 @media (max-width: 800px) {

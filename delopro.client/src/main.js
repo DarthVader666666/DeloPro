@@ -14,6 +14,7 @@ import { helper } from './helper/helper'
 axios.defaults.withCredentials = true
 
 async function bootstrap() {
+	sessionStorage.clear()
 	store.commit('setPending', true)
 
 	try {
