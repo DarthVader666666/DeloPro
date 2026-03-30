@@ -105,7 +105,11 @@ function chunkArray(arr, size = 3) {
 							)
 						"
 					>
-						<img :src="helper.getImagePath('chapter') + chapter.imagePath" />
+						<img
+							:src="helper.getImagePath('chapter') + chapter.imagePath"
+							loading="lazy"
+							decoding="async"
+						/>
 						<p>{{ chapter.chapterTitle }}</p>
 						<Button
 							v-if="isAdmin || isOwner"
@@ -140,7 +144,11 @@ function chunkArray(arr, size = 3) {
 						)
 					"
 				>
-					<img :src="helper.getImagePath('chapter') + slotProps.data.imagePath" />
+					<img
+						:src="helper.getImagePath('chapter') + slotProps.data.imagePath"
+						loading="lazy"
+						decoding="async"
+					/>
 					<p>{{ slotProps.data.chapterTitle }}</p>
 					<Button
 						v-if="isAdmin || isOwner"
