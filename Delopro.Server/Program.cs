@@ -196,18 +196,17 @@ app.UseDefaultFiles();
 
 app.UseStaticFiles();
 
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "chapters")),
-    RequestPath = "/chapters",
-    OnPrepareResponse = ctx =>
-    {
-        ctx.Context.Response.Headers["Cache-Control"] = "public,max-age=2592000"; // 30 days
-    }
-});
-
 if (app.Environment.IsProduction())
 {
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "chapters")),
+        RequestPath = "/chapters",
+        OnPrepareResponse = ctx =>
+        {
+            ctx.Context.Response.Headers["Cache-Control"] = "public,max-age=2592000"; // 30 days
+        }
+    });
     app.UseStaticFiles(new StaticFileOptions
     {
         FileProvider = new PhysicalFileProvider(

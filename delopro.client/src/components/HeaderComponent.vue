@@ -172,26 +172,10 @@ async function handleLogout() {
 		</div>
 		<div
 			v-if="!(isAdmin || isOwner)"
-			class="description"
+			class="contacts"
 		>
-			<div style="display: flex; align-items: center; gap: 10px">
-				<img :src="helper.getImagePath('icon') + 'email.svg'" />
-				<span>airlex34@gmail.com</span>
-			</div>
-			<!-- <div style="display: flex; gap: 10px">
-				<a href="viber://chat?number=">
-					<img
-						:src="helper.getImagePath('icon') + 'viber.svg'"
-						alt=""
-					/>
-				</a>
-				<a href="https://t.me/">
-					<img
-						:src="helper.getImagePath('icon') + 'telegram.svg'"
-						alt=""
-					/>
-				</a>
-			</div> -->
+			<img :src="helper.getImagePath('icon') + 'email.svg'" />
+			<span>airlex34@gmail.com</span>
 		</div>
 		<MenuSlider
 			v-if="showSlideMenu"
@@ -235,25 +219,25 @@ async function handleLogout() {
 	height: var(--HEADER-HEIGHT);
 }
 
-.description {
+.contacts {
 	display: flex;
 	gap: 10px;
 	position: absolute;
 	background-color: transparent;
 	color: var(--MENU-TEXT-COLOR);
-	left: 53%;
+	left: 50%;
 	padding: 18px 0 0 0;
-	transform: translateX(-47%);
+	transform: translateX(-50%);
 	align-items: center;
 }
 
-.description span,
+.contacts span,
 img {
 	font-size: 1.1rem;
 	opacity: 0.8;
 }
 
-.description img {
+.contacts img {
 	background-color: var(--MENU-TEXT-COLOR);
 	border-radius: 50px;
 	width: 30px;
@@ -292,16 +276,16 @@ img {
 }
 
 @media (max-width: 500px) {
-	.description {
+	.contacts {
 		flex-direction: column;
 	}
 
-	.description span {
+	.contacts span {
 		font-size: small;
 		padding-top: 19%;
 	}
 
-	.description img {
+	.contacts img {
 		display: none;
 	}
 }
