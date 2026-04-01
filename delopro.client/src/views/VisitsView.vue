@@ -1,59 +1,52 @@
 <script setup>
 import Chart from 'primevue/chart'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed } from 'vue'
 import { useStore } from 'vuex'
 import InputText from 'primevue/inputtext'
 import { helper } from '@/helper/helper'
-import SpinningCircle from '@/components/SpinningCircle.vue'
 
 const store = useStore()
-const pending = computed(() => store.getters.getPending)
 const visitResponse = computed(() => store.getters.getVisits)
-const currentDate = new Date()
 
-const chartData = ref()
-const chartOptions = ref()
-const dateRangeForm = reactive({
-	fromDate: null,
-	toDate: null,
-})
+const chartData = computed(() => ({
+	labels: visitResponse.value.labels,
+	datasets: visitResponse.value.datasets,
+}))
 
-onMounted(async () => {
-	await helper.timeoutAsync(10)
-	//document.documentElement.style.setProperty('--p-content-border-color', 'lightgray')
+const chartOptions = computed(() => setChartOptions())
+const dateRange = computed(() => store.getters.getVisitsDateRange)
 
-	const dateNow = new Date()
-	dateRangeForm.fromDate = helper.getDateStringForInput(dateNow.setDate(dateNow.getDate() - 30))
-	dateRangeForm.toDate = helper.getDateStringForInput(currentDate)
+async function handleFromDateChange(fromDate) {
+	const today = new Date()
+	const currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+	let fromDateValue = fromDate
 
-	await store.dispatch('downloadVisits', dateRangeForm)
-	chartData.value = setChartData()
-	chartOptions.value = setVisitChartOptions()
-})
-
-async function handleDateChange() {
-	const fromDate = new Date(dateRangeForm.fromDate)
-	const toDate = new Date(dateRangeForm.toDate)
-
-	if (toDate > currentDate) {
-		dateRangeForm.toDate = helper.getDateStringForInput(currentDate)
+	if (new Date(fromDate) > currentDate) {
+		fromDateValue = helper.getDateStringForInput(today)
 	}
 
-	if (fromDate > currentDate) {
-		dateRangeForm.fromDate = helper.getDateStringForInput(currentDate)
-	}
-
-	await store.dispatch('downloadVisits', dateRangeForm)
-	chartData.value = setChartData()
+	await store.dispatch('downloadVisits', {
+		fromDate: fromDateValue,
+		toDate: dateRange.value.toDate,
+	})
 }
 
-const setChartData = () => {
-	return {
-		labels: visitResponse.value.labels,
-		datasets: visitResponse.value.datasets,
+async function handleToDateChange(toDate) {
+	const today = new Date()
+	const currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+	let toDateValue = toDate
+
+	if (new Date(toDate) > currentDate) {
+		toDateValue = helper.getDateStringForInput(currentDate)
 	}
+
+	await store.dispatch('downloadVisits', {
+		fromDate: dateRange.value.fromDate,
+		toDate: toDateValue,
+	})
 }
-const setVisitChartOptions = () => {
+
+function setChartOptions() {
 	const documentStyle = getComputedStyle(document.documentElement)
 	const textColor = documentStyle.getPropertyValue('--p-text-color')
 	const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color')
@@ -91,11 +84,7 @@ const setVisitChartOptions = () => {
 </script>
 
 <template>
-	<SpinningCircle v-if="pending"></SpinningCircle>
-	<div
-		v-else
-		class="chart-container"
-	>
+	<div class="chart-container">
 		<Chart
 			style="height: 55%; padding: 10px"
 			type="line"
@@ -107,18 +96,18 @@ const setVisitChartOptions = () => {
 				<label style="padding: 5px">с:</label>
 				<InputText
 					style="padding: 5px"
-					v-model="dateRangeForm.fromDate"
+					v-model="dateRange.fromDate"
 					type="date"
-					@change="handleDateChange"
+					@change="handleFromDateChange($event.target.value)"
 				></InputText>
 			</div>
 			<div>
 				<label style="padding: 5px">по:</label>
 				<InputText
 					style="padding: 5px"
-					v-model="dateRangeForm.toDate"
+					v-model="dateRange.toDate"
 					type="date"
-					@change="handleDateChange"
+					@change="handleToDateChange($event.target.value)"
 				></InputText>
 			</div>
 		</div>

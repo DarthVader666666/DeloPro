@@ -7,12 +7,10 @@ import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import Column from 'primevue/column'
 import Tag from 'primevue/tag'
-import SpinningCircle from '@/components/SpinningCircle.vue'
 import UserModal from '@/components/UserModal.vue'
 import AvatarImage from '@/components/Account/AvatarImage.vue'
 
 const store = useStore()
-const pending = computed(() => store.getters.getPending)
 const users = computed(() => store.getters.getUsers)
 
 const filters = ref({
@@ -42,11 +40,7 @@ function setShowUserModal() {
 </script>
 
 <template>
-	<SpinningCircle v-if="pending"></SpinningCircle>
-	<div
-		v-else
-		class="users-container"
-	>
+	<div class="users-container">
 		<DataTable
 			:value="users"
 			paginator

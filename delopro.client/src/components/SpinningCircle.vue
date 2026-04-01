@@ -40,7 +40,7 @@ const props = defineProps({
 	width: var(--APP-COMPONENT-WIDTH);
 	padding: 10px;
 	background-color: var(--CENTRAL-BACKGROUND);
-	width: 100%;
+	width: var(--CENTRAL-COLUMN-WIDTH);
 }
 
 /** Spinning Wheel */

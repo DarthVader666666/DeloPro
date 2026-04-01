@@ -1,6 +1,5 @@
 <script setup>
 import RegisterComponent from '@/components/RegisterComponent.vue'
-import SpinningCircle from '@/components/SpinningCircle.vue'
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -8,7 +7,6 @@ import Button from 'primevue/button'
 
 const store = useStore()
 const router = useRouter()
-const pending = computed(() => store.getters.getPending)
 const showNotification = ref(false)
 const isAuthenticated = computed(() => store.getters.isAuthenticated)
 
@@ -46,11 +44,7 @@ async function registerUser(registerRequest) {
 			Понятно
 		</Button>
 	</div>
-	<div v-else>
-		<SpinningCircle
-			v-show="pending"
-			text="Пожалуйста, подождите..."
-		></SpinningCircle>
+	<div>
 		<RegisterComponent
 			v-show="!pending"
 			@register-user="registerUser"

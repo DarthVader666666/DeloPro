@@ -166,7 +166,6 @@ router.beforeEach(async (to, from, next) => {
 })
 
 router.afterEach(async (to) => {
-	store.commit('setPending', true)
 	store.commit('setShowRightColumn', true)
 
 	if (to.name === 'chapter-themes') {
@@ -245,6 +244,18 @@ router.afterEach(async (to) => {
 
 	if (to.name === 'visits') {
 		store.commit('setTitle', 'Статистика посещений')
+
+		const today = new Date()
+		const dateRangeForm = {
+			fromDate: helper.getDateStringForInput(
+				new Date(today.getFullYear(), today.getMonth(), today.getDate() - 30),
+			),
+			toDate: helper.getDateStringForInput(
+				new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+			),
+		}
+
+		await store.dispatch('downloadVisits', dateRangeForm)
 	}
 
 	if (to.name === 'documents') {
@@ -261,7 +272,6 @@ router.afterEach(async (to) => {
 	}
 
 	doScrollUp.value = true
-	store.commit('setPending', false)
 })
 
 export default router

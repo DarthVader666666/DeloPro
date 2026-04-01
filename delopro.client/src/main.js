@@ -13,21 +13,37 @@ import { helper } from './helper/helper'
 
 axios.defaults.withCredentials = true
 
+axios.interceptors.request.use((config) => {
+	config.loadingTimer = setTimeout(() => {
+		store.commit('incrementPending')
+	}, 500)
+
+	return config
+})
+
+axios.interceptors.response.use(
+	(response) => {
+		clearTimeout(response.config.loadingTimer)
+		store.commit('decrementPending')
+		return response
+	},
+	(error) => {
+		clearTimeout(error.config.loadingTimer)
+		store.commit('decrementPending')
+		return Promise.reject(error)
+	},
+)
+
 async function bootstrap() {
 	sessionStorage.clear()
-	store.commit('setPending', true)
 
-	try {
-		if (!store.getters.getCurrentUser && (await helper.checkAuthentication())) {
-			await store.dispatch('downloadCurrentUser')
-		}
-
-		await store.dispatch('downloadChapters')
-		await store.dispatch('downloadDocumentNodes')
-		await store.dispatch('downloadImageNames')
-	} finally {
-		store.commit('setPending', false)
+	if (!store.getters.getCurrentUser && (await helper.checkAuthentication())) {
+		await store.dispatch('downloadCurrentUser')
 	}
+
+	await store.dispatch('downloadChapters')
+	await store.dispatch('downloadDocumentNodes')
+	await store.dispatch('downloadImageNames')
 }
 
 createApp(App)

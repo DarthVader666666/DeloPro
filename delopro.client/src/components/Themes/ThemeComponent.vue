@@ -4,7 +4,6 @@ import Button from 'primevue/button'
 import { RouterLink, useRouter } from 'vue-router'
 import { helper } from '@/helper/helper'
 import { computed, ref } from 'vue'
-import SpinningCircle from '../SpinningCircle.vue'
 import CommentsComponent from '../Comments/CommentsComponent.vue'
 import ThemeContent from './ThemeContent.vue'
 import CommentModal from '../Comments/CommentModal.vue'
@@ -17,7 +16,6 @@ const emit = defineEmits(['removeTheme', 'setShowThemeButtons'])
 const isAdmin = computed(() => store.getters.isAdmin)
 const isOwner = computed(() => store.getters.isOwner)
 const isAuthenticated = computed(() => store.getters.isAuthenticated)
-const pending = computed(() => store.getters.getPending)
 const commentsCount = computed(() => store.getters.getCommentsCount)
 
 const showCommentModal = ref(false)
@@ -126,13 +124,7 @@ function redirectToComments() {
 				@click="() => emit('removeTheme', props.theme)"
 			></Button>
 		</div>
-		<div
-			v-if="pending"
-			style="display: flex; flex-direction: column; align-items: center"
-		>
-			<SpinningCircle></SpinningCircle>
-		</div>
-		<div v-else-if="!props.useShortMode">
+		<div v-if="!props.useShortMode">
 			<CommentsComponent v-if="props.isCommentsMode"></CommentsComponent>
 			<ThemeContent
 				v-else

@@ -32,10 +32,15 @@ const store = createStore({
 		showChapterList: true,
 		showRightColumn: true,
 		pending: false,
+		pendingCount: 0,
 		users: [],
 		user: null,
 		currentUser: null,
 		visits: [],
+		visitsDateRange: {
+			fromDate: null,
+			toDate: null,
+		},
 		comments: [],
 		commentsCount: 0,
 		sessionStorageKeys: {
@@ -152,7 +157,7 @@ const store = createStore({
 			return state.environment
 		},
 		getPending(state) {
-			return state.pending
+			return state.pendingCount > 0
 		},
 		getShowRightColumn(state) {
 			return state.showRightColumn
@@ -170,6 +175,9 @@ const store = createStore({
 		// VISITS
 		getVisits(state) {
 			return state.visits
+		},
+		getVisitsDateRange(state) {
+			return state.visitsDateRange
 		},
 
 		// COMMENTS
@@ -275,8 +283,11 @@ const store = createStore({
 		setCaptcha(state, value) {
 			state.captcha = value
 		},
-		setPending(state, value) {
-			state.pending = value
+		incrementPending(state) {
+			state.pendingCount++
+		},
+		decrementPending(state) {
+			state.pendingCount = Math.max(0, state.pendingCount - 1)
 		},
 		setImageNames(state, value) {
 			state.imageNames = value
@@ -285,6 +296,10 @@ const store = createStore({
 		// VISITS
 		setVisits(state, value) {
 			state.visits = value
+		},
+		setVisitsDateRange(state, dateRange) {
+			state.visitsDateRange.fromDate = dateRange.fromDate
+			state.visitsDateRange.toDate = dateRange.toDate
 		},
 
 		// COMMENTS
@@ -298,7 +313,6 @@ const store = createStore({
 	actions: {
 		// CHAPTERS
 		async downloadChapter({ commit, state }, chapterId) {
-			commit('setPending', true)
 			await axios
 				.get(`${state.serverUrl}/chapters/getchapter/${chapterId}`)
 				.then(async (response) => {
@@ -313,15 +327,11 @@ const store = createStore({
 						toast.error(error.response.data.errorText)
 					}
 				})
-				.finally(() => {
-					commit('setPending', false)
-				})
 		},
 		async downloadChapters({ dispatch, commit, state }) {
 			const storedChapters = sessionStorage.getItem(state.sessionStorageKeys.chaptersKey)
 
 			if (!storedChapters) {
-				commit('setPending', true)
 				axios
 					.get(`${state.serverUrl}/chapters/getchapters`)
 					.then(async (response) => {
@@ -336,7 +346,6 @@ const store = createStore({
 							toast.error(error.response.data.errorText)
 						}
 					})
-					.finally(() => commit('setPending', false))
 			} else {
 				commit('setChapters', JSON.parse(storedChapters))
 				await dispatch('downloadChapterNodes')
@@ -346,7 +355,6 @@ const store = createStore({
 			const storedChapterNodes = sessionStorage.getItem(state.sessionStorageKeys.chapterNodesKey)
 
 			if (!storedChapterNodes) {
-				commit('setPending', true)
 				axios
 					.get(`${state.serverUrl}/chapters/getchapternodes`)
 					.then((response) => {
@@ -359,7 +367,6 @@ const store = createStore({
 							toast.error(error.response.data.errorText)
 						}
 					})
-					.finally(() => commit('setPending', false))
 			} else {
 				commit('setChapterNodes', JSON.parse(storedChapterNodes))
 			}
@@ -442,8 +449,6 @@ const store = createStore({
 				return
 			}
 
-			commit('setPending', true)
-
 			await axios
 				.get(url)
 				.then(async (response) => {
@@ -456,9 +461,6 @@ const store = createStore({
 					if (error.response) {
 						toast.error(error.response.data.errorText)
 					}
-				})
-				.finally(() => {
-					commit('setPending', false)
 				})
 		},
 		async deleteTheme({ dispatch, state }, theme) {
@@ -680,8 +682,7 @@ const store = createStore({
 		},
 
 		// FEEDBACK
-		async sendFeedback({ commit, state }, formData) {
-			commit('setPending', true)
+		async sendFeedback({ state }, formData) {
 			const result = await axios
 				.post(`${state.serverUrl}/feedback/sendfeedback`, formData, {
 					headers: {
@@ -700,9 +701,6 @@ const store = createStore({
 						toast.error(error.response.data.errorText)
 						return false
 					}
-				})
-				.finally(() => {
-					commit('setPending', false)
 				})
 
 			return result
@@ -868,8 +866,7 @@ const store = createStore({
 		},
 
 		// REGISTER
-		async registerUser({ commit, state }, registerRequest) {
-			commit('setPending', true)
+		async registerUser({ state }, registerRequest) {
 			return await axios
 				.post(`${state.serverUrl}/register/registeruser`, registerRequest, {
 					headers: {
@@ -887,9 +884,6 @@ const store = createStore({
 						toast.error(error.response.data.errorText)
 					}
 					return false
-				})
-				.finally(() => {
-					commit('setPending', false)
 				})
 		},
 		async doesUserExist({ dispatch, state }, nicknameEmail) {
@@ -1012,8 +1006,7 @@ const store = createStore({
 					}
 				})
 		},
-		async recoverPassword({ commit, state }, email) {
-			commit('setPending', true)
+		async recoverPassword({ state }, email) {
 			return await axios
 				.post(`${state.serverUrl}/account/recoverpassword`, null, {
 					headers: {
@@ -1034,9 +1027,6 @@ const store = createStore({
 						toast.error(error.response.data.errorText)
 					}
 					return false
-				})
-				.finally(() => {
-					commit('setPending', false)
 				})
 		},
 		async checkPassword({ state }, password) {
@@ -1185,7 +1175,6 @@ const store = createStore({
 
 		// VISITS
 		async downloadVisits({ commit, state }, dateRangeForm) {
-			commit('setPending', true)
 			await axios
 				.get(`${state.serverUrl}/visits/getvisits`, {
 					params: {
@@ -1196,6 +1185,10 @@ const store = createStore({
 				.then(async (response) => {
 					if (response.status === 200) {
 						commit('setVisits', response.data)
+						commit('setVisitsDateRange', {
+							fromDate: dateRangeForm.fromDate,
+							toDate: dateRangeForm.toDate,
+						})
 					}
 				})
 				.catch((error) => {
@@ -1203,7 +1196,6 @@ const store = createStore({
 						toast.error(error.response.data.errorText)
 					}
 				})
-				.finally(() => commit('setPending', false))
 		},
 
 		// COMMENTS

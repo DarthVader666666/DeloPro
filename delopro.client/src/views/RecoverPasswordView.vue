@@ -2,16 +2,14 @@
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { useStore } from 'vuex'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 
 import { useRouter } from 'vue-router'
-import SpinningCircle from '@/components/SpinningCircle.vue'
 import CaptchaComponent from '@/components/CaptchaComponent.vue'
 
 const store = useStore()
 const router = useRouter()
 
-const pending = computed(() => store.getters.getPending)
 const isCaptchaMatch = ref(false)
 const email = ref(null)
 
@@ -32,7 +30,7 @@ function setCaptchaMatch(isMatch) {
 
 <template>
 	<div class="recover-password-container">
-		<div v-if="!pending">
+		<div>
 			<h3 style="padding: 11px">Новый пароль будет отправлен на ваш email</h3>
 			<form
 				@submit.prevent="sendRecoverPasswordRequest"
@@ -66,10 +64,6 @@ function setCaptchaMatch(isMatch) {
 				</div>
 			</form>
 		</div>
-		<SpinningCircle
-			v-else
-			text="Пожалуйста, подождите..."
-		></SpinningCircle>
 	</div>
 </template>
 

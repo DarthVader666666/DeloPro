@@ -4,7 +4,6 @@ import { useStore } from 'vuex'
 import { computed, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { helper } from '@/helper/helper'
-import SpinningCircle from '@/components/SpinningCircle.vue'
 import CaptchaComponent from '@/components/CaptchaComponent.vue'
 import PersonalDataAgreement from '@/components/PersonalDataAgreement.vue'
 import InputComponent from '@/components/InputComponent.vue'
@@ -14,7 +13,6 @@ const router = useRouter()
 const isAuthenticated = computed(() => store.getters.isAuthenticated)
 
 const isCaptchaMatch = ref(false)
-const pending = computed(() => store.getters.getPending)
 const invalid = ref(false)
 const isAgreementChecked = ref(false)
 const feedbackForm = reactive({
@@ -73,7 +71,7 @@ function setCaptchaMatch(isMatch) {
 </script>
 
 <template>
-	<div v-if="!pending">
+	<div>
 		<form
 			class="feedback-container"
 			@submit.prevent="sendFeedback"
@@ -140,10 +138,6 @@ function setCaptchaMatch(isMatch) {
 			</div>
 		</form>
 	</div>
-	<SpinningCircle
-		v-else
-		text="Сообщение отправляется..."
-	></SpinningCircle>
 </template>
 <style scoped>
 .feedback-container {

@@ -1,11 +1,5 @@
 <script setup>
-import { useStore } from 'vuex'
-import { computed } from 'vue'
-import SpinningCircle from '@/components/SpinningCircle.vue'
 import ChapterCarousel from '@/components/Chapters/ChapterCarousel.vue'
-
-const store = useStore()
-const pending = computed(() => store.getters.getPending)
 </script>
 
 <template>
@@ -39,12 +33,7 @@ const pending = computed(() => store.getters.getPending)
 				</div>
 			</div>
 		</div>
-
-		<SpinningCircle v-if="pending" />
-		<div
-			class="chapter-links"
-			v-else
-		>
+		<div class="chapter-links">
 			<ChapterCarousel></ChapterCarousel>
 		</div>
 	</div>

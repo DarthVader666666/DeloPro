@@ -4,8 +4,10 @@ import RightColumn from './RightColumn.vue'
 import { RouterView } from 'vue-router'
 import { useStore } from 'vuex'
 import { computed } from 'vue'
+import SpinningCircle from './SpinningCircle.vue'
 
 const store = useStore()
+const pending = computed(() => store.getters.getPending)
 const title = computed(() => store.getters.getTitle)
 const showRightColumn = computed(() => store.getters.getShowRightColumn)
 </script>
@@ -20,7 +22,11 @@ const showRightColumn = computed(() => store.getters.getShowRightColumn)
 	</div>
 	<div class="main-container">
 		<LeftColumn />
-		<RouterView id="central-container" />
+		<SpinningCircle v-if="pending" />
+		<RouterView
+			v-else
+			id="central-container"
+		/>
 		<RightColumn v-if="showRightColumn" />
 	</div>
 </template>
