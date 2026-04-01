@@ -98,6 +98,12 @@ const props = defineProps({
 	stroke-linecap: round;
 }
 
+@media (max-width: 1100px) {
+	.spinning-circle {
+		width: 100%;
+	}
+}
+
 @-webkit-keyframes rotate {
 	100% {
 		-webkit-transform: rotate(360deg);
