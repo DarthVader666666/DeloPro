@@ -16,7 +16,7 @@ axios.defaults.withCredentials = true
 axios.interceptors.request.use((config) => {
 	config.loadingTimer = setTimeout(() => {
 		store.commit('incrementPending')
-	}, 500)
+	}, 100)
 
 	return config
 })

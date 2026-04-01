@@ -107,7 +107,7 @@ namespace Delopro.Data.Repositories
                             DateCreated = t.DateCreated,
                             DateDeleted = t.DateDeleted
                         }).ToList()
-                }).AsEnumerable());
+                }).OrderBy(x => x.ChapterOrder).AsEnumerable());
         }
 
         public async Task<Chapter?> UpdateAsync(Chapter? item)
