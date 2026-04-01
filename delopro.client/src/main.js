@@ -14,21 +14,16 @@ import { helper } from './helper/helper'
 axios.defaults.withCredentials = true
 
 axios.interceptors.request.use((config) => {
-	config.loadingTimer = setTimeout(() => {
-		store.commit('incrementPending')
-	}, 100)
-
+	store.commit('incrementPending')
 	return config
 })
 
 axios.interceptors.response.use(
 	(response) => {
-		clearTimeout(response.config.loadingTimer)
 		store.commit('decrementPending')
 		return response
 	},
 	(error) => {
-		clearTimeout(error.config.loadingTimer)
 		store.commit('decrementPending')
 		return Promise.reject(error)
 	},
