@@ -6,7 +6,7 @@ import { useRouter } from 'vue-router'
 import { helper } from '@/helper/helper'
 import SpinningCircle from '@/components/SpinningCircle.vue'
 import CaptchaComponent from '@/components/CaptchaComponent.vue'
-import ConfirmAgreement from '@/components/ConfirmAgreement.vue'
+import PersonalDataAgreement from '@/components/PersonalDataAgreement.vue'
 import InputComponent from '@/components/InputComponent.vue'
 
 const store = useStore()
@@ -115,10 +115,10 @@ function setCaptchaMatch(isMatch) {
 				style="padding: 10px 0 10px 0"
 				@captcha-match="setCaptchaMatch"
 			></CaptchaComponent>
-			<ConfirmAgreement
+			<PersonalDataAgreement
 				@agreement-checked="isAgreementChecked = !isAgreementChecked"
 				:isAgreementChecked="isAgreementChecked"
-			></ConfirmAgreement>
+			></PersonalDataAgreement>
 			<div style="padding-top: 10px; display: flex; gap: 10px">
 				<Button
 					severity="secondary"

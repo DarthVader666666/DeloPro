@@ -5,7 +5,7 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import CaptchaComponent from '@/components/CaptchaComponent.vue'
-import ConfirmAgreement from './ConfirmAgreement.vue'
+import PersonalDataAgreement from './PersonalDataAgreement.vue'
 import InputComponent from './InputComponent.vue'
 
 const emit = defineEmits(['register-user'])
@@ -151,10 +151,10 @@ function setCaptchaMatch(isMatch) {
 				@captcha-match="setCaptchaMatch"
 				style="padding: 10px 0 10px 0"
 			></CaptchaComponent>
-			<ConfirmAgreement
+			<PersonalDataAgreement
 				@agreement-checked="isAgreementChecked = !isAgreementChecked"
 				:isAgreementChecked="isAgreementChecked"
-			></ConfirmAgreement>
+			></PersonalDataAgreement>
 
 			<hr />
 			<div class="buttons">
