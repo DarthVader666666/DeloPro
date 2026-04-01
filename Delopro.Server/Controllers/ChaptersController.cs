@@ -105,7 +105,7 @@ namespace Delopro.Server.Controllers
                     return StatusCode(StatusCodes.Status500InternalServerError, new { errorText = "Ошибка сервера" });
                 }
 
-                chapterResponse = _mapper.Map<IEnumerable<ChapterResponse>>(chapters);
+                chapterResponse = _mapper.Map<IEnumerable<ChapterResponse>>(chapters).OrderBy(x => x.ChapterOrder);
                 _memoryCache.Set(CacheKeys.ChaptersKey, chapterResponse, TimeSpan.FromMinutes(5));
             }
 

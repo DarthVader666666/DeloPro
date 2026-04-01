@@ -107,6 +107,7 @@ namespace Delopro.Data
             modelBuilder.Entity<Chapter>(chapter =>
             {
                 chapter.HasKey(x => x.ChapterId);
+                chapter.HasIndex(x => x.ChapterOrder).HasDatabaseName("IX_Chapter_Order").IsUnique();
                 chapter.HasMany(x => x.Themes).WithOne(x => x.Chapter).HasForeignKey(x => x.ChapterId).OnDelete(DeleteBehavior.Cascade);
                 chapter.HasOne(x => x.User).WithMany(x => x.Chapters).HasForeignKey(x => x.UserId);
                 chapter.Property(x => x.UserId).IsRequired();

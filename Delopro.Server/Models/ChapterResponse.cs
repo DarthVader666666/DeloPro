@@ -3,6 +3,7 @@
     public class ChapterResponse
     {
         public int ChapterId { get; set; }
+        public int? ChapterOrder {  get; set; }
         public int UserId { get; set; }
         public string? ChapterTitle { get; set; }
         public string? ImagePath { get; set; }

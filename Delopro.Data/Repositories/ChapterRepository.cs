@@ -64,6 +64,7 @@ namespace Delopro.Data.Repositories
                 {
                     ChapterId = c.ChapterId,
                     UserId = c.UserId,
+                    ChapterOrder = c.ChapterOrder,
                     ChapterTitle = c.ChapterTitle,
                     DateCreated = c.DateCreated,
                     DateDeleted = c.DateDeleted,
@@ -90,6 +91,7 @@ namespace Delopro.Data.Repositories
                 {
                     ChapterId = c.ChapterId,
                     UserId = c.UserId,
+                    ChapterOrder = c.ChapterOrder,
                     ChapterTitle = c.ChapterTitle,
                     DateCreated = c.DateCreated,
                     DateDeleted = c.DateDeleted,
