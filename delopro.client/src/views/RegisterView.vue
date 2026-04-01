@@ -44,10 +44,7 @@ async function registerUser(registerRequest) {
 			Понятно
 		</Button>
 	</div>
-	<div>
-		<RegisterComponent
-			v-show="!pending"
-			@register-user="registerUser"
-		></RegisterComponent>
+	<div v-else>
+		<RegisterComponent @register-user="registerUser"></RegisterComponent>
 	</div>
 </template>
