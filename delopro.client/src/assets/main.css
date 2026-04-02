@@ -61,44 +61,6 @@ body {
 	min-height: var(--MAIN-COMPONENT-MIN-HEIGHT);
 }
 
-.left-container {
-	width: var(--LEFT-COLUMN-WIDTH);
-	background-color: var(--COLUMNS-BACKGROUND);
-	word-break: break-word;
-	position: sticky;
-	height: 100vh;
-	top: 0;
-}
-
-.form-container {
-	padding: 20px;
-	font-size: small;
-	background-color: var(--CENTRAL-BACKGROUND);
-}
-
-.email-sent-notification {
-	display: flex;
-	flex-direction: column;
-	gap: 15px;
-	align-items: center;
-	width: var(--APP-COMPONENT-WIDTH);
-	padding-bottom: 10px;
-	background-color: var(--CENTRAL-BACKGROUND);
-}
-
-.email-sent-notification a {
-	text-decoration: none;
-	color: black;
-}
-
-.email-sent-notification button {
-	width: 80px;
-}
-
-.email-sent-notification img {
-	width: fit-content;
-}
-
 /* UserAccount */
 .account-info {
 	position: relative;
@@ -114,17 +76,6 @@ body {
 	display: flex;
 	gap: 25px;
 	margin-bottom: 20px;
-}
-
-.avatar {
-	width: 150px;
-	height: 150px;
-	border-radius: 50%;
-	font-size: 5rem;
-	color: rgb(71, 85, 105, 1);
-	background-color: rgb(241, 245, 249, 1);
-	align-content: center;
-	text-align: center;
 }
 
 .account-short-info {
@@ -169,28 +120,8 @@ body {
 }
 
 @media (max-width: 1100px) {
-	.left-container {
-		display: none;
-	}
-
-	.register-form {
-		width: 100%;
-	}
-
-	.form-container {
-		padding: 20px;
-	}
-
 	.spinning-circle {
 		width: 100%;
-	}
-
-	.email-sent-notification {
-		width: 100%;
-	}
-
-	.email-sent-notification img {
-		width: 320px;
 	}
 
 	.create-form-container {

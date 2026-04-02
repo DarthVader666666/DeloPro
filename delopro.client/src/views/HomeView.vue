@@ -3,7 +3,7 @@ import ChapterCarousel from '@/components/Chapters/ChapterCarousel.vue'
 </script>
 
 <template>
-	<div class="home-container">
+	<div>
 		<div class="chapters-header">
 			<h2>Документационное обеспечение управления в Республике Беларусь</h2>
 		</div>

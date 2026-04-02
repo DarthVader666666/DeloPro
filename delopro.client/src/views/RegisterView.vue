@@ -48,3 +48,37 @@ async function registerUser(registerRequest) {
 		<RegisterComponent @register-user="registerUser"></RegisterComponent>
 	</div>
 </template>
+<style scoped>
+.email-sent-notification {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	align-items: center;
+	width: var(--APP-COMPONENT-WIDTH);
+	padding-bottom: 10px;
+	background-color: var(--CENTRAL-BACKGROUND);
+}
+
+.email-sent-notification a {
+	text-decoration: none;
+	color: black;
+}
+
+.email-sent-notification button {
+	width: 80px;
+}
+
+.email-sent-notification img {
+	width: fit-content;
+}
+
+@media (max-width: 110px) {
+	.email-sent-notification {
+		width: 100%;
+	}
+
+	.email-sent-notification img {
+		width: 320px;
+	}
+}
+</style>

@@ -72,6 +72,15 @@ function toggleNode(node) {
 </template>
 
 <style scoped>
+.left-container {
+	width: var(--LEFT-COLUMN-WIDTH);
+	background-color: var(--COLUMNS-BACKGROUND);
+	word-break: break-word;
+	position: sticky;
+	height: 100vh;
+	top: 0;
+}
+
 .items {
 	text-align: start;
 	padding: 0.5rem;
@@ -120,8 +129,8 @@ function toggleNode(node) {
 	font-size: small;
 }
 
-@media (max-width: 1400px) {
-	.items-header button span {
+@media (max-width: 1100px) {
+	.left-container {
 		display: none;
 	}
 }
