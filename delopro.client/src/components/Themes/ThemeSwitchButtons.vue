@@ -1,6 +1,6 @@
 <script setup>
 import Button from 'primevue/button'
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
@@ -18,6 +18,29 @@ const themeIds = computed(() => store.getters.getThemes.map((x) => x.themeId))
 const themeIndex = computed(() => themeIds.value.indexOf(props.theme?.themeId ?? 0))
 const themeNumber = computed(() => themeIndex.value + 1)
 
+const width = ref(window.innerWidth)
+
+function updateWidth() {
+	width.value = window.innerWidth
+}
+
+onMounted(() => {
+	if (!isAdminOrOwner.value) {
+		window.addEventListener('resize', updateWidth)
+	}
+})
+onUnmounted(() => {
+	if (!isAdminOrOwner.value) {
+		window.removeEventListener('resize', updateWidth)
+	}
+})
+
+const bottomValue = computed(() => {
+	if (isAdminOrOwner.value) return '5%'
+	if (width.value >= 1100) return '5%'
+	return '12%'
+})
+
 function previousTheme() {
 	if (themeIndex.value != 0 && props.theme) {
 		router.push(`/chapters/${props.theme.chapterId}/themes/${themeIds.value[themeIndex.value - 1]}`)
@@ -34,7 +57,7 @@ function nextTheme() {
 <template>
 	<div
 		class="theme-buttons"
-		:style="{ bottom: isAdminOrOwner ? '5%' : '12%' }"
+		:style="{ bottom: bottomValue }"
 	>
 		<Button
 			@click="previousTheme"
@@ -57,10 +80,12 @@ function nextTheme() {
 <style scoped>
 .theme-buttons {
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
 	align-items: center;
+	left: 50%;
+	transform: translateX(-50%);
 	gap: 10%;
-	width: inherit;
+	width: 30%;
 	position: fixed;
 	z-index: 1;
 }
