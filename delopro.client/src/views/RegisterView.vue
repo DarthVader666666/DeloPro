@@ -72,7 +72,7 @@ async function registerUser(registerRequest) {
 	width: fit-content;
 }
 
-@media (max-width: 110px) {
+@media (max-width: 1100px) {
 	.email-sent-notification {
 		width: 100%;
 	}

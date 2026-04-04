@@ -5,9 +5,11 @@ import SearchBar from './components/SearchBar.vue'
 import MainComponent from './components/MainComponent.vue'
 import { useStore } from 'vuex'
 import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 
 const store = useStore()
 const showSearchBar = computed(() => store.state.showSearchBar)
+const route = useRoute()
 </script>
 
 <template>
@@ -15,7 +17,7 @@ const showSearchBar = computed(() => store.state.showSearchBar)
 		<HeaderComponent />
 		<SearchBar v-if="showSearchBar" />
 		<MainComponent />
-		<FooterComponent />
+		<FooterComponent v-show="route.name != 'feedback'" />
 	</div>
 </template>
 

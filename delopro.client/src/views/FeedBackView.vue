@@ -145,7 +145,7 @@ function setCaptchaMatch(isMatch) {
 	padding: 10px;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 650px) {
 	.feedback-container {
 		width: 100%;
 	}

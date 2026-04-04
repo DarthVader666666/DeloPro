@@ -221,13 +221,14 @@ async function handleLogout() {
 
 .contacts {
 	display: flex;
-	gap: 10px;
+	gap: 5px;
 	position: absolute;
 	background-color: transparent;
 	color: var(--MENU-TEXT-COLOR);
 	left: 50%;
-	padding: 18px 0 0 0;
 	transform: translateX(-50%);
+
+	padding: 18px 0 0 0;
 	align-items: center;
 }
 
@@ -277,16 +278,17 @@ img {
 
 @media (max-width: 500px) {
 	.contacts {
-		flex-direction: column;
+		top: 22%;
+		left: 55%;
+		transform: translateX(-45%);
 	}
 
 	.contacts span {
-		font-size: small;
-		padding-top: 19%;
+		font-size: 0.9rem;
 	}
 
 	.contacts img {
-		display: none;
+		width: 20px;
 	}
 }
 </style>

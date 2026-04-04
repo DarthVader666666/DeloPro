@@ -13,6 +13,7 @@ const props = defineProps({
 	},
 })
 
+const isAdminOrOwner = computed(() => store.getters.isAdmin || store.getters.isOwner)
 const themeIds = computed(() => store.getters.getThemes.map((x) => x.themeId))
 const themeIndex = computed(() => themeIds.value.indexOf(props.theme?.themeId ?? 0))
 const themeNumber = computed(() => themeIndex.value + 1)
@@ -31,7 +32,10 @@ function nextTheme() {
 </script>
 
 <template>
-	<div class="theme-buttons">
+	<div
+		class="theme-buttons"
+		:style="{ bottom: isAdminOrOwner ? '5%' : '12%' }"
+	>
 		<Button
 			@click="previousTheme"
 			icon="pi pi-arrow-left"
@@ -59,7 +63,6 @@ function nextTheme() {
 	width: inherit;
 	position: fixed;
 	z-index: 1;
-	bottom: 5%;
 }
 
 .theme-buttons button {
@@ -78,6 +81,12 @@ function nextTheme() {
 	border-radius: 20px;
 	background: rgba(0, 50, 90, 0.5);
 	color: white;
+}
+
+@media (min-width: 1100px) {
+	.theme-buttons {
+		bottom: 12%;
+	}
 }
 
 @media (max-width: 1100px) {
