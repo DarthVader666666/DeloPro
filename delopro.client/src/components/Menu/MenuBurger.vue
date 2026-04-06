@@ -28,8 +28,6 @@ const emit = defineEmits(['setShowSlideMenu'])
 
 <style scoped>
 .burger {
-	display: none;
-	align-content: center;
 	color: var(--MENU-TEXT-COLOR);
 }
 

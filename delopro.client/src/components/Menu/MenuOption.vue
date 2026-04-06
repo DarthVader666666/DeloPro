@@ -63,7 +63,7 @@ function clicked() {
 			v-if="props.icon"
 			:class="props.icon"
 		></i>
-		<span style="position: relative">
+		<span style="position: relative; white-space: nowrap">
 			{{ props.label }}
 			<span
 				v-if="props.routeName === 'messages' && unreadMessagesCount"

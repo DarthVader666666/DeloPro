@@ -44,6 +44,10 @@ const props = defineProps({
 	flex-direction: row;
 	align-items: end;
 	gap: 2px;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	bottom: 0;
 }
 
 @media (max-width: 1000px) {

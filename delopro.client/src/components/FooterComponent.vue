@@ -17,7 +17,7 @@ const isAdminOrOwner = computed(() => store.getters.isAdmin || store.getters.isO
 	>
 		<div class="footer-content">
 			<div style="display: flex; flex-direction: column; gap: 5px">
-				<span style="font-size: 1.1rem; opacity: 0.9">Пишите:</span>
+				<span style="font-size: 1.1rem; opacity: 0.9">Консультация:</span>
 				<div style="display: flex; gap: 5px; align-items: center">
 					<img
 						style="width: 20px"
@@ -51,7 +51,7 @@ const isAdminOrOwner = computed(() => store.getters.isAdmin || store.getters.isO
 	margin: 10px 15px 10px 15px;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1000px) {
 	.footer-container {
 		position: sticky;
 		bottom: 0;

@@ -2,7 +2,7 @@
 const props = defineProps({
 	text: {
 		typeof: String,
-		default: 'Загрузка...',
+		default: '',
 	},
 })
 </script>
@@ -46,8 +46,6 @@ const props = defineProps({
 /** Spinning Wheel */
 #wrapper {
 	position: relative;
-	/*background:#333;*/
-	height: 100%;
 }
 
 .profile-main-loader {

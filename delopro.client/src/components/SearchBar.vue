@@ -9,6 +9,8 @@ const store = useStore()
 const router = useRouter()
 const searchLine = ref(null)
 
+const emit = defineEmits(['hideModal'])
+
 async function handleSearch() {
 	if (!searchLine.value || searchLine.value.trim().length === 0) {
 		searchLine.value = null
@@ -17,14 +19,13 @@ async function handleSearch() {
 
 	await store.dispatch('downloadSearchResult', searchLine.value)
 	searchLine.value = null
+	emit('hideModal')
+
 	router.push('/search-result')
 }
 </script>
 <template>
-	<div
-		class="search-bar"
-		id="search-bar"
-	>
+	<div class="search-bar-container">
 		<span style="padding-right: 10px; font-size: medium">Поиск</span>
 		<InputText
 			v-model="searchLine"
@@ -44,7 +45,7 @@ async function handleSearch() {
 </template>
 
 <style scoped>
-.search-bar {
+.search-bar-container {
 	position: relative;
 	height: var(--SEARCHBAR-HEIGHT);
 	flex-direction: row;
@@ -56,36 +57,36 @@ async function handleSearch() {
 	padding-right: 60px;
 }
 
-.search-bar label {
+.search-bar-container label {
 	margin-right: 10px;
 }
 
-.search-bar button {
+.search-bar-container button {
 	position: absolute;
 	height: 36px;
 	bottom: 12px;
 }
 
-.search-bar button i {
+.search-bar-container button i {
 	margin-right: 5px;
 }
 
-.search-bar input {
+.search-bar-container input {
 	width: 40%;
 	margin-right: 5px;
 	box-shadow: var(--INPUT-BOX-SHADOW);
 }
 
-@media (max-width: 800px) {
-	.search-bar input {
+@media (max-width: 1000px) {
+	.search-bar-container input {
 		width: 70%;
 	}
 
-	.search-bar button span {
+	.search-bar-container button span {
 		display: none;
 	}
 
-	.search-bar button {
+	.search-bar-container button {
 		width: 40px;
 	}
 }

@@ -6,9 +6,12 @@ import MenuLoginForm from './Menu/MenuLoginForm.vue'
 import MenuAccount from './Menu/MenuAccount.vue'
 import MenuAccountSettings from './Menu/MenuAccountSettings.vue'
 import MenuSlider from './Menu/MenuSlider.vue'
+import Button from 'primevue/button'
+import Dialog from 'primevue/dialog'
 import { useStore } from 'vuex'
 import { computed, onMounted, ref, watch } from 'vue'
 import { helper } from '@/helper/helper'
+import SearchBar from './SearchBar.vue'
 
 const store = useStore()
 
@@ -23,6 +26,8 @@ const showAccountSettings = ref(false)
 const changeBackground = computed(
 	() => showLogIn.value || showAccountSettings.value || showSlideMenu.value,
 )
+
+const showSearchBar = ref(false)
 
 watch(changeBackground, (newValue) => {
 	if (newValue) {
@@ -163,6 +168,10 @@ async function handleLogout() {
 
 	await store.dispatch('logOut')
 }
+
+function showSearchBarModal(value) {
+	showSearchBar.value = !value
+}
 </script>
 
 <template>
@@ -174,6 +183,7 @@ async function handleLogout() {
 			v-if="!(isAdmin || isOwner)"
 			class="contacts"
 		>
+			<span>Консультация</span>
 			<img :src="helper.getImagePath('icon') + 'email.svg'" />
 			<span>airlex34@gmail.com</span>
 		</div>
@@ -186,10 +196,18 @@ async function handleLogout() {
 			v-else
 			:options="options"
 		></MenuComponent>
-		<MenuBurger
-			:nickname="currentUser?.nickname"
-			@setShowSlideMenu="setShowSlideMenu"
-		></MenuBurger>
+		<div class="shrinked-menu">
+			<Button
+				icon="pi pi-search"
+				text
+				rounded
+				@click="showSearchBarModal(showSearchBar)"
+			></Button>
+			<MenuBurger
+				:nickname="currentUser?.nickname"
+				@setShowSlideMenu="setShowSlideMenu"
+			></MenuBurger>
+		</div>
 		<MenuLoginForm
 			v-if="showLogIn"
 			@setShowLogIn="setShowLogIn"
@@ -207,6 +225,19 @@ async function handleLogout() {
 			@setShowAccountSettings="setShowAccountSettings"
 		></MenuAccountSettings>
 	</div>
+	<Dialog
+		position="top"
+		v-model:visible="showSearchBar"
+		modal
+		@hide="showSearchBarModal(!showSearchBar)"
+		:draggable="false"
+		:style="{ minWidth: '90%' }"
+	>
+		<template #header>
+			<div></div>
+		</template>
+		<SearchBar @hideModal="showSearchBarModal(showSearchBar)"></SearchBar>
+	</Dialog>
 </template>
 <style scoped>
 .header-container {
@@ -219,6 +250,28 @@ async function handleLogout() {
 	height: var(--HEADER-HEIGHT);
 }
 
+:global(.p-dialog .p-dialog-header) {
+	padding: 10px 10px 0 10px;
+}
+
+:global(.p-dialog .p-dialog-content) {
+	padding: 0 25px 10px 25px;
+}
+
+.shrinked-menu {
+	display: none;
+}
+
+.shrinked-menu button {
+	color: var(--MENU-TEXT-COLOR);
+	width: 40px;
+	height: auto;
+}
+
+.shrinked-menu button :deep(span) {
+	font-size: 1.5rem;
+}
+
 .contacts {
 	display: flex;
 	gap: 5px;
@@ -227,7 +280,6 @@ async function handleLogout() {
 	color: var(--MENU-TEXT-COLOR);
 	left: 50%;
 	transform: translateX(-50%);
-
 	padding: 18px 0 0 0;
 	align-items: center;
 }
@@ -235,19 +287,15 @@ async function handleLogout() {
 .contacts span,
 img {
 	font-size: 1.1rem;
-	opacity: 0.8;
+	opacity: 0.9;
 }
 
 .contacts img {
 	background-color: var(--MENU-TEXT-COLOR);
 	border-radius: 50px;
-	width: 30px;
+	width: 24px;
 	height: auto;
 	padding: 2px;
-
-	&:hover {
-		opacity: 0.8;
-	}
 }
 
 .logo {
@@ -274,21 +322,15 @@ img {
 	.account {
 		display: none;
 	}
-}
 
-@media (max-width: 500px) {
 	.contacts {
-		top: 22%;
-		left: 55%;
-		transform: translateX(-45%);
+		display: none;
 	}
 
-	.contacts span {
-		font-size: 0.9rem;
-	}
-
-	.contacts img {
-		width: 20px;
+	.shrinked-menu {
+		display: flex;
+		gap: 5px;
+		align-items: center;
 	}
 }
 </style>

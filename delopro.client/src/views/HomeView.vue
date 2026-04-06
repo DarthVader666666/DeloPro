@@ -69,7 +69,7 @@ import ChapterCarousel from '@/components/Chapters/ChapterCarousel.vue'
 	align-items: center;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1000px) {
 	.chapters-header h2 {
 		font-size: medium;
 	}

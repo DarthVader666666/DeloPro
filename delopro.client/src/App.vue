@@ -15,15 +15,41 @@ const route = useRoute()
 <template>
 	<div class="app-container">
 		<HeaderComponent />
-		<SearchBar v-if="showSearchBar" />
+		<div class="search-bar">
+			<SearchBar
+				v-if="showSearchBar"
+				@hide-modal="() => {}"
+			/>
+		</div>
 		<MainComponent />
 		<FooterComponent v-show="route.name != 'feedback'" />
 	</div>
 </template>
 
-<style scoped>
+<style>
 .app-container {
 	padding: var(--APP-PADDING);
+}
+
+.search-bar {
+	animation-name: slide-down;
+	animation-duration: 0.2s;
+	transform: translateY(0%);
+}
+
+@keyframes slide-down {
+	0% {
+		transform: translateY(-30%);
+	}
+	100% {
+		transform: translateY(0%);
+	}
+}
+
+@media (max-width: 1000px) {
+	.search-bar {
+		display: none;
+	}
 }
 
 @media (max-width: 1600px) {
