@@ -201,6 +201,7 @@ function showSearchBarModal(value) {
 				icon="pi pi-search"
 				text
 				rounded
+				style="width: 43px"
 				@click="showSearchBarModal(showSearchBar)"
 			></Button>
 			<MenuBurger
@@ -226,12 +227,11 @@ function showSearchBarModal(value) {
 		></MenuAccountSettings>
 	</div>
 	<Dialog
-		position="top"
 		v-model:visible="showSearchBar"
+		style="background: transparent; border: none; box-shadow: none; width: 100%"
 		modal
 		@hide="showSearchBarModal(!showSearchBar)"
 		:draggable="false"
-		:style="{ minWidth: '90%' }"
 	>
 		<template #header>
 			<div></div>
@@ -247,15 +247,11 @@ function showSearchBarModal(value) {
 	position: relative;
 	background: var(--MENU-BACKGROUND);
 	box-shadow: var(--COMPONENT-BOX-SHADOW);
-	height: var(--HEADER-HEIGHT);
+	height: 80px;
 }
 
-:global(.p-dialog .p-dialog-header) {
-	padding: 10px 10px 0 10px;
-}
-
-:global(.p-dialog .p-dialog-content) {
-	padding: 0 25px 10px 25px;
+:global(.p-dialog-close-button) {
+	background: rgba(255, 255, 255, 0.8) !important;
 }
 
 .shrinked-menu {
@@ -280,7 +276,7 @@ function showSearchBarModal(value) {
 	color: var(--MENU-TEXT-COLOR);
 	left: 50%;
 	transform: translateX(-50%);
-	padding: 18px 0 0 0;
+	padding: 12px 0 0 0;
 	align-items: center;
 }
 
@@ -299,7 +295,7 @@ img {
 }
 
 .logo {
-	padding-top: 15px;
+	padding-top: 10px;
 	padding-left: 15px;
 }
 
@@ -331,6 +327,16 @@ img {
 		display: flex;
 		gap: 5px;
 		align-items: center;
+	}
+}
+
+@media (max-width: 500px) {
+	.header-container {
+		height: 70px;
+	}
+
+	.logo {
+		padding-top: 5px;
 	}
 }
 </style>

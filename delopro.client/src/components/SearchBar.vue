@@ -47,7 +47,7 @@ async function handleSearch() {
 <style scoped>
 .search-bar-container {
 	position: relative;
-	height: var(--SEARCHBAR-HEIGHT);
+	height: 60px;
 	flex-direction: row;
 	text-align: center;
 	align-content: center;
@@ -88,6 +88,31 @@ async function handleSearch() {
 
 	.search-bar-container button {
 		width: 40px;
+	}
+}
+
+@media (max-width: 500px) {
+	.search-bar-container {
+		padding-right: 25px;
+		border-radius: 10px;
+	}
+
+	.search-bar-container input {
+		width: 80%;
+	}
+
+	.search-bar-container span,
+	button span {
+		display: none;
+	}
+
+	.search-bar-container button {
+		width: 40px;
+		border-radius: 50px;
+	}
+
+	.search-bar-container button i {
+		margin: 0;
 	}
 }
 </style>

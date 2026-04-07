@@ -177,12 +177,6 @@ router.afterEach(async (to) => {
 
 		store.commit('renderSearchBar')
 		store.commit('setShowChapterList', false)
-
-		doScrollUp.value = false
-
-		if (!to.query.searchFragment) {
-			window.scrollTo(0, 170)
-		}
 	} else {
 		store.commit('setShowChapterList', true)
 		store.commit('setTheme', null)
