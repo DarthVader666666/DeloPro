@@ -228,7 +228,7 @@ function showSearchBarModal(value) {
 	</div>
 	<Dialog
 		v-model:visible="showSearchBar"
-		style="background: transparent; border: none; box-shadow: none; width: 100%"
+		style="background: transparent; border: none; box-shadow: none; width: 80%"
 		modal
 		@hide="showSearchBarModal(!showSearchBar)"
 		:draggable="false"
@@ -236,7 +236,10 @@ function showSearchBarModal(value) {
 		<template #header>
 			<div></div>
 		</template>
-		<SearchBar @hideModal="showSearchBarModal(showSearchBar)"></SearchBar>
+		<SearchBar
+			style="border-radius: 10px"
+			@hideModal="showSearchBarModal(showSearchBar)"
+		></SearchBar>
 	</Dialog>
 </template>
 <style scoped>
@@ -310,7 +313,7 @@ img {
 }
 
 .account {
-	padding-top: 10px;
+	padding-top: 5px;
 	padding-right: 20px;
 }
 
@@ -337,6 +340,15 @@ img {
 
 	.logo {
 		padding-top: 5px;
+	}
+
+	:global(.p-dialog-mask) {
+		align-items: flex-start !important;
+		padding-top: 50% !important;
+	}
+
+	:global(.p-dialog) {
+		width: 100% !important;
 	}
 }
 </style>

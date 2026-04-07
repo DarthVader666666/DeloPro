@@ -94,7 +94,7 @@ body {
 
 .slide-container {
 	position: fixed;
-	top: var(--HEADER-HEIGHT);
+	top: 10%;
 	right: 0;
 	z-index: 2;
 	background-color: var(--MENU-BACKGROUND);

@@ -93,8 +93,7 @@ async function handleSearch() {
 
 @media (max-width: 500px) {
 	.search-bar-container {
-		padding-right: 25px;
-		border-radius: 10px;
+		padding-right: 30px;
 	}
 
 	.search-bar-container input {

@@ -170,7 +170,6 @@ function chunkArray(arr, size = 3) {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin-right: 6%;
 }
 
 .chapter {
@@ -254,7 +253,7 @@ function chunkArray(arr, size = 3) {
 
 @media (max-width: 500px) {
 	.chapter {
-		width: 260px;
+		width: 240px;
 	}
 
 	.chapter-image img {
