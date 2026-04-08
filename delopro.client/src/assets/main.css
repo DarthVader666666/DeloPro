@@ -26,7 +26,10 @@
 	--INPUT-BOX-SHADOW: 0px 2px 3px -2px black;
 	--PNG-IMAGE-SHADOW: 5px 5px 5px #222;
 	--MENU-BOX-SHADOW: 0px 0px 10px 0px black;
-	--LOGO-SHADOW: 3px 3px rgba(22, 22, 22, 0.651);
+	--LOGO-SHADOW: 3px 3px rgba(22, 22, 22, 0.6);
+	--TEXT-SHADOW:
+		1px 1px 1px rgba(20, 20, 10, 1), -1px 1px 1px rgba(20, 20, 10, 1),
+		1px -1px 1px rgba(20, 20, 10, 1);
 
 	/* SIZES */
 	--LEFT-COLUMN-WIDTH: 16%;

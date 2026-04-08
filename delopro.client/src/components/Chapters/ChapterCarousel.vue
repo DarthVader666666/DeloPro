@@ -233,6 +233,17 @@ function chunkArray(arr, size = 3) {
 	background: lightgray;
 }
 
+:deep(.p-carousel-content) {
+	padding-top: 20px;
+	background: rgb(255, 255, 255, 0.3);
+	border-radius: 15px 15px 0 0;
+}
+
+:deep(.p-carousel-indicator-list) {
+	background: rgb(255, 255, 255, 0.3);
+	border-radius: 0 0 15px 15px;
+}
+
 @media (min-width: 1800px) {
 	.chapter-image img {
 		height: 230px;

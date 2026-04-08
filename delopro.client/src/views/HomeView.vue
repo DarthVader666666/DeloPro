@@ -3,19 +3,19 @@ import ChapterCarousel from '@/components/Chapters/ChapterCarousel.vue'
 </script>
 
 <template>
-	<div>
+	<div class="home-container">
 		<div class="chapters-header">
 			<h2>Документационное обеспечение управления в Республике Беларусь</h2>
 		</div>
-		<div style="padding: 10px; display: flex; flex-direction: column">
-			<span style="font-size: 1.1rem">
+		<div class="service-description">
+			<span>
 				Поможем составить номенклатуру дел, подготовить документы для хранения в архиве. Подробно
 				рассмотрим делопроизводственный процесс, включающий оформление, движение документов и
 				контроль их исполнения.
 			</span>
 
 			<div class="services">
-				<div style="">
+				<div>
 					<i class="pi pi-star-fill"></i>
 					<span>Делопроизводство в организации и оформление документов</span>
 				</div>
@@ -40,6 +40,13 @@ import ChapterCarousel from '@/components/Chapters/ChapterCarousel.vue'
 </template>
 
 <style scoped>
+.home-container {
+	background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('@/assets/home2.jpg');
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
 .chapters-header {
 	text-align: center;
 	margin: 15px 0 15px 0;
@@ -56,11 +63,21 @@ import ChapterCarousel from '@/components/Chapters/ChapterCarousel.vue'
 	margin: 0 10px 0 10px;
 }
 
+.service-description {
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	color: var(--MENU-TEXT-COLOR);
+	text-shadow: var(--TEXT-SHADOW);
+}
+
 .services {
 	display: flex;
 	flex-direction: column;
 	padding: 15px;
 	gap: 8px;
+	font-size: 0.8rem;
+	color: var(--MENU-TEXT-COLOR);
 }
 
 .services div {
