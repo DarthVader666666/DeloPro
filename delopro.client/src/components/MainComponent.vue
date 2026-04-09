@@ -6,6 +6,7 @@ import { useStore } from 'vuex'
 import { computed } from 'vue'
 
 const store = useStore()
+const pending = computed(() => store.getters.getPending)
 const title = computed(() => store.getters.getTitle)
 const showRightColumn = computed(() => store.getters.getShowRightColumn)
 </script>
@@ -19,7 +20,14 @@ const showRightColumn = computed(() => store.getters.getShowRightColumn)
 	</div>
 	<div class="main-container">
 		<LeftColumn />
-		<RouterView class="central-container" />
+		<div
+			v-if="pending"
+			style="width: var(--CENTRAL-COLUMN-WIDTH)"
+		></div>
+		<RouterView
+			v-show="!pending"
+			class="central-container"
+		/>
 		<RightColumn v-if="showRightColumn" />
 	</div>
 </template>
