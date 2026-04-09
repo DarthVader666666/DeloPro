@@ -6,10 +6,12 @@ import MainComponent from './components/MainComponent.vue'
 import { useStore } from 'vuex'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import PendingModal from './components/PendingModal.vue'
 
 const store = useStore()
 const showSearchBar = computed(() => store.state.showSearchBar)
 const route = useRoute()
+const pending = computed(() => store.getters.getPending)
 </script>
 
 <template>
@@ -23,6 +25,7 @@ const route = useRoute()
 		</div>
 		<MainComponent />
 		<FooterComponent v-show="route.name != 'feedback'" />
+		<PendingModal v-model:visible="pending"></PendingModal>
 	</div>
 </template>
 

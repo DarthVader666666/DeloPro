@@ -9,13 +9,13 @@
 	--HOME-HEADER-COLOR: rgb(1, 47, 85);
 	--MENU-TEXT-COLOR: rgb(230, 230, 230);
 	--MENU-HOVER-TEXT-COLOR: rgb(200, 200, 200);
+	--SPINNER-COLOR: rgba(84, 160, 222, 0.712);
 
 	/* BACKGROUNDS */
 	--SEARCHBAR-BACKGROUND: rgb(240, 240, 240);
 	--CENTRAL-BACKGROUND: rgb(240, 240, 240);
 	--COLUMNS-BACKGROUND: rgb(230, 230, 230);
 	--TEXT-BACKGROUND: rgba(204, 204, 204, 0.98);
-	--SELECTED-LINK-BACKGROUND: rgb(49, 127, 62);
 	--MENU-BACKGROUND: rgb(0, 50, 90);
 	--THEME-HEADER-BACKGROUND: rgb(0, 50, 90);
 	--BODY-BACKGROUND: rgb(190, 190, 190);
@@ -118,10 +118,6 @@ body {
 }
 
 @media (max-width: 1100px) {
-	.spinning-circle {
-		width: 100%;
-	}
-
 	.create-form-container {
 		width: 100%;
 	}

@@ -1,14 +1,6 @@
-<script setup>
-const props = defineProps({
-	text: {
-		typeof: String,
-		default: '',
-	},
-})
-</script>
+<script setup></script>
 <template>
 	<div class="spinning-circle">
-		<h2>{{ props.text }}</h2>
 		<div id="wrapper">
 			<div class="profile-main-loader">
 				<div class="loader">
@@ -22,7 +14,7 @@ const props = defineProps({
 							cy="50"
 							r="20"
 							fill="none"
-							stroke="#70c542"
+							stroke="#00407599"
 							stroke-width="2"
 						/>
 					</svg>
@@ -37,10 +29,7 @@ const props = defineProps({
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	width: var(--APP-COMPONENT-WIDTH);
-	padding: 10px;
-	background-color: var(--CENTRAL-BACKGROUND);
-	width: var(--CENTRAL-COLUMN-WIDTH);
+	background: transparent;
 }
 
 /** Spinning Wheel */
@@ -61,7 +50,7 @@ const props = defineProps({
 	position: relative;
 	margin: 0px auto;
 	width: 200px;
-	height: 200px;
+	/* height: 200px; */
 }
 
 .profile-main-loader .loader:before {
@@ -94,12 +83,6 @@ const props = defineProps({
 		dash 1.5s ease-in-out infinite,
 		color 6s ease-in-out infinite;
 	stroke-linecap: round;
-}
-
-@media (max-width: 1100px) {
-	.spinning-circle {
-		width: 100%;
-	}
 }
 
 @-webkit-keyframes rotate {
@@ -148,33 +131,33 @@ const props = defineProps({
 
 @-webkit-keyframes color {
 	0% {
-		stroke: var(--MENU-BACKGROUND);
+		stroke: var(--SPINNER-COLOR);
 	}
 	40% {
-		stroke: var(--MENU-BACKGROUND);
+		stroke: var(--SPINNER-COLOR);
 	}
 	66% {
-		stroke: var(--MENU-BACKGROUND);
+		stroke: var(--SPINNER-COLOR);
 	}
 	80%,
 	90% {
-		stroke: var(--MENU-BACKGROUND);
+		stroke: var(--SPINNER-COLOR);
 	}
 }
 
 @keyframes color {
 	0% {
-		stroke: var(--MENU-BACKGROUND);
+		stroke: var(--SPINNER-COLOR);
 	}
 	40% {
-		stroke: var(--MENU-BACKGROUND);
+		stroke: var(--SPINNER-COLOR);
 	}
 	66% {
-		stroke: var(--MENU-BACKGROUND);
+		stroke: var(--SPINNER-COLOR);
 	}
 	80%,
 	90% {
-		stroke: var(--MENU-BACKGROUND);
+		stroke: var(--SPINNER-COLOR);
 	}
 }
 </style>
