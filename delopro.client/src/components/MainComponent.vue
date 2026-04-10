@@ -6,9 +6,15 @@ import { useStore } from 'vuex'
 import { computed } from 'vue'
 
 const store = useStore()
-const pending = computed(() => store.getters.getPending)
 const title = computed(() => store.getters.getTitle)
 const showRightColumn = computed(() => store.getters.getShowRightColumn)
+
+const props = defineProps({
+	showSpinner: {
+		type: Boolean,
+		default: false,
+	},
+})
 </script>
 
 <template>
@@ -21,11 +27,11 @@ const showRightColumn = computed(() => store.getters.getShowRightColumn)
 	<div class="main-container">
 		<LeftColumn />
 		<div
-			v-if="pending"
+			v-if="props.showSpinner"
 			style="width: var(--CENTRAL-COLUMN-WIDTH)"
 		></div>
 		<RouterView
-			v-show="!pending"
+			v-show="!props.showSpinner"
 			class="central-container"
 		/>
 		<RightColumn v-if="showRightColumn" />

@@ -194,7 +194,7 @@ function showSearchBarModal(value) {
 		></MenuSlider>
 		<MenuComponent
 			v-else
-			:options="options"
+			:options="options.filter((x) => x.label != 'Документы')"
 		></MenuComponent>
 		<div class="shrinked-menu">
 			<Button
