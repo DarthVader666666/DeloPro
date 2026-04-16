@@ -41,7 +41,8 @@ import ChapterCarousel from '@/components/Chapters/ChapterCarousel.vue'
 
 <style scoped>
 .home-container {
-	background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('@/assets/home2.jpg');
+	background:
+		linear-gradient(rgba(0, 43, 78, 0.94), rgba(14, 60, 97, 0.6)), url('/src/assets/home.webp');
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
@@ -51,7 +52,7 @@ import ChapterCarousel from '@/components/Chapters/ChapterCarousel.vue'
 	text-align: center;
 	margin: 15px 0 15px 0;
 	padding: 1px;
-	background: var(--MENU-BACKGROUND);
+	/* background: var(--MENU-BACKGROUND); */
 	color: var(--MENU-TEXT-COLOR);
 }
 
@@ -68,7 +69,7 @@ import ChapterCarousel from '@/components/Chapters/ChapterCarousel.vue'
 	display: flex;
 	flex-direction: column;
 	color: var(--MENU-TEXT-COLOR);
-	text-shadow: var(--TEXT-SHADOW);
+	/* text-shadow: var(--TEXT-SHADOW); */
 }
 
 .services {
