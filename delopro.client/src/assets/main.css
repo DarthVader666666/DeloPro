@@ -18,7 +18,8 @@
 	--TEXT-BACKGROUND: rgba(204, 204, 204, 0.98);
 	--MENU-BACKGROUND: rgb(0, 50, 90);
 	--THEME-HEADER-BACKGROUND: rgb(0, 50, 90);
-	--BODY-BACKGROUND: rgb(190, 190, 190);
+	/* --BODY-BACKGROUND: rgb(190, 190, 190); */
+	--BODY-BACKGROUND: rgb(166, 176, 184);
 
 	/* SHADOWS */
 	--GLOW-BOX-SHADOW: rgba(158, 158, 158, 0.8) 0 0 10px 2px;
@@ -26,7 +27,10 @@
 	--INPUT-BOX-SHADOW: 0px 2px 3px -2px black;
 	--PNG-IMAGE-SHADOW: 5px 5px 5px #222;
 	--MENU-BOX-SHADOW: 0px 0px 10px 0px black;
-	--LOGO-SHADOW: 3px 3px rgba(22, 22, 22, 0.651);
+	--LOGO-SHADOW: 3px 3px rgba(22, 22, 22, 0.6);
+	--TEXT-SHADOW:
+		1px 1px 1px rgba(20, 20, 10, 1), -1px 1px 1px rgba(20, 20, 10, 1),
+		1px -1px 1px rgba(20, 20, 10, 1);
 
 	/* SIZES */
 	--LEFT-COLUMN-WIDTH: 16%;
