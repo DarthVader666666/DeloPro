@@ -1,5 +1,11 @@
 <script setup>
 import ChapterCarousel from '@/components/Chapters/ChapterCarousel.vue'
+import FeedbackComponent from '@/components/FeedbackComponent.vue'
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+const isAuthenticated = computed(() => store.getters.isAuthenticated)
 </script>
 
 <template>
@@ -35,6 +41,13 @@ import ChapterCarousel from '@/components/Chapters/ChapterCarousel.vue'
 		</div>
 		<div class="chapter-links">
 			<ChapterCarousel></ChapterCarousel>
+		</div>
+		<div
+			v-if="!isAuthenticated"
+			style="background: rgb(240, 240, 240, 0.4); border-radius: 10px; padding: 10px; margin: 20px"
+		>
+			<h2 style="text-align: center">Заказать консультацию</h2>
+			<FeedbackComponent></FeedbackComponent>
 		</div>
 	</div>
 </template>

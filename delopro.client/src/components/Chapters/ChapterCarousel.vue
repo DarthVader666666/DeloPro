@@ -185,7 +185,6 @@ function chunkArray(arr, size = 3) {
 		-moz-transform: scale(1.05);
 		-o-transform: scale(1.05);
 		transform: scale(1.05);
-		opacity: 0.8;
 		cursor: pointer;
 	}
 }

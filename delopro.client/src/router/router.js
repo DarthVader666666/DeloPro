@@ -151,14 +151,12 @@ router.beforeEach(async (to, from, next) => {
 				return next('/')
 			}
 
-			store.commit('setTitle', 'Напишите ваше сообщение')
+			store.commit('setTitle', 'Заказать консультацию')
 			const captchaInput = document.getElementById('captcha-input')
 
 			if (captchaInput) {
 				captchaInput.value = null
 			}
-
-			await store.dispatch('downloadCaptcha')
 		}
 	}
 

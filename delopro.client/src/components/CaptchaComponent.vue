@@ -1,6 +1,6 @@
 <script setup>
 import { useStore } from 'vuex'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 
@@ -8,6 +8,10 @@ const emit = defineEmits(['captcha-match'])
 const store = useStore()
 const captcha = computed(() => store.getters.getCaptcha)
 const isCaptchaMatch = ref(false)
+
+onMounted(() => {
+	store.dispatch('downloadCaptcha')
+})
 
 function checkCaptchaMatch(event) {
 	if (event.target.value === captcha.value.code) {
