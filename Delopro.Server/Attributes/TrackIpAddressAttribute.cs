@@ -25,9 +25,14 @@ namespace Delopro.Server.Attributes
             var rootServiceProvider = httpContext.RequestServices;
             var url = httpContext.Request.Path;
             var ipAddress = httpContext.Connection?.RemoteIpAddress?.ToString();
+            var isAdminOrOwner = httpContext.User.IsInRole("Admin") || httpContext.User.IsInRole("Owner");
 
             await next();
-            _ = TrackIpAddressAsync(rootServiceProvider, url, ipAddress);
+
+            if (!isAdminOrOwner)
+            { 
+                _ = TrackIpAddressAsync(rootServiceProvider, url, ipAddress);
+            }
         }
 
         private static async Task TrackIpAddressAsync(IServiceProvider rootServiceProvider, string url, string? ipAddress)
