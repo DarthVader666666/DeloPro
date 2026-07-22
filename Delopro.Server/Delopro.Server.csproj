@@ -32,7 +32,6 @@
     <ProjectReference Include="..\delopro.client\delopro.client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\Delopro.Data\Delopro.Data.csproj" />
   </ItemGroup>
 
 </Project>

@@ -375,3 +375,4 @@ FodyWeavers.xsd
 # Text
 *.txt
 *.xml
+/.github/copilot-instructions.md
