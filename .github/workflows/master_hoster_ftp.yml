@@ -41,6 +41,61 @@ jobs:
         with: 
           name: .net-app
           path: ./publish
+          
+      - name: Create appsettings
+        run: |
+          $json = @"
+          {
+            "Logging": {
+                "LogLevel": {
+                    "Default": "Information",
+                    "Microsoft.AspNetCore": "Warning"
+                }
+            },
+            "AllowedHosts": "*",
+            "AesKey": "${{ secrets.AESKEY }}",
+            "AesIV": "${{ secrets.AESIV }}",
+            "AzureEmailSender": "${{ secrets.AZURE_EMAIL_SENDER }}",
+            "AzureCommunicationService": "${{ secrets.AZURE_COMMUNICATION_SERVICE }}",
+            "OwnerNickname": "alex",
+            "AdminNickname": "admin",
+            
+            "SmtpEmailSender": {
+                "Host": "${{ secrets.SMTP_EMAIL_SENDER_HOST }}",
+                "UserName": "${{ secrets.SMTP_EMAIL_SENDER_USERNAME }}",
+                "Password": "${{ secrets.SMTP_EMAIL_SENDER_PASSWORD }}"
+            },
+            
+            "DocsFolderName": "docs",
+            
+            "GoogleDrive": {
+                "ApplicationName": "${{ secrets.GOOGLE_DRIVE_APPLICATION_NAME }}",
+                "FolderId": "${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}",
+                "Secrets": "${{ secrets.GOOGLE_DRIVE_SECRETS }}"
+            }
+          }
+          "@
+          $json | Out-File -FilePath ./publish/appsettings.json -Encoding UTF8
+
+      - name: Create appsettings Production
+        run: |
+          $json = @"
+          {
+            "ConnectionStrings": {
+              "MssqlDeloproDb": "${{ secrets.MSSQL_DELOPRO_DB_CONNECTION_STRING }}"
+            },
+            "OwnerEmail": "airlex34@gmail.com",
+            "ClientUrl": "https://www.delopro.site",
+            
+            "CorsOrigins": [
+              "http://delopro.site",
+              "http://www.delopro.site",
+              "https://delopro.site",
+              "https://www.delopro.site"
+            ]
+          }
+          "@
+          $json | Out-File -FilePath ./publish/appsettings.Production.json -Encoding UTF8  
 
       - name: Upload files via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4

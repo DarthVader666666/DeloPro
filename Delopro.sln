@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.10.35122.118
+# Visual Studio Version 18
+VisualStudioVersion = 18.9.12112.369 stable
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{6F167688-5496-49F3-A1E5-0D16F78E66E3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Delopro.Server", "Delopro.Server\Delopro.Server.csproj", "{5988E1F4-8809-4551-9998-6B1453A9C22C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Delopro.Bll", "Delopro.Bll\Delopro.Bll.csproj", "{1AA1EF5B-09EE-480B-A964-766FB8165146}"
@@ -19,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6F167688-5496-49F3-A1E5-0D16F78E66E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F167688-5496-49F3-A1E5-0D16F78E66E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F167688-5496-49F3-A1E5-0D16F78E66E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F167688-5496-49F3-A1E5-0D16F78E66E3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5988E1F4-8809-4551-9998-6B1453A9C22C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5988E1F4-8809-4551-9998-6B1453A9C22C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5988E1F4-8809-4551-9998-6B1453A9C22C}.Release|Any CPU.ActiveCfg = Release|Any CPU
