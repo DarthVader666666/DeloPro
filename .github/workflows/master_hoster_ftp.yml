@@ -75,7 +75,7 @@ jobs:
               "http://www.delopro.site",
               "https://delopro.site",
               "https://www.delopro.site"
-            ]
+            ],
 
             "AesKey": "${{ secrets.AESKEY }}",
             "AesIV": "${{ secrets.AESIV }}",            
