@@ -120,15 +120,7 @@ else
     builder.Services.AddScoped<IRepository<Comment>, CommentRepository>(ConfigureRepository<PostgresDeloproDbContext, CommentRepository>);
 }
 
-if (builder.Environment.IsDevelopment() || usePostgres)
-{
-    builder.Services.AddScoped<IEmailSender, AzureEmailSender>();
-}
-
-if (builder.Environment.IsProduction() && !usePostgres)
-{
-    builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
-}
+builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 
 builder.Services.AddSingleton<CryptoService>();
 builder.Services.AddScoped<UserManager>();

@@ -1,5 +1,5 @@
 <script setup>
-import DocumentsComponent from './DocumentsComponent.vue'
+import DocumentsComponent from '@/components/Documents/DocumentsComponent.vue'
 </script>
 <template>
 	<div class="right-container">

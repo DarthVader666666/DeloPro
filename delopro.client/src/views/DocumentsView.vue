@@ -1,5 +1,5 @@
 <script setup>
-import DocumentsComponent from '@/components/DocumentsComponent.vue'
+import DocumentsComponent from '@/components/Documents/DocumentsComponent.vue'
 </script>
 
 <template>
