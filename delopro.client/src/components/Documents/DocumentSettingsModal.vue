@@ -20,10 +20,7 @@ const toast = useToast()
 const store = useStore()
 
 const newName = ref(null)
-const editedNode = ref(props.node)
-const editedNodeId = ref(
-	editedNode.value && `${editedNode.value.data.path}_${editedNode.value.data.type}`,
-)
+const nodeId = computed(() => props.node && `${props.node.data.path}_${props.node.data.type}`)
 const moveFolder = ref(null)
 const newFolderName = ref(null)
 
@@ -48,43 +45,34 @@ async function createFolder() {
 }
 
 function hideSettings() {
-	if (!editedNode.value) {
+	if (!props.node) {
 		return
-	} else if (!editedNodeId.value) {
-		editedNodeId.value = `${editedNode.value.data.path}_${editedNode.value.data.type}`
+	} else if (!nodeId.value) {
+		nodeId.value = `${props.node.data.path}_${props.node.data.type}`
 	}
 }
-
-// async function showSettings() {
-// 	if (editedNode.value) {
-// 		hideSettings()
-// 	}
-
-// 	editedNode.value = props.node
-// 	editedNodeId.value = `${props.node.data.path}_${props.node.data.type}`
-// }
 
 function showRenameInput() {
 	hideSettings()
 
-	newName.value = editedNode.value.data.name
+	newName.value = props.node.data.name
 
-	const renameInput = document.getElementById(`${editedNodeId.value}_rename-input`)
+	const renameInput = document.getElementById(`${nodeId.value}_rename-input`)
 	renameInput.focus()
 }
 
 function showNewFolderInput() {
 	hideSettings()
 
-	const newFolderInput = document.getElementById(`${editedNodeId.value}_new-folder-input`)
+	const newFolderInput = document.getElementById(`${nodeId.value}_new-folder-input`)
 	newFolderInput.focus()
 }
 
 function showPathSelector() {
 	hideSettings()
 
-	const name = document.getElementById(`${editedNodeId.value}_name`)
-	const pathSelector = document.getElementById(`${editedNodeId.value}_path-selector`)
+	const name = document.getElementById(`${nodeId.value}_name`)
+	const pathSelector = document.getElementById(`${nodeId.value}_path-selector`)
 
 	name.style.display = 'none'
 	pathSelector.style.display = 'inline-flex'
@@ -112,8 +100,7 @@ async function renameDocument() {
 	newName.value = null
 
 	if (success) {
-		editedNode.value = null
-		editedNodeId.value = null
+		nodeId.value = null
 		hideSettings()
 	}
 }
@@ -137,29 +124,27 @@ async function uploadFiles(event) {
 async function deleteDocument() {
 	if (
 		!window.confirm(
-			`${editedNode.value.data.type === 'file' ? `Файл "${editedNode.value.data.name}" будет удален` : `Папка "${editedNode.value.data.name}" и всё её содержимое будет удалено`}, вы уверены?`,
+			`${props.node.data.type === 'file' ? `Файл "${props.node.data.name}" будет удален` : `Папка "${props.node.data.name}" и всё её содержимое будет удалено`}, вы уверены?`,
 		)
 	) {
 		return
 	}
 
 	const deleteModel = {
-		path: editedNode.value.data.path,
-		type: editedNode.value.data.type,
+		path: props.node.data.path,
+		type: props.node.data.type,
 	}
 
 	const success = await store.dispatch('deleteDocument', deleteModel)
 
 	if (success) {
-		//hideButtons()
-		editedNode.value = null
-		editedNodeId.value = null
+		nodeId.value = null
 	}
 }
 
 async function moveFile() {
-	const oldPath = editedNode.value.data.path.replace('...', '')
-	let fileName = '\\' + editedNode.value.data.path.split('\\').at(-1)
+	const oldPath = props.node.data.path.replace('...', '')
+	let fileName = '\\' + props.node.data.path.split('\\').at(-1)
 	const newPath = moveFolder.value.replace('...', '') + fileName
 
 	const moveModel = {
@@ -167,14 +152,10 @@ async function moveFile() {
 		newPath: newPath,
 	}
 
-	// hideButtons()
-
 	const success = await store.dispatch('moveDocument', moveModel)
 
 	if (success) {
 		resetTempValues()
-		editedNode.value = null
-		editedNodeId.value = null
 	}
 }
 
@@ -187,10 +168,9 @@ function resetTempValues() {
 async function copyUrlToClipboard() {
 	hideSettings()
 
-	const url =
-		store.getters.serverUrl.replace('api', '') + editedNode.value.data.path.replace('\\', '/')
+	const url = store.getters.serverUrl.replace('api', '') + props.node.data.path.replace('\\', '/')
 	navigator.clipboard.writeText(url)
-	toast.success(`Ссылка для "${editedNode.value.data.name}" скопирована`)
+	toast.success(`Ссылка для "${props.node.data.name}" скопирована`)
 }
 
 function enableArrowKeysEvents(event) {
@@ -205,7 +185,10 @@ function enableArrowKeysEvents(event) {
 	<Dialog>
 		<!-- Settings -->
 		<div :id="`${props.node.data.path}_${props.node.data.type}_settings`">
-			<div v-if="editedNode && editedNode.data.type != 'folder' && props.node.data.type != 'root'">
+			<div
+				v-if="props.node.data.type != 'folder' && props.node.data.type != 'root'"
+				class="setting-buttons"
+			>
 				<Button
 					@click="copyUrlToClipboard"
 					text
@@ -213,6 +196,7 @@ function enableArrowKeysEvents(event) {
 					severity="contrast"
 					icon="pi pi-link"
 					title="Копировать ссылку"
+					label="Копировать ссылку"
 				></Button>
 				<Button
 					@click="showPathSelector"
@@ -221,37 +205,67 @@ function enableArrowKeysEvents(event) {
 					severity="contrast"
 					icon="pi pi-file-export"
 					title="Переместить"
+					label="Переместить"
 				></Button>
 			</div>
-			<FileUpload
+			<div
 				v-if="props.node.data.type == 'folder' || props.node.data.type == 'root'"
-				mode="basic"
-				name="files"
-				:multiple="true"
-				:maxFileSize="20000000"
-				class="p-button-icon-only"
-				chooseIcon="pi pi-upload"
-				:auto="true"
-				:chooseButtonProps="{
-					severity: 'contrast',
-					text: true,
-					raised: false,
-				}"
-				customUpload
-				title="Добавить файлы"
-				@select="uploadFiles($event)"
-			/>
-			<Button
-				v-if="props.node.data.type == 'folder' || props.node.data.type == 'root'"
-				@click="showNewFolderInput"
-				text
-				rounded
-				severity="contrast"
-				icon="pi pi-folder-plus"
-				title="Добавить папку"
-			></Button>
+				class="setting-buttons"
+			>
+				<div
+					style="
+						display: inline-flex;
+						align-items: center;
+						position: relative;
+						cursor: pointer;
+						padding: 6px 12px;
+						border-radius: 4px;
+						background: transparent;
+						transition: background-color 0.2s;
+					"
+					onmouseover="this.style.backgroundColor = 'rgba(248,250,252,0)'"
+					onmouseout="this.style.backgroundColor = 'transparent'"
+				>
+					<FileUpload
+						mode="basic"
+						name="files"
+						:multiple="true"
+						:maxFileSize="20000000"
+						:auto="true"
+						customUpload
+						@select="uploadFiles($event)"
+						style="
+							position: absolute;
+							top: 0;
+							left: 0;
+							width: 100%;
+							height: 100%;
+							opacity: 0;
+							cursor: pointer;
+							z-index: 1;
+						"
+					/>
+					<i
+						class="pi pi-upload"
+						style="margin-right: 8px; color: black"
+					></i>
+					<span style="font-size: 1rem; color: black; font-weight: 500">Добавить файлы</span>
+				</div>
 
-			<div v-if="props.node.data.type != 'root'">
+				<Button
+					@click="showNewFolderInput"
+					text
+					rounded
+					severity="contrast"
+					icon="pi pi-folder-plus"
+					title="Добавить папку"
+					label="Добавить папку"
+				></Button>
+			</div>
+			<div
+				v-if="props.node.data.type != 'root'"
+				class="setting-buttons"
+			>
 				<Button
 					@click="showRenameInput"
 					text
@@ -259,6 +273,7 @@ function enableArrowKeysEvents(event) {
 					severity="contrast"
 					icon="pi pi-pencil"
 					title="Переименовать"
+					label="Переименовать"
 				></Button>
 				<Button
 					v-if="props.node.data.type != 'root'"
@@ -268,6 +283,7 @@ function enableArrowKeysEvents(event) {
 					text
 					icon="pi pi-trash"
 					title="Удалить"
+					label="Удалить"
 				></Button>
 			</div>
 		</div>
@@ -292,7 +308,7 @@ function enableArrowKeysEvents(event) {
 				</template>
 			</Select>
 			<Button
-				@click="() => emit('showSettings')"
+				@click="() => emit('showSettings', $event, props.node, false)"
 				text
 				rounded
 				severity="contrast"
@@ -312,7 +328,7 @@ function enableArrowKeysEvents(event) {
 				class="settings-input"
 				:id="`${props.node.data.path}_${props.node.data.type}_rename-input`"
 				@keydown.stop="enableArrowKeysEvents"
-				@keydown.esc="() => emit('showSettings', false)"
+				@keydown.esc="() => emit('showSettings', $event, props.node, false)"
 				@keydown.enter="renameDocument()"
 			/>
 
@@ -325,7 +341,7 @@ function enableArrowKeysEvents(event) {
 				title="Ок"
 			></Button>
 			<Button
-				@click="() => emit('showSettings', false)"
+				@click="() => emit('showSettings', $event, props.node, false)"
 				rounded
 				severity="danger"
 				text
@@ -345,7 +361,7 @@ function enableArrowKeysEvents(event) {
 				class="settings-input"
 				:id="`${props.node.data.path}_${props.node.data.type}_new-folder-input`"
 				@keydown.stop="enableArrowKeysEvents"
-				@keydown.esc="() => emit('showSettings', false)"
+				@keydown.esc="() => emit('showSettings', $event, props.node, false)"
 				@keydown.enter="createFolder()"
 			/>
 
@@ -358,7 +374,7 @@ function enableArrowKeysEvents(event) {
 				title="Ок"
 			></Button>
 			<Button
-				@click="() => emit('showSettings', false)"
+				@click="() => emit('showSettings', $event, props.node, false)"
 				rounded
 				severity="danger"
 				text
@@ -381,4 +397,10 @@ function enableArrowKeysEvents(event) {
 	</Dialog>
 </template>
 
-<style scoped></style>
+<style scoped>
+.setting-buttons {
+	display: flex;
+	flex-direction: column;
+	align-items: start;
+}
+</style>

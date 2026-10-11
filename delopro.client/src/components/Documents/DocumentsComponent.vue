@@ -15,6 +15,17 @@ const props = defineProps({
 
 const store = useStore()
 
+const coords = ref({ x: 0, y: 0 })
+
+const settingsStyle = computed(() => {
+	return {
+		position: 'absolute',
+		left: `${coords.value.x - 250}px`,
+		top: `${coords.value.y - 100}px`,
+		width: '15rem',
+	}
+})
+
 const isAdmin = computed(() => store.getters.isAdmin)
 const isOwner = computed(() => store.getters.isOwner)
 const documentNodes = computed(() => store.getters.getDocumentNodes)
@@ -36,13 +47,18 @@ function disableArrowKeysEvents(event) {
 	}
 }
 
-function showSettings(node, value) {
+function showSettings(event, node, value) {
+	coords.value = {
+		x: event.clientX,
+		y: event.clientY,
+	}
+
 	editedNode.value = node
 	showDocumentSettings.value = value != undefined ? value : false
 }
 
-function startCountdown() {
-	interval.value = setTimeout(() => showSettings(), 1200)
+function startCountdown(event, node, show) {
+	interval.value = setTimeout(() => showSettings(event, node, show), 1200)
 }
 
 function stopCountdown() {
@@ -68,10 +84,10 @@ function stopCountdown() {
 					<div style="display: flex; flex-direction: row; align-items: center; gap: 5px">
 						<!-- Document name -->
 						<div
-							@touchstart="startCountdown(node)"
+							@touchstart="startCountdown($event, node, true)"
 							@touchend="stopCountdown"
 							@touchmove="stopCountdown"
-							@contextmenu.prevent="showSettings(node, true)"
+							@contextmenu.prevent="showSettings($event, node, true)"
 							:id="`${node.data.path}_${node.data.type}_name`"
 						>
 							<i
@@ -98,6 +114,7 @@ function stopCountdown() {
 			v-model:visible="showDocumentSettings"
 			:node="editedNode"
 			@showSettings="showSettings"
+			:style="settingsStyle"
 		></DocumentSettingsModal>
 	</div>
 </template>
@@ -140,6 +157,11 @@ function stopCountdown() {
 }
 
 .file:hover {
+	cursor: pointer;
+	color: gray;
+}
+
+.folder:hover {
 	cursor: pointer;
 	color: gray;
 }
