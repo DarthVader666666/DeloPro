@@ -1,7 +1,7 @@
 <script setup>
 import TreeTable from 'primevue/treetable'
 import Column from 'primevue/column'
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { useStore } from 'vuex'
 
 import DocumentSettingsModal from './DocumentSettingsModal.vue'
@@ -22,7 +22,7 @@ const settingsStyle = computed(() => {
 		position: 'absolute',
 		left: `${coords.value.x - 250}px`,
 		top: `${coords.value.y - 100}px`,
-		width: '15rem',
+		minWidth: '15rem',
 	}
 })
 
@@ -32,13 +32,14 @@ const documentNodes = computed(() => store.getters.getDocumentNodes)
 
 const expandedNodes = { docs: true }
 
-const showDocumentSettings = ref(false)
+const showSettingsModal = ref(false)
 const editedNode = ref(null)
 const interval = ref(null)
 
 function downloadFile(node) {
-	if (node.data.path)
+	if (node.data.path) {
 		window.open(store.getters.serverUrl.replace('api', '') + node.data.path.replace('\\', '/'))
+	}
 }
 
 function disableArrowKeysEvents(event) {
@@ -47,18 +48,24 @@ function disableArrowKeysEvents(event) {
 	}
 }
 
-function showSettings(event, node, value) {
+function showSettings(event, node) {
 	coords.value = {
 		x: event.clientX,
 		y: event.clientY,
 	}
 
 	editedNode.value = node
-	showDocumentSettings.value = value != undefined ? value : false
+	showSettingsModal.value = false
+	nextTick(() => (showSettingsModal.value = true))
 }
 
-function startCountdown(event, node, show) {
-	interval.value = setTimeout(() => showSettings(event, node, show), 1200)
+function hideSettings() {
+	editedNode.value = null
+	showSettingsModal.value = false
+}
+
+function startCountdown(event, node) {
+	interval.value = setTimeout(() => showSettings(event, node), 1200)
 }
 
 function stopCountdown() {
@@ -84,10 +91,10 @@ function stopCountdown() {
 					<div style="display: flex; flex-direction: row; align-items: center; gap: 5px">
 						<!-- Document name -->
 						<div
-							@touchstart="startCountdown($event, node, true)"
+							@touchstart="startCountdown($event, node)"
 							@touchend="stopCountdown"
 							@touchmove="stopCountdown"
-							@contextmenu.prevent="showSettings($event, node, true)"
+							@contextmenu.prevent="showSettings($event, node)"
 							:id="`${node.data.path}_${node.data.type}_name`"
 						>
 							<i
@@ -111,9 +118,9 @@ function stopCountdown() {
 	</div>
 	<div v-if="isAdmin || isOwner">
 		<DocumentSettingsModal
-			v-model:visible="showDocumentSettings"
+			v-model:visible="showSettingsModal"
 			:node="editedNode"
-			@showSettings="showSettings"
+			@hideSettings="hideSettings"
 			:style="settingsStyle"
 		></DocumentSettingsModal>
 	</div>
@@ -166,33 +173,6 @@ function stopCountdown() {
 	color: gray;
 }
 
-.settings-input {
-	max-width: 100px;
-	background-color: white;
-}
-
-.setting-buttons {
-	display: none;
-	align-items: center;
-	border: solid;
-	border-width: 1px;
-	background-color: white;
-	gap: 0px;
-}
-
-.setting-buttons:deep(*) {
-	background-color: white;
-}
-
-.path-selector {
-	height: 20px;
-}
-
-.path-selector:deep(span) {
-	padding: 2px 0 2px 4px;
-	border-radius: 20%;
-}
-
 @media (max-width: 1100px) {
 	.tree-table:deep(tr) {
 		height: 28px;
@@ -200,26 +180,6 @@ function stopCountdown() {
 
 	.tree-table {
 		font-size: small;
-	}
-
-	.setting-buttons {
-		height: 28px;
-	}
-
-	.setting-buttons:deep(button span) {
-		font-size: 0.9rem;
-	}
-
-	.setting-buttons:deep(button) {
-		margin: 3px;
-	}
-
-	.settings-input {
-		height: 28px;
-	}
-
-	.settings-input {
-		font-size: medium;
 	}
 }
 </style>
