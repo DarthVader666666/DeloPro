@@ -36,7 +36,7 @@ async function renameDocument() {
 }
 </script>
 <template>
-	<div style="display: flex; flex-direction: column; gap: 5px">
+	<div style="display: flex; flex-direction: column; gap: 10px">
 		<InputText
 			:id="`${props.node.data.path}_${props.node.data.type}_rename-input`"
 			type="text"
@@ -47,16 +47,18 @@ async function renameDocument() {
 			<Button
 				style="width: 90px"
 				@click="renameDocument()"
-				severity="primary"
+				severity="secondary"
+				raised
 				icon="pi pi-check"
 				title="Ок"
 			>
-				Ок
+				ОК
 			</Button>
 			<Button
 				style="width: 90px"
 				@click="emit('hideSettings')"
 				severity="contrast"
+				raised
 				title="Отмена"
 			>
 				Отмена

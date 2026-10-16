@@ -128,8 +128,8 @@ async function copyUrlToClipboard() {
 				rounded
 				severity="contrast"
 				icon="pi pi-folder-plus"
-				title="Добавить папку"
-				label="Добавить папку"
+				title="Создать папку"
+				label="Создать папку"
 			></Button>
 		</div>
 		<div
@@ -163,5 +163,10 @@ async function copyUrlToClipboard() {
 	display: flex;
 	flex-direction: column;
 	align-items: start;
+}
+
+.p-button {
+	width: 100%;
+	justify-content: flex-start;
 }
 </style>

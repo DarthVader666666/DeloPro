@@ -62,7 +62,7 @@ namespace Delopro.Server.Controllers
             return Ok(documentResponse);
         }
 
-        void FillNodes(string? path, DocumentNode? parentNode = null)
+        void FillNodes(string? path, string? parentKey, DocumentNode? parentNode = null)
         {
             parentNode ??= new DocumentNode();
 
@@ -70,7 +70,9 @@ namespace Delopro.Server.Controllers
             var directoryInfoArray = rootDirectoryInfo.GetDirectories();
             var shortPath = path?.Replace(webRootPath + Path.DirectorySeparatorChar, string.Empty);
 
-            parentNode.Key = $"{shortPath?.Replace(Path.DirectorySeparatorChar, '-') + (shortPath == documentsDirectoryName ? "" : '-' + path)}";
+            var key = $"{shortPath?.Replace(Path.DirectorySeparatorChar, '-') + (shortPath == documentsDirectoryName ? "" : '-' + path)}";
+            parentNode.Key = key;
+            parentNode.ParentKey = parentKey;
             parentNode.Icon = shortPath == documentsDirectoryName ? "pi pi-ellipsis-h" : "pi pi-folder";
             parentNode.Data = new TreeNode
             {
@@ -83,13 +85,14 @@ namespace Delopro.Server.Controllers
             {
                 var node = new DocumentNode();
                 parentNode.Children?.Add(node);
-                FillNodes(directoryInfo.FullName, node);
+                FillNodes(directoryInfo.FullName, key, node);
             }
 
             var files = rootDirectoryInfo.GetFiles();
             var fileNodes = files.Select(f => new DocumentNode
             {
                 Key = $"{shortPath.Replace(Path.DirectorySeparatorChar, '-')}-{f.FullName}",
+                ParentKey = parentNode.Key,
                 Icon = "pi pi-file",
                 Data = new TreeNode
                 {
@@ -112,7 +115,7 @@ namespace Delopro.Server.Controllers
                 try
                 {
                     node = new DocumentNode();
-                    FillNodes(docsPath, node);
+                    FillNodes(docsPath, string.Empty, node);
                     _memoryCache.Set(CacheKeys.DocumentNodesKey, node, TimeSpan.FromMinutes(5));
                 }
                 catch (Exception ex)
@@ -335,7 +338,7 @@ namespace Delopro.Server.Controllers
             }
 
             var oldPath = Path.Combine(webRootPath!, Path.Combine(moveFileModel.OldPath.Split(Path.DirectorySeparatorChar)));
-            var newPath = Path.Combine(webRootPath!, documentsDirectoryName!, Path.Combine(moveFileModel.NewPath.Split(Path.DirectorySeparatorChar)));
+            var newPath = Path.Combine(webRootPath!, Path.Combine(moveFileModel.NewPath.Split(Path.DirectorySeparatorChar)));
 
             if (oldPath == newPath)
             {

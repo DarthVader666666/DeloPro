@@ -29,11 +29,12 @@ async function createFolder() {
 }
 </script>
 <template>
-	<div style="display: flex; flex-direction: column; gap: 5px">
+	<div style="display: flex; flex-direction: column; gap: 10px">
 		<InputText
 			:id="`${props.node.data.path}_${props.node.data.type}_new-folder-input`"
 			type="text"
 			v-model="newFolderName"
+			placeholder="Имя папки"
 			@keydown.esc="() => emit('hideSettings')"
 			@keydown.enter="createFolder()"
 		/>
@@ -41,15 +42,17 @@ async function createFolder() {
 			<Button
 				style="width: 90px"
 				@click="createFolder()"
-				severity="primary"
+				severity="secondary"
+				raised
 				title="Ок"
 			>
-				Ок
+				ОК
 			</Button>
 			<Button
 				style="width: 90px"
 				@click="() => emit('hideSettings')"
 				severity="contrast"
+				raised
 				icon="pi pi-ban"
 				title="Отмена"
 			>

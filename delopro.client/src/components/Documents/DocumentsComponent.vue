@@ -20,7 +20,7 @@ const coords = ref({ x: 0, y: 0 })
 const settingsStyle = computed(() => {
 	return {
 		position: 'absolute',
-		left: `${coords.value.x - 250}px`,
+		left: `${coords.value.x - 350}px`,
 		top: `${coords.value.y - 100}px`,
 		minWidth: '15rem',
 	}
@@ -39,12 +39,6 @@ const interval = ref(null)
 function downloadFile(node) {
 	if (node.data.path) {
 		window.open(store.getters.serverUrl.replace('api', '') + node.data.path.replace('\\', '/'))
-	}
-}
-
-function disableArrowKeysEvents(event) {
-	if ([38, 40, 37, 39].includes(event.keyCode)) {
-		event.preventDefault()
 	}
 }
 
@@ -81,7 +75,6 @@ function stopCountdown() {
 			scrollable
 			:scrollHeight="props.scrollHeight"
 			class="tree-table"
-			@keydown="disableArrowKeysEvents"
 		>
 			<Column
 				field="name"
@@ -116,14 +109,13 @@ function stopCountdown() {
 			</Column>
 		</TreeTable>
 	</div>
-	<div v-if="isAdmin || isOwner">
-		<DocumentSettingsModal
-			v-model:visible="showSettingsModal"
-			:node="editedNode"
-			@hideSettings="hideSettings"
-			:style="settingsStyle"
-		></DocumentSettingsModal>
-	</div>
+	<DocumentSettingsModal
+		v-if="isAdmin || isOwner"
+		v-model:visible="showSettingsModal"
+		:node="editedNode"
+		@hideSettings="hideSettings"
+		:style="settingsStyle"
+	></DocumentSettingsModal>
 </template>
 
 <style scoped>
@@ -169,6 +161,11 @@ function stopCountdown() {
 }
 
 .folder:hover {
+	cursor: pointer;
+	color: gray;
+}
+
+#docs_root_name:hover {
 	cursor: pointer;
 	color: gray;
 }

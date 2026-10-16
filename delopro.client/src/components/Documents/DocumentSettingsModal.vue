@@ -42,28 +42,17 @@ function showCreateFolderHandler() {
 	})
 }
 
-//function showMove() {
-// const name = document.getElementById(`${nodeId.value}_name`)
-// const pathSelector = document.getElementById(`${nodeId.value}_path-selector`)
-//}
-
 function closeAll() {
 	showSettings.value = false
 	showRename.value = false
 	showCreateFolder.value = false
 	showMove.value = false
 }
-
-// function enableArrowKeysEvents(event) {
-// 	if ([38, 40, 37, 39].includes(event.keyCode)) {
-// 		event.stopPropagation()
-// 		return true
-// 	}
-// }
 </script>
 
 <template>
 	<Dialog
+		modal
 		@show="
 			() => {
 				closeAll()
@@ -78,7 +67,7 @@ function closeAll() {
 		"
 	>
 		<template #header>
-			<span></span>
+			<span>{{ props.node.data.name }}</span>
 		</template>
 		<DocumentSettings
 			v-if="showSettings"
