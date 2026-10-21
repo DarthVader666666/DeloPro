@@ -19,9 +19,9 @@ const coords = ref({ x: 0, y: 0 })
 
 const settingsStyle = computed(() => {
 	return {
-		position: 'absolute',
-		left: `${coords.value.x - 350}px`,
-		top: `${coords.value.y - 100}px`,
+		// position: 'absolute',
+		// left: `${coords.value.x - 350}px`,
+		// top: `${coords.value.y - 100}px`,
 		minWidth: '15rem',
 	}
 })
@@ -88,7 +88,6 @@ function stopCountdown() {
 							@touchend="stopCountdown"
 							@touchmove="stopCountdown"
 							@contextmenu.prevent="showSettings($event, node)"
-							:id="`${node.data.path}_${node.data.type}_name`"
 						>
 							<i
 								:class="node.icon"

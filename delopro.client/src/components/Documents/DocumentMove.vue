@@ -89,7 +89,7 @@ function moveFile() {
 				showGridlines
 				selectionMode="single"
 				:showHeaders="false"
-				@rowDblclick="openFolder($event)"
+				@rowSelect="openFolder($event)"
 			>
 				<Column field="text">
 					<template #body="{ data }">
