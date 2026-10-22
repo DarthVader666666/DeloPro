@@ -5,24 +5,38 @@ import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 
 const props = defineProps({
-	node: { type: Object, default: null },
+	node: {
+		type: Object,
+		default: null,
+	},
+	disableFiles: {
+		type: Boolean,
+		default: false,
+	},
 })
 
+const emit = defineEmits(['updateDocumentBreadCrumbs'])
+
 const store = useStore()
-const documentNodes = computed(() => store.getters.getDocumentNodes)
+
 const showFolders = ref(true)
-
-// root detection: no parentKey, not `parentKey === 'docs'`
-const isRootFolder = computed(() => !props.node?.parentKey)
-
 const selectedFolderOverride = ref(null)
 
-// computed so it re-evaluates when store/props change
-const selectedFolder = computed(() => {
-	if (selectedFolderOverride.value) return selectedFolderOverride.value
-	if (!props.node) return null
+const documentNodes = computed(() => store.getters.getDocumentNodes)
+const isRootFolder = computed(() => !props.node?.parentKey)
 
-	if (isRootFolder.value) return documentNodes.value[0] ?? null
+const selectedFolder = computed(() => {
+	if (selectedFolderOverride.value) {
+		return selectedFolderOverride.value
+	}
+
+	if (!props.node) {
+		return null
+	}
+
+	if (isRootFolder.value) {
+		return documentNodes.value[0] ?? null
+	}
 
 	return getFolderByKey(documentNodes.value, props.node.parentKey) ?? null
 })
@@ -63,10 +77,17 @@ function getFolders(folderNode) {
 function onDocumentSelect(event) {
 	const node = event.data
 
+	if (props.disableFiles && node.data.type === 'file') {
+		return
+	}
+
 	if (node.data.type === 'file') {
-		window.open(store.getters.serverUrl.replace('api', '') + node.data.path.replace('\\', '/'))
+		if (window.confirm('Окрыть/скаяать файл?')) {
+			window.open(store.getters.serverUrl.replace('api', '') + node.data.path.replace('\\', '/'))
+		}
 	} else {
 		selectedFolderOverride.value = event.data
+		emit('updateDocumentBreadCrumbs', selectedFolderOverride.value)
 	}
 }
 </script>
@@ -82,7 +103,10 @@ function onDocumentSelect(event) {
 	>
 		<Column field="text">
 			<template #body="{ data }">
-				<span :title="data.data.path">
+				<span
+					:title="data.data.path"
+					:style="props.disableFiles && data.data.type === 'file' ? { opacity: 0.5 } : {}"
+				>
 					<i
 						:class="isParentFolder(data) ? 'pi pi-ellipsis-h' : data.icon"
 						:title="data.data.path"
