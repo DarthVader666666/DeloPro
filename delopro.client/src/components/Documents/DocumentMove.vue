@@ -1,9 +1,8 @@
 <script setup>
 import Button from 'primevue/button'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
+import DocumentsNavigator from './DocumentsNavigator.vue'
 
 const props = defineProps({
 	node: {
@@ -16,20 +15,8 @@ const store = useStore()
 const emit = defineEmits(['hideSettings'])
 
 const documentNodes = computed(() => store.getters.getDocumentNodes)
-const showFolders = ref(true)
-
-const isRootFolder = computed(() => props.node.parentKey === 'docs')
-
-const selectedFolder = ref(
-	isRootFolder.value
-		? documentNodes.value[0]
-		: getFolderByKey(documentNodes.value, props.node.parentKey),
-)
-const folders = computed(() => getFolders(selectedFolder.value))
-
-function isParentFolder(node) {
-	return folders.value.indexOf(node) === 0 && node.key === selectedFolder.value.parentKey
-}
+const selectedFolder = ref(null)
+const initialFolder = ref(getFolderByKey(documentNodes.value, props.node.parentKey))
 
 function getFolderByKey(nodes, key) {
 	for (const node of nodes.filter((n) => n.data.type === 'folder' || n.data.type === 'root')) {
@@ -49,15 +36,8 @@ function getFolderByKey(nodes, key) {
 	return null
 }
 
-function getFolders(folderNode) {
-	var childFolders = folderNode.children.filter((c) => c.data.type === 'folder')
-	var parentFolder = getFolderByKey(documentNodes.value, folderNode.parentKey)
-
-	return parentFolder ? [parentFolder].concat(childFolders) : childFolders
-}
-
-async function openFolder(event) {
-	selectedFolder.value = event.data
+async function openFolder(node) {
+	selectedFolder.value = node
 }
 
 function moveFile() {
@@ -81,30 +61,13 @@ function moveFile() {
 		"
 	>
 		<div>
-			<span style="padding-bottom: 10px">{{ selectedFolder.data.path }}</span>
-			<DataTable
-				v-if="showFolders"
-				:value="folders"
-				stripedRows
-				showGridlines
-				selectionMode="single"
-				:showHeaders="false"
-				@rowSelect="openFolder($event)"
-			>
-				<Column field="text">
-					<template #body="{ data }">
-						<span :title="data.data.path">
-							<i
-								:class="isParentFolder(data) ? 'pi pi-ellipsis-h' : data.icon"
-								:title="data.data.path"
-							></i>
-							{{ isParentFolder(data) ? '' : data.data.name }}
-						</span>
-					</template>
-				</Column>
-			</DataTable>
+			<DocumentsNavigator
+				:node="initialFolder"
+				:disable-files="true"
+				:useModal="false"
+				@onRowSelect="openFolder"
+			></DocumentsNavigator>
 		</div>
-
 		<div style="display: flex; justify-content: space-between">
 			<Button
 				@click="moveFile"

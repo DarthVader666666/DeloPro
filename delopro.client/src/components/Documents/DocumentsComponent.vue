@@ -15,17 +15,6 @@ const props = defineProps({
 
 const store = useStore()
 
-const coords = ref({ x: 0, y: 0 })
-
-const settingsStyle = computed(() => {
-	return {
-		// position: 'absolute',
-		// left: `${coords.value.x - 350}px`,
-		// top: `${coords.value.y - 100}px`,
-		minWidth: '15rem',
-	}
-})
-
 const isAdmin = computed(() => store.getters.isAdmin)
 const isOwner = computed(() => store.getters.isOwner)
 const documentNodes = computed(() => store.getters.getDocumentNodes)
@@ -42,12 +31,7 @@ function downloadFile(node) {
 	}
 }
 
-function showSettings(event, node) {
-	coords.value = {
-		x: event.clientX,
-		y: event.clientY,
-	}
-
+function showSettings(node) {
 	editedNode.value = node
 	showSettingsModal.value = false
 	nextTick(() => (showSettingsModal.value = true))
@@ -58,8 +42,8 @@ function hideSettings() {
 	showSettingsModal.value = false
 }
 
-function startCountdown(event, node) {
-	interval.value = setTimeout(() => showSettings(event, node), 1200)
+function startCountdown(node) {
+	interval.value = setTimeout(() => showSettings(node), 1200)
 }
 
 function stopCountdown() {
@@ -82,12 +66,11 @@ function stopCountdown() {
 			>
 				<template #body="{ node }">
 					<div style="display: flex; flex-direction: row; align-items: center; gap: 5px">
-						<!-- Document name -->
 						<div
 							@touchstart="startCountdown($event, node)"
 							@touchend="stopCountdown"
 							@touchmove="stopCountdown"
-							@contextmenu.prevent="showSettings($event, node)"
+							@contextmenu.prevent="showSettings(node)"
 						>
 							<i
 								:class="node.icon"
@@ -113,7 +96,7 @@ function stopCountdown() {
 		v-model:visible="showSettingsModal"
 		:node="editedNode"
 		@hideSettings="hideSettings"
-		:style="settingsStyle"
+		style="min-width: 15rem"
 	></DocumentSettingsModal>
 </template>
 

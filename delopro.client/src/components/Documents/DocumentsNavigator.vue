@@ -1,8 +1,9 @@
 <script setup>
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useStore } from 'vuex'
+import DocumentSettingsModal from './DocumentSettingsModal.vue'
 
 const props = defineProps({
 	node: {
@@ -13,14 +14,23 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	useModal: {
+		type: Boolean,
+		default: false,
+	},
 })
 
-const emit = defineEmits(['updateDocumentBreadCrumbs'])
-
+const emit = defineEmits(['onRowSelect'])
 const store = useStore()
 
 const showFolders = ref(true)
 const selectedFolderOverride = ref(null)
+const breadCrumbs = ref(store.getters.getDocumentNodes)
+const showSettingsModal = ref(false)
+const editedNode = ref(null)
+
+const isAdmin = computed(() => store.getters.isAdmin)
+const isOwner = computed(() => store.getters.isOwner)
 
 const documentNodes = computed(() => store.getters.getDocumentNodes)
 const isRootFolder = computed(() => !props.node?.parentKey)
@@ -41,11 +51,30 @@ const selectedFolder = computed(() => {
 	return getFolderByKey(documentNodes.value, props.node.parentKey) ?? null
 })
 
-const folders = computed(() => (selectedFolder.value ? getFolders(selectedFolder.value) : []))
+const documents = computed(() =>
+	documentNodes.value && selectedFolder.value ? getDocuments(selectedFolder.value) : [],
+)
+
+watch(selectedFolderOverride, () => updateDocumentBreadCrumbs())
+watch(
+	documentNodes,
+	(newNodes) => {
+		if (!selectedFolderOverride.value) return
+
+		const key = selectedFolderOverride.value.key
+		const fresh = getFolderByKey(newNodes, key)
+
+		// Only reassign if we found a fresh node and it's a different object
+		if (fresh && fresh !== selectedFolderOverride.value) {
+			selectedFolderOverride.value = fresh
+		}
+	},
+	{ deep: true },
+)
 
 function isParentFolder(node) {
 	return (
-		folders.value.indexOf(node) === 0 &&
+		documents.value.indexOf(node) === 0 &&
 		selectedFolder.value != null &&
 		node.key === selectedFolder.value.parentKey
 	)
@@ -53,6 +82,7 @@ function isParentFolder(node) {
 
 function getFolderByKey(nodes, key) {
 	if (!nodes || !key) return null
+
 	for (const node of nodes.filter((n) => n.data?.type === 'folder' || n.data?.type === 'root')) {
 		if (node.key === key) return node
 		if (node.children?.length) {
@@ -63,7 +93,7 @@ function getFolderByKey(nodes, key) {
 	return null
 }
 
-function getFolders(folderNode) {
+function getDocuments(folderNode) {
 	if (!folderNode?.children) {
 		return []
 	}
@@ -74,32 +104,74 @@ function getFolders(folderNode) {
 	return parentFolder ? [parentFolder, ...childFolders] : childFolders
 }
 
-function onDocumentSelect(event) {
-	const node = event.data
+function fillBreadCrumbs(folder) {
+	breadCrumbs.value.push(folder)
+	const parent = getFolderByKey(documentNodes.value, folder.parentKey)
 
+	if (parent) {
+		fillBreadCrumbs(parent)
+	}
+}
+
+function onDocumentSelect(node) {
 	if (props.disableFiles && node.data.type === 'file') {
 		return
 	}
 
 	if (node.data.type === 'file') {
-		if (window.confirm('Окрыть/скаяать файл?')) {
+		if (window.confirm('Окрыть/скачать файл?')) {
 			window.open(store.getters.serverUrl.replace('api', '') + node.data.path.replace('\\', '/'))
 		}
 	} else {
-		selectedFolderOverride.value = event.data
-		emit('updateDocumentBreadCrumbs', selectedFolderOverride.value)
+		selectedFolderOverride.value = node
+		updateDocumentBreadCrumbs()
+		emit('onRowSelect', node)
 	}
+}
+
+function updateDocumentBreadCrumbs() {
+	breadCrumbs.value = []
+	fillBreadCrumbs(selectedFolder.value)
+	breadCrumbs.value.reverse()
+}
+
+function showSettings(event) {
+	event.originalEvent.preventDefault()
+	const node = event.data
+
+	editedNode.value = node
+	showSettingsModal.value = false
+	nextTick(() => (showSettingsModal.value = true))
+}
+
+function hideSettings() {
+	showSettingsModal.value = false
 }
 </script>
 <template>
+	<div style="padding: 10px">
+		<span
+			v-for="node in breadCrumbs"
+			:key="node.key"
+		>
+			<span
+				@click="onDocumentSelect(node)"
+				class="bread-crumb"
+			>
+				{{ node.data.name === '' ? '...' : node.data.name }}
+			</span>
+			<span>{{ ' / ' }}</span>
+		</span>
+	</div>
 	<DataTable
 		v-if="showFolders"
-		:value="folders"
+		:value="documents"
 		stripedRows
 		showGridlines
 		selectionMode="single"
 		:showHeaders="false"
-		@rowSelect="onDocumentSelect($event)"
+		@rowSelect="onDocumentSelect($event.data)"
+		@rowContextmenu="showSettings($event)"
 	>
 		<Column field="text">
 			<template #body="{ data }">
@@ -116,6 +188,13 @@ function onDocumentSelect(event) {
 			</template>
 		</Column>
 	</DataTable>
+	<DocumentSettingsModal
+		v-if="props.useModal && (isAdmin || isOwner)"
+		v-model:visible="showSettingsModal"
+		:node="editedNode"
+		@hideSettings="hideSettings"
+		style="min-width: 15rem"
+	></DocumentSettingsModal>
 </template>
 <style scoped>
 .path-selector {
@@ -125,5 +204,12 @@ function onDocumentSelect(event) {
 .path-selector:deep(span) {
 	padding: 2px 0 2px 4px;
 	border-radius: 20%;
+}
+
+.bread-crumb {
+	&:hover {
+		cursor: pointer;
+		text-decoration: underline;
+	}
 }
 </style>
