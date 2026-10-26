@@ -5,6 +5,7 @@ import { computed, nextTick, ref } from 'vue'
 import { useStore } from 'vuex'
 
 import DocumentSettingsModal from './DocumentSettingsModal.vue'
+import { helper } from '@/helper/helper.js'
 
 const props = defineProps({
 	scrollHeight: {
@@ -26,8 +27,10 @@ const editedNode = ref(null)
 const interval = ref(null)
 
 function downloadFile(node) {
-	if (node.data.path) {
-		window.open(store.getters.serverUrl.replace('api', '') + node.data.path.replace('\\', '/'))
+	if (window.confirm('Открыть/скачать файл?')) {
+		if (node.data.path) {
+			window.open(store.getters.serverUrl.replace('api', '') + node.data.path.replace('\\', '/'))
+		}
 	}
 }
 
@@ -65,17 +68,29 @@ function stopCountdown() {
 				expander
 			>
 				<template #body="{ node }">
-					<div style="display: flex; flex-direction: row; align-items: center; gap: 5px">
+					<div
+						style="display: flex; flex-direction: row; align-items: center; padding: 4px 0 4px 0"
+					>
 						<div
 							@touchstart="startCountdown($event, node)"
 							@touchend="stopCountdown"
 							@touchmove="stopCountdown"
 							@contextmenu.prevent="showSettings(node)"
 						>
+							<img
+								v-if="node.data.type === 'folder'"
+								src="/src/assets/icons/folder.png"
+								style="width: 1.6em; height: 1.4em; vertical-align: -0.3em; padding-right: 3px"
+							/>
 							<i
-								:class="'icon ' + node.icon"
-								style="font-size: small; padding-right: 3px"
+								v-else-if="node.data.type === 'root'"
+								class="icon pi pi-ellipsis-h"
 							></i>
+							<img
+								v-else
+								:src="`/src/assets/icons/${helper.getDocimentIconName(node.data.name)}.png`"
+								style="width: 1.6em; height: 1.4em; vertical-align: -0.3em; padding-right: 3px"
+							/>
 
 							<span
 								:title="node.data.size"

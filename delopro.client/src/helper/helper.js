@@ -280,4 +280,27 @@ export const helper = {
 	generateKey() {
 		return Math.random().toString(36).slice(2)
 	},
+	getDocimentIconName(fileName) {
+		const ext = fileName.split('.').pop()
+
+		if (['doc'].some((x) => ext.includes(x))) {
+			return 'word'
+		}
+
+		if (['xml', 'xls'].some((x) => ext.includes(x))) {
+			return 'exel'
+		}
+
+		if (['jpg', 'png', 'jpeg', 'gif', 'bmp', 'tif'].some((x) => ext.includes(x))) {
+			return 'image'
+		}
+
+		if (['txt', 'csv'].some((x) => ext.includes(x))) {
+			return 'text'
+		}
+
+		if (['pdf'].some((x) => ext.includes(x))) {
+			return 'pdf'
+		}
+	},
 }

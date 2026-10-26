@@ -4,6 +4,7 @@ import Column from 'primevue/column'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import DocumentSettingsModal from './DocumentSettingsModal.vue'
+import { helper } from '@/helper/helper.js'
 
 const props = defineProps({
 	node: {
@@ -185,7 +186,13 @@ function hideSettings() {
 					:style="props.disableFiles && data.data.type === 'file' ? { opacity: 0.5 } : {}"
 				>
 					<i
-						:class="isParentFolder(data) ? 'pi pi-ellipsis-h' : data.icon"
+						:class="
+							isParentFolder(data) || data.data.type === 'root'
+								? 'pi pi-ellipsis-h'
+								: data.data.type === 'folder'
+									? 'folder-icon'
+									: (helper.getDocimentIconName(data.data.name) ?? data.icon) + '-icon'
+						"
 						:title="data.data.path"
 					></i>
 					{{ isParentFolder(data) ? '' : data.data.name }}
