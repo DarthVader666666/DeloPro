@@ -79,7 +79,7 @@ function stopCountdown() {
 						>
 							<img
 								v-if="node.data.type === 'folder'"
-								src="/src/assets/icons/folder.png"
+								:src="helper.getImagePath('icon') + 'folder.png'"
 								style="width: 1.6em; height: 1.4em; vertical-align: -0.3em; padding-right: 3px"
 							/>
 							<i
@@ -88,7 +88,9 @@ function stopCountdown() {
 							></i>
 							<img
 								v-else
-								:src="`/src/assets/icons/${helper.getDocimentIconName(node.data.name)}.png`"
+								:src="
+									helper.getImagePath('icon') + helper.getDocimentIconName(node.data.name) + '.png'
+								"
 								style="width: 1.6em; height: 1.4em; vertical-align: -0.3em; padding-right: 3px"
 							/>
 
