@@ -1,6 +1,6 @@
 <script setup>
 import Button from 'primevue/button'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useStore } from 'vuex'
 import DocumentsNavigator from './DocumentsNavigator.vue'
 
@@ -14,27 +14,7 @@ const props = defineProps({
 const store = useStore()
 const emit = defineEmits(['hideSettings'])
 
-const documentNodes = computed(() => store.getters.getDocumentNodes)
 const selectedFolder = ref(null)
-const initialFolder = ref(getFolderByKey(documentNodes.value, props.node.parentKey))
-
-function getFolderByKey(nodes, key) {
-	for (const node of nodes.filter((n) => n.data.type === 'folder' || n.data.type === 'root')) {
-		if (node.key === key) {
-			return node
-		}
-
-		if (node.children && node.children.length > 0) {
-			const foundNode = getFolderByKey(node.children, key)
-
-			if (foundNode) {
-				return foundNode
-			}
-		}
-	}
-
-	return null
-}
 
 async function openFolder(node) {
 	selectedFolder.value = node
@@ -51,24 +31,14 @@ function moveFile() {
 }
 </script>
 <template>
-	<div
-		style="
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between;
-			min-width: 400px;
-			min-height: 300px;
-		"
-	>
-		<div>
-			<DocumentsNavigator
-				:node="initialFolder"
-				:disable-files="true"
-				:useModal="false"
-				@onRowSelect="openFolder"
-			></DocumentsNavigator>
-		</div>
-		<div style="display: flex; justify-content: space-between">
+	<div style="min-width: 250px">
+		<DocumentsNavigator
+			:node="props.node"
+			:disable-files="true"
+			:useModal="false"
+			@onRowSelect="openFolder"
+		></DocumentsNavigator>
+		<div style="padding-top: 15px; display: flex; justify-content: space-between">
 			<Button
 				@click="moveFile"
 				style="width: 90px"

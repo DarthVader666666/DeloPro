@@ -1,7 +1,7 @@
 <script setup>
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import DocumentSettingsModal from './DocumentSettingsModal.vue'
 
@@ -64,13 +64,16 @@ watch(
 		const key = selectedFolderOverride.value.key
 		const fresh = getFolderByKey(newNodes, key)
 
-		// Only reassign if we found a fresh node and it's a different object
 		if (fresh && fresh !== selectedFolderOverride.value) {
 			selectedFolderOverride.value = fresh
 		}
 	},
 	{ deep: true },
 )
+
+onMounted(() => {
+	updateDocumentBreadCrumbs()
+})
 
 function isParentFolder(node) {
 	return (
@@ -98,10 +101,10 @@ function getDocuments(folderNode) {
 		return []
 	}
 
-	const childFolders = folderNode.children
+	const childNodes = folderNode.children
 	const parentFolder = getFolderByKey(documentNodes.value, folderNode.parentKey)
 
-	return parentFolder ? [parentFolder, ...childFolders] : childFolders
+	return parentFolder ? [parentFolder, ...childNodes] : [selectedFolder.value, ...childNodes]
 }
 
 function fillBreadCrumbs(folder) {
@@ -172,11 +175,13 @@ function hideSettings() {
 		:showHeaders="false"
 		@rowSelect="onDocumentSelect($event.data)"
 		@rowContextmenu="showSettings($event)"
+		style="min-height: 350px"
 	>
 		<Column field="text">
 			<template #body="{ data }">
 				<span
 					:title="data.data.path"
+					:class="data.data.type === 'folder' ? 'folder' : ''"
 					:style="props.disableFiles && data.data.type === 'file' ? { opacity: 0.5 } : {}"
 				>
 					<i
@@ -188,6 +193,7 @@ function hideSettings() {
 			</template>
 		</Column>
 	</DataTable>
+
 	<DocumentSettingsModal
 		v-if="props.useModal && (isAdmin || isOwner)"
 		v-model:visible="showSettingsModal"
@@ -211,5 +217,9 @@ function hideSettings() {
 		cursor: pointer;
 		text-decoration: underline;
 	}
+}
+
+.folder {
+	font-weight: bold;
 }
 </style>

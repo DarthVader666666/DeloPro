@@ -73,7 +73,7 @@ function stopCountdown() {
 							@contextmenu.prevent="showSettings(node)"
 						>
 							<i
-								:class="node.icon"
+								:class="'icon ' + node.icon"
 								style="font-size: small; padding-right: 3px"
 							></i>
 
@@ -96,7 +96,6 @@ function stopCountdown() {
 		v-model:visible="showSettingsModal"
 		:node="editedNode"
 		@hideSettings="hideSettings"
-		style="min-width: 15rem"
 	></DocumentSettingsModal>
 </template>
 
@@ -137,19 +136,13 @@ function stopCountdown() {
 	background: transparent;
 }
 
-.file:hover {
-	cursor: pointer;
-	color: gray;
-}
-
-.folder:hover {
-	cursor: pointer;
-	color: gray;
-}
-
-#docs_root_name:hover {
-	cursor: pointer;
-	color: gray;
+.file,
+.folder,
+.icon {
+	&:hover {
+		cursor: pointer;
+		color: gray;
+	}
 }
 
 @media (max-width: 1100px) {

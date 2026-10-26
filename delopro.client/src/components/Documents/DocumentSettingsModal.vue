@@ -53,6 +53,7 @@ function closeAll() {
 <template>
 	<Dialog
 		modal
+		style="max-width: 90%; max-height: 90%"
 		@show="
 			() => {
 				closeAll()

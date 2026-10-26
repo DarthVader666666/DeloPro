@@ -1,10 +1,21 @@
 <script setup>
 import DocumentsComponent from '@/components/Documents/DocumentsComponent.vue'
+import Button from 'primevue/button'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 </script>
 <template>
 	<div class="right-container">
-		<div class="items-header">
-			<span style="margin: 5px 0 6px 0; font-size: large">Документы</span>
+		<div style="height: 48px; text-align: center">
+			<Button
+				raised
+				severity="secondary"
+				style="border-radius: 30px; margin-top: 8px; margin-bottom: 4px"
+				@click="router.push({ name: 'documents' })"
+			>
+				<span>Документы</span>
+			</Button>
 		</div>
 		<hr style="width: 90%" />
 		<DocumentsComponent :scrollHeight="'85vh'"></DocumentsComponent>
@@ -18,13 +29,6 @@ import DocumentsComponent from '@/components/Documents/DocumentsComponent.vue'
 	position: sticky;
 	height: 100vh;
 	top: 0;
-}
-
-.items-header {
-	text-align: center;
-	min-height: 37px;
-	padding-top: 18px;
-	padding-bottom: 8px;
 }
 
 @media (max-width: 1100px) {
