@@ -179,23 +179,27 @@ function hideSettings() {
 		style="min-height: 350px"
 	>
 		<Column field="text">
-			<template #body="{ data }">
+			<template #body="{ data: node }">
 				<span
-					:title="data.data.path"
-					:class="data.data.type === 'folder' ? 'folder' : ''"
-					:style="props.disableFiles && data.data.type === 'file' ? { opacity: 0.5 } : {}"
+					:title="node.data.path"
+					:class="node.data.type === 'folder' ? 'folder' : ''"
+					:style="props.disableFiles && node.data.type === 'file' ? { opacity: 0.5 } : {}"
 				>
+					<img
+						v-if="node.data.type === 'folder'"
+						:src="helper.getImagePath('icon') + 'folder.png'"
+						style="width: 1.6em; height: 1.4em; vertical-align: -0.3em; padding-right: 3px"
+					/>
 					<i
-						:class="
-							isParentFolder(data) || data.data.type === 'root'
-								? 'pi pi-ellipsis-h'
-								: data.data.type === 'folder'
-									? 'folder-icon'
-									: (helper.getDocimentIconName(data.data.name) ?? data.icon) + '-icon'
-						"
-						:title="data.data.path"
+						v-else-if="node.data.type === 'root'"
+						class="icon pi pi-ellipsis-h"
 					></i>
-					{{ isParentFolder(data) ? '' : data.data.name }}
+					<img
+						v-else
+						:src="helper.getImagePath('icon') + helper.getDocimentIconName(node.data.name) + '.png'"
+						style="width: 1.6em; height: 1.4em; vertical-align: -0.3em; padding-right: 3px"
+					/>
+					{{ isParentFolder(node) ? '' : node.data.name }}
 				</span>
 			</template>
 		</Column>

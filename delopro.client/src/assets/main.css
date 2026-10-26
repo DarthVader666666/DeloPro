@@ -115,66 +115,6 @@ body {
 	width: 100%;
 }
 
-.folder-icon {
-	display: inline-block;
-	width: 1.4em;
-	height: 1.4em;
-	background-image: url('../assets/icons/folder.png');
-	background-size: contain;
-	background-repeat: no-repeat;
-	vertical-align: -0.3em;
-}
-
-.word-icon {
-	display: inline-block;
-	width: 1.4em;
-	height: 1.4em;
-	background-image: url('../assets/icons/word.png');
-	background-size: contain;
-	background-repeat: no-repeat;
-	vertical-align: -0.3em;
-}
-
-.exel-icon {
-	display: inline-block;
-	width: 1.4em;
-	height: 1.4em;
-	background-image: url('../assets/icons/exel.png');
-	background-size: contain;
-	background-repeat: no-repeat;
-	vertical-align: -0.4em;
-}
-
-.pdf-icon {
-	display: inline-block;
-	width: 1.4em;
-	height: 1.4em;
-	background-image: url('../assets/icons/pdf.png');
-	background-size: contain;
-	background-repeat: no-repeat;
-	vertical-align: -0.4em;
-}
-
-.text-icon {
-	display: inline-block;
-	width: 1.4em;
-	height: 1.4em;
-	background-image: url('../assets/icons/text.png');
-	background-size: contain;
-	background-repeat: no-repeat;
-	vertical-align: -0.4em;
-}
-
-.image-icon {
-	display: inline-block;
-	width: 1.4em;
-	height: 1.4em;
-	background-image: url('../assets/icons/image.png');
-	background-size: contain;
-	background-repeat: no-repeat;
-	vertical-align: -0.3em;
-}
-
 @media (max-width: 1500px) {
 	#app {
 		width: 100%;
