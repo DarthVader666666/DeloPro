@@ -280,7 +280,7 @@ export const helper = {
 	generateKey() {
 		return Math.random().toString(36).slice(2)
 	},
-	getDocimentIconName(fileName) {
+	getDocumentIconName(fileName) {
 		const ext = fileName.split('.').pop()
 
 		if (['doc'].some((x) => ext.includes(x))) {

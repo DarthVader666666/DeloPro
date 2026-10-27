@@ -186,17 +186,17 @@ function hideSettings() {
 					:style="props.disableFiles && node.data.type === 'file' ? { opacity: 0.5 } : {}"
 				>
 					<img
-						v-if="node.data.type === 'folder'"
+						v-if="node.data.type === 'folder' && !isParentFolder(node)"
 						:src="helper.getImagePath('icon') + 'folder.png'"
 						style="width: 1.6em; height: 1.4em; vertical-align: -0.3em; padding-right: 3px"
 					/>
 					<i
-						v-else-if="node.data.type === 'root'"
+						v-else-if="node.data.type === 'root' || isParentFolder(node)"
 						class="icon pi pi-ellipsis-h"
 					></i>
 					<img
 						v-else
-						:src="helper.getImagePath('icon') + helper.getDocimentIconName(node.data.name) + '.png'"
+						:src="helper.getImagePath('icon') + helper.getDocumentIconName(node.data.name) + '.png'"
 						style="width: 1.6em; height: 1.4em; vertical-align: -0.3em; padding-right: 3px"
 					/>
 					{{ isParentFolder(node) ? '' : node.data.name }}

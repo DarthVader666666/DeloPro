@@ -89,7 +89,7 @@ function stopCountdown() {
 							<img
 								v-else
 								:src="
-									helper.getImagePath('icon') + helper.getDocimentIconName(node.data.name) + '.png'
+									helper.getImagePath('icon') + helper.getDocumentIconName(node.data.name) + '.png'
 								"
 								style="width: 1.6em; height: 1.4em; vertical-align: -0.3em; padding-right: 3px"
 							/>
