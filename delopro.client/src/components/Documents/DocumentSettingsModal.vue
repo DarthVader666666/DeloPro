@@ -68,7 +68,7 @@ function closeAll() {
 		"
 	>
 		<template #header>
-			<span style="max-width: 300px; overflow: hidden; text-overflow: ellipsis">
+			<span style="max-width: 90%; overflow: hidden; text-overflow: ellipsis">
 				{{ props.node.data.name }}
 			</span>
 		</template>

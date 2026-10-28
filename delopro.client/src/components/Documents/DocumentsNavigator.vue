@@ -41,12 +41,8 @@ const selectedFolder = computed(() => {
 		return selectedFolderOverride.value
 	}
 
-	if (!props.node) {
-		return null
-	}
-
-	if (isRootFolder.value) {
-		return documentNodes.value[0] ?? null
+	if (!props.node || isRootFolder.value) {
+		return documentNodes.value[0]
 	}
 
 	return getFolderByKey(documentNodes.value, props.node.parentKey) ?? null
@@ -176,7 +172,6 @@ function hideSettings() {
 		:showHeaders="false"
 		@rowSelect="onDocumentSelect($event.data)"
 		@rowContextmenu="showSettings($event)"
-		style="min-height: 350px"
 	>
 		<Column field="text">
 			<template #body="{ data: node }">
