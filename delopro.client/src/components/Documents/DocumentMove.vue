@@ -31,8 +31,8 @@ function moveFile() {
 }
 </script>
 <template>
-	<div class="move-container">
-		<div style="max-height: 500px; overflow-y: scroll">
+	<div>
+		<div class="move-container">
 			<DocumentsNavigator
 				:node="props.node"
 				:disable-files="true"
@@ -40,7 +40,8 @@ function moveFile() {
 				@onRowSelect="openFolder"
 			></DocumentsNavigator>
 		</div>
-		<div style="padding-top: 15px; display: flex; justify-content: space-between">
+
+		<div style="padding-top: 25px; display: flex; justify-content: space-around">
 			<Button
 				@click="moveFile"
 				style="width: 90px"
@@ -72,17 +73,7 @@ function moveFile() {
 }
 
 .move-container {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	width: 500px;
-	height: 600px;
-}
-
-@media (max-width: 500px) {
-	.move-container {
-		width: 100%;
-		height: 400px;
-	}
+	height: 380px;
+	overflow-y: scroll;
 }
 </style>

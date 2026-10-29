@@ -205,7 +205,6 @@ function hideSettings() {
 		v-model:visible="showSettingsModal"
 		:node="editedNode"
 		@hideSettings="hideSettings"
-		style="min-width: 15rem"
 	></DocumentSettingsModal>
 </template>
 <style scoped>
